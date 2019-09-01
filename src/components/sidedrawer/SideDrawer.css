@@ -1,0 +1,153 @@
+ .side-drawer {
+     height: 100%;
+     background: #ffffff;
+     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 75%;
+     max-width: 400px;
+     z-index: 200;
+     transform: translateX(-110%);
+     transition: transform 0.5s ease-in-out;
+ }
+ 
+ .side-drawer.open {
+     transform: translateX(0);
+ }
+ 
+ .side-drawer-items {
+     width: 100%;
+ }
+ 
+ .side-drawer ul {
+     list-style: none;
+     margin: 0;
+     padding: 0;
+     border: 0;
+     font-size: 100%;
+     font: inherit;
+     vertical-align: baseline;
+     display: flex;
+     flex-direction: column;
+ }
+ 
+ .side-drawer a,
+ .side-drawer label {
+     display: flex;
+     justify-content: space-between;
+     padding: .85rem;
+     color: #29303b;
+     text-decoration: none !important;
+     -webkit-transition: all .25s ease-in;
+     transition: all .25s ease-in;
+ }
+ 
+ .auth-link a {
+     color: rgb(11, 145, 168);
+     font-weight: bold
+ }
+ 
+ .side-drawer a:focus,
+ .side-drawer a:hover,
+ .side-drawer label:focus,
+ .side-drawer label:hover {
+     background: #F2F3F5;
+     color: #0056b3;
+ }
+ 
+ .side-drawer label {
+     cursor: pointer;
+     margin-bottom: 0;
+ }
+ /**
+ * Styling first level lists items
+ */
+ 
+ .group-list a,
+ .group-list label {
+     padding-left: 2rem;
+     background: #FFFFFF;
+ }
+ 
+ .group-list a:focus,
+ .group-list a:hover,
+ .group-list label:focus,
+ .group-list label:hover {
+     background: #F2F3F5;
+     color: #0056b3;
+ }
+ /**
+ * Styling second level list items
+ */
+ 
+ .sub-group-list a,
+ .sub-group-list label {
+     padding-left: 4rem;
+     background: #FFFFFF;
+ }
+ 
+ .sub-group-list a:focus,
+ .sub-group-list a:hover,
+ .sub-group-list label:focus,
+ .sub-group-list label:hover {
+     background: #F2F3F5;
+     color: #0056b3;
+ }
+ /**
+ * Styling third level list items
+ */
+ 
+ .sub-sub-group-list a,
+ .sub-sub-group-list label {
+     padding-left: 6rem;
+     background: #FFFFFF;
+ }
+ 
+ .sub-sub-group-list a:focus,
+ .sub-sub-group-list a:hover,
+ .sub-sub-group-list label:focus,
+ .sub-sub-group-list label:hover {
+     background: #F2F3F5;
+     color: rgb(11, 145, 168);
+ }
+ /**
+ * Hide nested lists
+ */
+ 
+ .group-list,
+ .sub-group-list,
+ .sub-sub-group-list {
+     height: 100%;
+     max-height: 0;
+     overflow: hidden;
+     -webkit-transition: max-height .5s ease-in-out;
+     transition: max-height .5s ease-in-out;
+ }
+ 
+ .side-drawer-items input[type=checkbox]:checked+label+ul {
+     /* reset the height when checkbox is checked */
+     max-height: 1000px;
+ }
+ /**
+ * Rotating chevron icon
+ */
+ 
+ label>span {
+     float: right;
+     -webkit-transition: -webkit-transform .65s ease;
+     transition: transform .65s ease;
+ }
+ 
+ .side-drawer-items input[type=checkbox]:checked+label>span {
+     -webkit-transform: rotate(90deg);
+     -ms-transform: rotate(90deg);
+     transform: rotate(90deg);
+ }
+ /* Medium devices (tablets, 768px and down) */
+ 
+ @media only screen and (min-width: 768px) {
+     .side-drawer {
+         display: none;
+     }
+ }

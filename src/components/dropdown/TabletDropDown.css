@@ -1,0 +1,170 @@
+.drop-down {
+    display: inline-block;
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
+.drop-down .drop-down-btn:focus {
+    box-shadow: none;
+}
+
+.drop-down-icon {
+    padding-right: 10px;
+}
+
+.drop-down-menu {
+    list-style: none;
+    z-index: 100;
+    background-color: #fff;
+    border-top: 1px solid #e8e9eb;
+    box-shadow: 0 4px 16px rgba(20, 23, 28, .25);
+    max-height: 500px;
+    padding: 0;
+    display: none;
+    position: absolute;
+    min-height: 560px;
+}
+
+.drop-down.open .drop-down-menu-level-one {
+    display: block;
+}
+
+.side-drawer-items {
+    width: 100%;
+}
+
+.drop-down ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    display: flex;
+    flex-direction: column;
+}
+
+.drop-down a,
+.drop-down label {
+    display: flex;
+    justify-content: space-between;
+    padding: .85rem;
+    color: #29303b;
+    text-decoration: none !important;
+    -webkit-transition: all .25s ease-in;
+    transition: all .25s ease-in;
+}
+
+.auth-link a {
+    color: rgb(11, 145, 168);
+    font-weight: bold
+}
+
+.drop-down a:focus,
+.drop-down a:hover,
+.drop-down label:focus,
+.drop-down label:hover {
+    background: #F2F3F5;
+    color: #0056b3;
+}
+
+.drop-down label {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+
+/**
+* Styling first level lists items
+*/
+
+.group-list a,
+.group-list label {
+    padding-left: 2rem;
+    background: #FFFFFF;
+}
+
+.group-list a:focus,
+.group-list a:hover,
+.group-list label:focus,
+.group-list label:hover {
+    background: #F2F3F5;
+    color: #0056b3;
+}
+
+
+/**
+* Styling second level list items
+*/
+
+.sub-group-list a,
+.sub-group-list label {
+    padding-left: 4rem;
+    background: #FFFFFF;
+}
+
+.sub-group-list a:focus,
+.sub-group-list a:hover,
+.sub-group-list label:focus,
+.sub-group-list label:hover {
+    background: #F2F3F5;
+    color: #0056b3;
+}
+
+
+/**
+* Styling third level list items
+*/
+
+.sub-sub-group-list a,
+.sub-sub-group-list label {
+    padding-left: 6rem;
+    background: #FFFFFF;
+}
+
+.sub-sub-group-list a:focus,
+.sub-sub-group-list a:hover,
+.sub-sub-group-list label:focus,
+.sub-sub-group-list label:hover {
+    background: #F2F3F5;
+    color: rgb(11, 145, 168);
+}
+
+
+/**
+* Hide nested lists
+*/
+
+.group-list,
+.sub-group-list,
+.sub-sub-group-list {
+    height: 100%;
+    max-height: 0;
+    overflow: hidden;
+    -webkit-transition: max-height .5s ease-in-out;
+    transition: max-height .5s ease-in-out;
+}
+
+.side-drawer-items input[type=checkbox]:checked+label+ul {
+    /* reset the height when checkbox is checked */
+    max-height: 1000px;
+}
+
+
+/**
+* Rotating chevron icon
+*/
+
+label>span {
+    float: right;
+    -webkit-transition: -webkit-transform .65s ease;
+    transition: transform .65s ease;
+}
+
+.side-drawer-items input[type=checkbox]:checked+label>span {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}

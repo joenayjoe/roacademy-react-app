@@ -1,0 +1,34 @@
+ .top-header {
+     width: 100%;
+ }
+ 
+ .nav-container {
+     width: 80%;
+     margin: 0 auto;
+ }
+ 
+ .nav-left {
+     flex: 1;
+ }
+ 
+ .nav-right {
+     display: flex;
+ }
+ 
+ .nav-search {
+     flex: 1;
+ }
+ /* Medium devices (tablets, 768px and down) */
+ 
+ @media (max-width: 768px) {
+     #navbarSupportedContent {
+         display: none;
+     }
+     .mobile-spacer {
+         display: initial;
+         flex: 1;
+     }
+     .nav-container {
+         width: 100%;
+     }
+ }
