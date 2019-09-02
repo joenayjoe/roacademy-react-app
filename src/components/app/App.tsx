@@ -1,7 +1,11 @@
 import React, { Component } from "react";
-import NavbarNew from "../navbar/Navbar";
+import Navbar from "../navbar/Navbar";
 import SideDrawer from "../sidedrawer/SideDrawer";
 import Backdrop from "../backdrop/Backdrop";
+
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import Donation from "../donation/Donation";
+import Home from "../home/Home";
 
 import "./App.css";
 
@@ -15,6 +19,7 @@ import {
   faBars,
   faAngleRight,
   faAngleDown,
+  faAngleLeft,
   faCaretUp
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -26,6 +31,7 @@ library.add(
   faDonate,
   faBars,
   faAngleRight,
+  faAngleLeft,
   faAngleDown,
   faCaretUp
 );
@@ -57,18 +63,19 @@ class App extends Component<{}, AppState> {
       backdrop = <Backdrop onClickHandler={this.backdropClickHandler} />;
     }
     return (
-      <React.Fragment>
+      <BrowserRouter>
         {backdrop}
 
-        <NavbarNew drawerToggleHandler={this.drawerToggleHandler} />
+        <Navbar drawerToggleHandler={this.drawerToggleHandler} />
         <SideDrawer isOpen={this.state.sideDrawerOpen} />
+
         <div className="content-wrapper">
-          <div>
-            Content here
-            <a href="/"> A test Link</a>
-            </div>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/donation" component={Donation} />
+          </Switch>
         </div>
-      </React.Fragment>
+      </BrowserRouter>
     );
   }
 }

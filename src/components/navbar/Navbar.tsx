@@ -7,6 +7,7 @@ import DrawerToggleButton from "../sidedrawer/DrawerToggleButton";
 import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
 import DropDown from "../dropdown/DropDown";
+import {NavLink} from "react-router-dom";
 
 interface NavbarProbs {
   drawerToggleHandler: () => void;
@@ -25,7 +26,7 @@ class NavbarNew extends Component<NavbarProbs, any> {
 
           <div className="mobile-spacer" />
 
-          <a className="navbar-brand" href="/">
+          <NavLink to="/" className="navbar-brand">
             <img
               src={logo}
               width="30"
@@ -34,7 +35,7 @@ class NavbarNew extends Component<NavbarProbs, any> {
               alt=""
             />
             Rohingya Academy
-          </a>
+          </NavLink>
 
           <div className="navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto nav-left">
@@ -51,10 +52,10 @@ class NavbarNew extends Component<NavbarProbs, any> {
 
             <div className="nav-right">
               <div className="donate nav-link">
-                <a href="/">
+                <NavLink to="/donation">
                   <FontAwesomeIcon icon="donate" className="icon" />
                   Donate
-                </a>
+                </NavLink>
               </div>
               <div className="login nav-link">
                 <a href="/">Log In</a>

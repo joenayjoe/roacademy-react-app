@@ -27,10 +27,8 @@ class DropDown extends Component<DropDownProps, DropDownState> {
   menuBtnNode: any = createRef();
   menuNode: any = createRef();
 
-  handleMenuLinkClick = (
-    item: any,
-    levelTwoPID?: number
-  ) => {
+
+  handleMenuLinkClick = (item: any, levelTwoPID?: number) => {
     if (isMobile) {
       if (item.children === undefined) {
         console.log("no sub menu, load data for link");
@@ -45,14 +43,24 @@ class DropDown extends Component<DropDownProps, DropDownState> {
       console.log("load page for ", item.url);
     }
   };
+
+  handleBackBtnClick = (data: any) => {
+    const ltp = this.state.levelTwoParent;
+    this.setState({
+      selectedMenuLinkId: ltp,
+      levelTwoParent: null
+    });
+
+  };
+
   handleOnClick = (e: Event) => {
     if (this.menuBtnNode.contains(e.target)) {
-      console.log("change toggle state")
+      console.log("change toggle state");
       this.setState(prevState => {
         return { isToggle: !prevState.isToggle };
       });
     } else if (!isMobile || (isMobile && !this.menuNode.contains(e.target))) {
-      console.log("make toggle false")
+      console.log("make toggle false");
       this.setState({ isToggle: false });
     }
   };
@@ -85,8 +93,21 @@ class DropDown extends Component<DropDownProps, DropDownState> {
         </li>
       );
     });
+
     return (
       <ul className="drop-down-menu drop-down-menu-level-three">
+        {isMobile ? (
+          <li
+            key="back-l-3"
+            className="drop-down-menu-item back-menu-link"
+            onClick={() => this.handleBackBtnClick(data)}
+          >
+            <div>
+              <FontAwesomeIcon icon="angle-left" />
+              <span> {data.name} </span>
+            </div>
+          </li>
+        ) : null}
         <li key={data.id} className="drop-down-menu-item">
           <div
             className="menu-link"
@@ -133,6 +154,18 @@ class DropDown extends Component<DropDownProps, DropDownState> {
 
     return (
       <ul className="drop-down-menu drop-down-menu-level-two">
+        {isMobile ? (
+          <li
+            key="back-l-2"
+            className="drop-down-menu-item back-menu-link"
+            onClick={() => this.handleBackBtnClick(data)}
+          >
+            <div>
+              <FontAwesomeIcon icon="angle-left" />
+              <span> {data.name} </span>
+            </div>
+          </li>
+        ) : null}
         <li key={data.id} className="drop-down-menu-item">
           <div
             className="menu-link"
@@ -165,7 +198,10 @@ class DropDown extends Component<DropDownProps, DropDownState> {
         submenu = this.dropDownMenuLevelTwo(item);
       }
       return (
-        <li key={item.id} className={`drop-down-menu-item ${openKlass} ${openParenMenu}`}>
+        <li
+          key={item.id}
+          className={`drop-down-menu-item ${openKlass} ${openParenMenu}`}
+        >
           <div
             className="menu-link"
             data-href={item.url}
