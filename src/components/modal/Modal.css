@@ -1,0 +1,26 @@
+.ra-modal {
+    background: #ffffff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 300;
+    margin: 0 auto;
+    display: table;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10%;
+    bottom: 0;
+}
+
+.modal-sm {
+    min-width: 200px;
+}
+
+.modal-md {
+    min-width: 380px;
+}
+
+.modal-lg {
+    min-width: 60%;
+}

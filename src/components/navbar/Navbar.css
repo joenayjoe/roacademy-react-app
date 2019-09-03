@@ -17,6 +17,7 @@
  
  .nav-search {
      flex: 1;
+     padding-right: 10px;
  }
  /* Medium devices (tablets, 768px and down) */
  
@@ -30,5 +31,9 @@
      }
      .nav-container {
          width: 100%;
+     }
+     .nav-right .nav-link {
+         padding-left: 2px;
+         padding-right: 2px;
      }
  }

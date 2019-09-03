@@ -4,6 +4,7 @@ import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 interface AutocompleteProps {
+  placeholder:string;
   icon?: IconProp;
   onChangeHandler(): void;
 }
@@ -46,7 +47,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     let searchInput = (
       <input
         type="search"
-        placeholder="Search anything?"
+        placeholder={this.props.placeholder}
         aria-describedby="button-addon"
         className={`form-control bg-none border-0 ${focusKlass}`}
         onChange={this.props.onChangeHandler}

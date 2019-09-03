@@ -6,16 +6,57 @@ import DrawerToggleButton from "../sidedrawer/DrawerToggleButton";
 
 import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
-import DropDown from "../dropdown/DropDown";
-import {NavLink} from "react-router-dom";
+import DropDownMenu from "./DropDownMenu";
+import { NavLink } from "react-router-dom";
+import { modalDataType } from "../../settings/DataTypes";
 
 interface NavbarProbs {
   drawerToggleHandler: () => void;
+  modalShowHandler: (modalData: modalDataType) => void;
+  modalCloseHandler: () => void;
 }
 
-class NavbarNew extends Component<NavbarProbs, any> {
+class NavbarNew extends Component<NavbarProbs, {}> {
   handleAutoCompleteOnChange = () => {
     console.log("changing");
+  };
+
+  showLoginModal = () => {
+    const modalData: modalDataType = {
+      heading: "Log In",
+      closeBtnText: "Cancel",
+      submitBtnText: "Log In",
+      children: this.loginModalBody()
+    };
+
+    this.props.modalShowHandler(modalData);
+  };
+
+  loginModalBody = () => {
+    return (
+      <div>
+        <p>This is modal login content</p>
+      </div>
+    );
+  };
+
+  showSignupModal = () => {
+    const modalData: modalDataType = {
+      heading: "Sign Up",
+      closeBtnText: "Cancel",
+      submitBtnText: "Sign Up",
+      children: this.signupModalBody()
+    };
+
+    this.props.modalShowHandler(modalData);
+  };
+
+  signupModalBody = () => {
+    return (
+      <div>
+        <p>Sign Up modal body</p>
+      </div>
+    );
   };
 
   render() {
@@ -40,10 +81,11 @@ class NavbarNew extends Component<NavbarProbs, any> {
           <div className="navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto nav-left">
               <li className="nav-item">
-              <DropDown displayName="Categories" icon="th-list" />
+                <DropDownMenu displayName="Categories" icon="th-list" />
               </li>
               <li className="nav-item nav-search">
                 <Autocomplete
+                  placeholder="Search anything ..."
                   icon="search"
                   onChangeHandler={this.handleAutoCompleteOnChange}
                 />
@@ -51,17 +93,25 @@ class NavbarNew extends Component<NavbarProbs, any> {
             </ul>
 
             <div className="nav-right">
+              <div className="login nav-link" onClick={this.showLoginModal}>
+                <button className="btn btn-outline-primary nav-btn">
+                  Log In
+                </button>
+              </div>
+              <div className="signup nav-link" onClick={this.showSignupModal}>
+                <button className="btn btn-primary nav-btn">Sign Up </button>
+              </div>
               <div className="donate nav-link">
                 <NavLink to="/donation">
-                  <FontAwesomeIcon icon="donate" className="icon" />
-                  Donate
+                  <button className="btn btn-outline-success">
+                    <FontAwesomeIcon
+                      icon="donate"
+                      className="ra-icon"
+                      size="lg"
+                    />
+                    Donate
+                  </button>
                 </NavLink>
-              </div>
-              <div className="login nav-link">
-                <a href="/">Log In</a>
-              </div>
-              <div className="signup nav-link">
-                <a href="/">Sign Up</a>
               </div>
             </div>
           </div>
