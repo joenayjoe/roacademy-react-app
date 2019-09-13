@@ -1,0 +1,29 @@
+.social-btn {
+    color: #ffffff;
+    min-height: 40px;
+    display: flex;
+    padding-left: 1.5rem;
+    height: 48px;
+    margin-bottom: 10px;
+}
+
+.facebook-login {
+    background-color: #1a538a;
+}
+
+.google-login {
+    background-color: #dd4b39;
+}
+
+.social-btn a {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    align-items: center;
+    display: flex;
+}
+
+.social-btn a:hover {
+    color: #ffffff;
+}

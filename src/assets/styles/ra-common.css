@@ -1,0 +1,36 @@
+.ra-icon {
+    padding-right: 5px;
+}
+
+.drop-down-btn:focus {
+    box-shadow: none;
+}
+
+.animate-top {
+    position: absolute;
+    animation: animatetop 0.4s
+}
+
+.span-as-link {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.span-as-link:hover {
+    color: #007bff;
+    background-color: transparent;
+}
+
+.small-text {
+    font-size: 68%;
+}
+
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}

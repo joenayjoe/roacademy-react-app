@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Autocomplete from "../autocomplete/Autocomplete";
+import Autocomplete from "../../components/autocomplete/Autocomplete";
 
 import DrawerToggleButton from "../sidedrawer/DrawerToggleButton";
 
@@ -8,11 +8,17 @@ import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
 import DropDownMenu from "./DropDownMenu";
 import { NavLink } from "react-router-dom";
-import { modalDataType } from "../../settings/DataTypes";
+import { ModalDataType, ModalType, ModalSize } from "../../settings/DataTypes";
+import LoginModalBody from "../../components/modal/LoginModalBody";
+import SignupModalBody from "../../components/modal/SignupModalBody";
 
 interface NavbarProbs {
   drawerToggleHandler: () => void;
-  modalShowHandler: (modalData: modalDataType) => void;
+  modalShowHandler: (
+    modalData: ModalDataType,
+    size?: ModalSize,
+    modalType?: ModalType
+  ) => void;
   modalCloseHandler: () => void;
 }
 
@@ -22,42 +28,24 @@ class NavbarNew extends Component<NavbarProbs, {}> {
   };
 
   showLoginModal = () => {
-    const modalData: modalDataType = {
-      heading: "Log In",
-      closeBtnText: "Cancel",
-      submitBtnText: "Log In",
-      children: this.loginModalBody()
+    const modalData: ModalDataType = {
+      heading: "Log In to Your Account!",
+      modalBody: <LoginModalBody showSignupModalHandler={this.showSignupModal}/>
     };
 
     this.props.modalShowHandler(modalData);
-  };
-
-  loginModalBody = () => {
-    return (
-      <div>
-        <p>This is modal login content</p>
-      </div>
-    );
   };
 
   showSignupModal = () => {
-    const modalData: modalDataType = {
-      heading: "Sign Up",
-      closeBtnText: "Cancel",
-      submitBtnText: "Sign Up",
-      children: this.signupModalBody()
+    const modalData: ModalDataType = {
+      heading: "Sign Up and Start Learning!",
+      modalBody: <SignupModalBody showLoginModalHandler = {this.showLoginModal}/>
     };
 
     this.props.modalShowHandler(modalData);
   };
 
-  signupModalBody = () => {
-    return (
-      <div>
-        <p>Sign Up modal body</p>
-      </div>
-    );
-  };
+
 
   render() {
     return (

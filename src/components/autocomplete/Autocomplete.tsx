@@ -74,7 +74,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     }
 
     return (
-      <div className="input-group border">
+      <div className="autocomplete input-group border">
         {searchInput}
         {searchIcon}
       </div>

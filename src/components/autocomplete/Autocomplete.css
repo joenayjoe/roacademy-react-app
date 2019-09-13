@@ -1,29 +1,20 @@
-/* 
-.autocomplete-input {
-    background-color: #E9ECEF !important;
-}
-.autocomplete-input:focus {
-    box-shadow: none !important;
-    background-color: #ffffff !important;
-} */
-
-.focus {
-    background-color: #ffffff !important;
+.autocomplete .focus {
+    background-color: #ffffff;
 }
 
-.blur {
-    background-color: #E9ECEF !important;
+.autocomplete .blur {
+    background-color: #E9ECEF;
 }
 
-.form-control:focus {
-    box-shadow: none !important;
+.autocomplete .form-control:focus {
+    box-shadow: none;
 }
 
-#button-addon:hover {
-    background-color: #EC5252 !important;
+.autocomplete #button-addon:hover {
+    background-color: #EC5252;
 }
 
-.form-control::placeholder {
+.autocomplete .form-control::placeholder {
     font-size: 0.95rem;
     color: #aaa;
 }
