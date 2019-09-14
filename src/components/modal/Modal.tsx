@@ -1,39 +1,21 @@
 import React, { Component, MouseEvent } from "react";
-import { ModalDataType, ModalType, ModalSize } from "../../settings/DataTypes";
+import { ModalType, ModalSize } from "../../settings/DataTypes";
 
 import "./Modal.css";
 
-interface ModalProps {
-  modalData: ModalDataType;
+interface IProps {
+  heading: string;
   size: ModalSize;
   modalType: ModalType;
   closeHandler: () => void;
 }
-class Modal extends Component<ModalProps, {}> {
+class Modal extends Component<IProps, {}> {
   backGroundClickHandler = (e: MouseEvent) => {
     if (e.target === e.currentTarget) {
       this.props.closeHandler();
     }
   };
   render() {
-    let modalData = this.props.modalData;
-
-    let modalFooter;
-    if (this.props.modalType && this.props.modalType === "card") {
-      modalFooter = (
-        <div className="modal-footer">
-          <button
-            className="modal-submit btn btn-secondary"
-            onClick={this.props.closeHandler}
-          >
-            {modalData.closeBtnText || "Cancel"}
-          </button>
-          <button className="modal-close btn btn-primary">
-            {modalData.submitBtnText || "Save"}
-          </button>
-        </div>
-      );
-    }
     return (
       <div
         className="modal-container"
@@ -41,7 +23,7 @@ class Modal extends Component<ModalProps, {}> {
       >
         <div className={`ra-modal animate-top ${this.props.size}`}>
           <div className="modal-header">
-            <h5 className="modal-title">{modalData.heading}</h5>
+            <h5 className="modal-title">{this.props.heading}</h5>
             <button
               type="button"
               className="close"
@@ -52,8 +34,7 @@ class Modal extends Component<ModalProps, {}> {
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div className="modal-body">{modalData.modalBody}</div>
-          {modalFooter}
+          <div className="modal-body">{this.props.children}</div>
         </div>
       </div>
     );

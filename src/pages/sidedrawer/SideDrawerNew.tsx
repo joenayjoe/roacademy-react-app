@@ -1,29 +1,21 @@
 import React, { Component } from "react";
 import {
   ICategory,
-  ModalDataType,
-  ModalSize,
-  ModalType,
   IGrade,
-  MenuItemType
+  MenuItemType,
+  ModalIdentifier
 } from "../../settings/DataTypes";
 
 import "./SideDrawerNew.css";
 import ApiManager from "../../dataManagers/ApiManager";
-import LoginModalBody from "../../components/modal/LoginModalBody";
-import SignupModalBody from "../../components/modal/SignupModalBody";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AxiosError } from "axios";
 
 interface IProps {
   isOpen: boolean;
-  modalShowHandler: (
-    modalData: ModalDataType,
-    modalSize?: ModalSize,
-    modalType?: ModalType
-  ) => void;
   modalCloseHandler: () => void;
   backdropClickHandler: () => void;
+  modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
 }
 
 interface IStates {
@@ -57,30 +49,18 @@ class SideDrawerNew extends Component<IProps, IStates> {
   }
 
   showLoginModal = () => {
-    const modalData: ModalDataType = {
-      heading: "Log In to Your Account!",
-      modalBody: (
-        <LoginModalBody showSignupModalHandler={this.showSignupModal} />
-      )
-    };
-
-    this.props.modalShowHandler(modalData);
+    this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
   };
 
   showSignupModal = () => {
-    const modalData: ModalDataType = {
-      heading: "Sign Up and Start Learning!",
-      modalBody: <SignupModalBody showLoginModalHandler={this.showLoginModal} />
-    };
-
-    this.props.modalShowHandler(modalData);
+    this.props.modalSwitcher(ModalIdentifier.SIGNUP_MODAL);
   };
 
   handleAuthLinkClick = () => {
     this.showSignupModal();
   };
 
-async getCoursesFor(grade: IGrade) {
+  async getCoursesFor(grade: IGrade) {
     if (grade.catched === undefined || !grade.catched) {
       try {
         const response = await this.apiManager.getCoursesForGrade(grade);
@@ -114,7 +94,7 @@ async getCoursesFor(grade: IGrade) {
         }
       }
       this.getCoursesFor(grade);
-      this.setState({ levelTwoParent: parent? parent.url : null });
+      this.setState({ levelTwoParent: parent ? parent.url : null });
     }
     this.setState({
       selectedMenuItem: item.url

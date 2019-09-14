@@ -24,15 +24,16 @@
 }
 
 .modal-sm {
-    min-width: 200px;
+    max-width: 200px;
 }
 
 .modal-md {
-    min-width: 380px;
+    max-width: 380px;
+    min-width: 345px;
 }
 
 .modal-lg {
-    min-width: 60%;
+    max-width: 60%;
 }
 
 .auth-modal input,

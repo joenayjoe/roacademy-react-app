@@ -8,18 +8,12 @@ import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
 import DropDownMenu from "./DropDownMenu";
 import { NavLink } from "react-router-dom";
-import { ModalDataType, ModalType, ModalSize } from "../../settings/DataTypes";
-import LoginModalBody from "../../components/modal/LoginModalBody";
-import SignupModalBody from "../../components/modal/SignupModalBody";
+import {ModalIdentifier } from "../../settings/DataTypes";
 
 interface NavbarProbs {
   drawerToggleHandler: () => void;
-  modalShowHandler: (
-    modalData: ModalDataType,
-    size?: ModalSize,
-    modalType?: ModalType
-  ) => void;
   modalCloseHandler: () => void;
+  modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
 }
 
 class NavbarNew extends Component<NavbarProbs, {}> {
@@ -28,21 +22,11 @@ class NavbarNew extends Component<NavbarProbs, {}> {
   };
 
   showLoginModal = () => {
-    const modalData: ModalDataType = {
-      heading: "Log In to Your Account!",
-      modalBody: <LoginModalBody showSignupModalHandler={this.showSignupModal}/>
-    };
-
-    this.props.modalShowHandler(modalData);
-  };
+    this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
+   };
 
   showSignupModal = () => {
-    const modalData: ModalDataType = {
-      heading: "Sign Up and Start Learning!",
-      modalBody: <SignupModalBody showLoginModalHandler = {this.showLoginModal}/>
-    };
-
-    this.props.modalShowHandler(modalData);
+    this.props.modalSwitcher(ModalIdentifier.SIGNUP_MODAL);
   };
 
 

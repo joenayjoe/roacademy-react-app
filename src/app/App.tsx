@@ -7,28 +7,21 @@ import Home from "../pages/home/Home";
 
 import "./App.css";
 
-import Modal from "../components/modal/Modal";
-import { ModalDataType, ModalSize, ModalType } from "../settings/DataTypes";
+import {
+  ModalIdentifier
+} from "../settings/DataTypes";
 import SideDrawerNew from "../pages/sidedrawer/SideDrawerNew";
+import ModalSelector from "../components/modal/ModalSelector";
 
 interface AppState {
   isSideDrawerOpen: boolean;
-  isModalOpen: boolean;
-  modalData: ModalDataType;
-  modalSize: ModalSize;
-  modalType: ModalType;
+  currentModal: ModalIdentifier | null;
 }
 
 class App extends Component<{}, AppState> {
   state: AppState = {
     isSideDrawerOpen: false,
-    isModalOpen: false,
-    modalData: {
-      heading: "Heading",
-      modalBody: "modal body"
-    },
-    modalSize: "modal-md",
-    modalType: "regular"
+    currentModal: null
   };
 
   handleDrawerToggle = () => {
@@ -39,21 +32,9 @@ class App extends Component<{}, AppState> {
     });
   };
 
-  showModal = (
-    modaData: ModalDataType,
-    modalSize: ModalSize = "modal-md",
-    modalType: ModalType = "regular"
-  ) => {
-    this.setState({
-      isModalOpen: true,
-      modalData: modaData,
-      modalSize: modalSize,
-      modalType: modalType
-    });
-  };
   closeModal = () => {
     this.setState({
-      isModalOpen: false
+      currentModal: null
     });
   };
 
@@ -62,41 +43,28 @@ class App extends Component<{}, AppState> {
       isSideDrawerOpen: false
     });
   };
+  switchModal(modalIdentifier: ModalIdentifier) {
+    this.setState({ currentModal: modalIdentifier });
+  }
 
   render() {
-    let modal;
-    if (this.state.isModalOpen) {
-      modal = (
-        <Modal
-          modalData={this.state.modalData}
-          size={this.state.modalSize}
-          modalType={this.state.modalType}
-          closeHandler={this.closeModal}
-        />
-      );
-    }
-
     return (
       <BrowserRouter>
-        {modal}
+        <ModalSelector
+          modalIdentifier={this.state.currentModal}
+          closeHandler={this.closeModal}
+          modalSwitcher={(identifier) => this.switchModal(identifier)}
+        />
 
         <Navbar
           drawerToggleHandler={this.handleDrawerToggle}
-          modalShowHandler={(
-            modalData: ModalDataType,
-            modalSize?: ModalSize,
-            modalType?: ModalType
-          ) => this.showModal(modalData, modalSize, modalType)}
           modalCloseHandler={this.closeModal}
+          modalSwitcher={identifier => this.switchModal(identifier)}
         />
 
         <SideDrawerNew
           isOpen={this.state.isSideDrawerOpen}
-          modalShowHandler={(
-            modalData: ModalDataType,
-            modalSize?: ModalSize,
-            modalType?: ModalType
-          ) => this.showModal(modalData, modalSize, modalType)}
+          modalSwitcher={identifier => this.switchModal(identifier)}
           modalCloseHandler={this.closeModal}
           backdropClickHandler={this.backdropClickHandler}
         />
