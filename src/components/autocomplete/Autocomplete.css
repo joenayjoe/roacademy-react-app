@@ -1,3 +1,7 @@
+.autocomplete .form-inline .input-group {
+    width: 100%;
+}
+
 .autocomplete .focus {
     background-color: #ffffff;
 }

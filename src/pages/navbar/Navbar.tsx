@@ -10,16 +10,22 @@ import DropDownMenu from "./DropDownMenu";
 import { NavLink } from "react-router-dom";
 import {ModalIdentifier } from "../../settings/DataTypes";
 
-interface NavbarProbs {
+interface IProbs {
   drawerToggleHandler: () => void;
   modalCloseHandler: () => void;
   modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
 }
 
-class NavbarNew extends Component<NavbarProbs, {}> {
-  handleAutoCompleteOnChange = () => {
-    console.log("changing");
+class NavbarNew extends Component<IProbs, {}> {
+
+
+  handleAutoCompleteOnChange = (query:string) => {
+    console.log("query:", query);
   };
+
+  handleAutoCompleteOnSubmit = (query:string) => {
+    console.log("autocomplete submited with: ", query);
+  }
 
   showLoginModal = () => {
     this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
@@ -57,9 +63,11 @@ class NavbarNew extends Component<NavbarProbs, {}> {
               </li>
               <li className="nav-item nav-search">
                 <Autocomplete
-                  placeholder="Search anything ..."
+                  suggestions={[]}
+                  placeholder="Search for anything ..."
                   icon="search"
-                  onChangeHandler={this.handleAutoCompleteOnChange}
+                  onChangeHandler={(q:string) =>this.handleAutoCompleteOnChange(q)}
+                  onSubmitHandler={(q:string) =>this.handleAutoCompleteOnSubmit(q)}
                 />
               </li>
             </ul>

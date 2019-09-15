@@ -1,24 +1,38 @@
-import React, { Component } from "react";
+import React, { Component, FormEvent, ChangeEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 interface AutocompleteProps {
-  placeholder:string;
+  suggestions: string[];
+  placeholder: string;
   icon?: IconProp;
-  onChangeHandler(): void;
+  onChangeHandler(query:string): void;
+  onSubmitHandler(query:string):void;
 }
 
 interface AutocompleteState {
-  isFocus: boolean,
-  isIconHover: boolean
+  isFocus: boolean;
+  isIconHover: boolean;
+  query: string;
 }
 
 class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   state: AutocompleteState = {
     isFocus: false,
-    isIconHover: false
+    isIconHover: false,
+    query: ""
   };
+
+  handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({query: e.currentTarget.value})
+    this.props.onChangeHandler(e.currentTarget.value);
+  }
+
+  handleOnSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    this.props.onSubmitHandler(this.state.query);
+  }
   handleOnFocus = () => {
     this.setState(prevState => {
       return { isFocus: !prevState.isFocus };
@@ -29,13 +43,13 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     this.setState(prevState => {
       return { isIconHover: !prevState.isIconHover };
     });
-  }
+  };
 
   render() {
     let focusKlass = "blur";
-    let iconColor = "#EC5252"
+    let iconColor = "#EC5252";
 
-    if(this.state.isIconHover) {
+    if (this.state.isIconHover) {
       iconColor = "#FFFFFF";
     }
 
@@ -47,10 +61,12 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     let searchInput = (
       <input
         type="search"
+        name="query"
+        value = {this.state.query}
         placeholder={this.props.placeholder}
         aria-describedby="button-addon"
         className={`form-control bg-none border-0 ${focusKlass}`}
-        onChange={this.props.onChangeHandler}
+        onChange={(e) => this.handleOnChange(e)}
         onFocus={this.handleOnFocus}
         onBlur={this.handleOnFocus}
       />
@@ -64,7 +80,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
         >
           <button
             id="button-addon"
-            type="button"
+            type="submit"
             className="btn btn-link text-success"
           >
             <FontAwesomeIcon icon={this.props.icon} color={iconColor} />
@@ -74,9 +90,13 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     }
 
     return (
-      <div className="autocomplete input-group border">
-        {searchInput}
-        {searchIcon}
+      <div className="autocomplete border">
+        <form className="form-inline" onSubmit={(e) =>this.handleOnSubmit(e)}>
+          <div className="input-group">
+            {searchInput}
+            {searchIcon}
+          </div>
+        </form>
       </div>
     );
   }
