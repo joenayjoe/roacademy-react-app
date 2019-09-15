@@ -7,6 +7,8 @@ import Cookies from "universal-cookie";
 import { ILoginRequest, ModalIdentifier } from "../../settings/DataTypes";
 import Modal from "./Modal";
 import { withRouter, RouteComponentProps } from "react-router";
+import { parseError } from "../../utils/Helper";
+import ErrorFlash from "../flash/ErrorFlash";
 
 interface IProps extends RouteComponentProps {
   showSignupModalHandler: (modalIdentifier: ModalIdentifier) => void;
@@ -46,16 +48,7 @@ class LoginModal extends Component<IProps, IStates> {
         this.props.history.push("/donation");
       })
       .catch(error => {
-        let errorResponse = error.response.data;
-        let errorMessages: string[] = [];
-        if (errorResponse.errors) {
-          for (let [, value] of Object.entries(errorResponse.errors)) {
-            let val: any = value;
-            errorMessages.push(val[0]["message"]);
-          }
-        } else {
-          errorMessages.push(errorResponse.detail);
-        }
+        const errorMessages: string[] = parseError(error);
         this.setState({ errorMessages: errorMessages });
       });
   };
@@ -65,18 +58,6 @@ class LoginModal extends Component<IProps, IStates> {
   };
 
   render() {
-    let formError;
-    if (this.state.errorMessages.length) {
-      let errorList = this.state.errorMessages.map(error => {
-        return <li key={error}>{error}</li>;
-      });
-      formError = (
-        <div className="alert alert-danger error" role="alert">
-          <ul className="m-0 p-0">{errorList}</ul>
-        </div>
-      );
-    }
-
     const heading = "Login to Your Account";
     return (
       <Modal
@@ -115,7 +96,7 @@ class LoginModal extends Component<IProps, IStates> {
           <div className="dropdown-divider mt-3 mb-3"></div>
           <div>
             <form onSubmit={this.handleLoginOnSubmit}>
-              {formError}
+              <ErrorFlash errors={this.state.errorMessages} />
               <div className="form-group">
                 <div className="input-group mb-3">
                   <div className="input-group-prepend">
