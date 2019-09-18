@@ -2,13 +2,15 @@ import React, { Component, FormEvent, ChangeEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { ILinkItem } from "../../settings/DataTypes";
 
 interface AutocompleteProps {
-  suggestions: string[];
+  suggestions: ILinkItem[];
   placeholder: string;
   icon?: IconProp;
-  onChangeHandler(query:string): void;
-  onSubmitHandler(query:string):void;
+  onChangeHandler(query: string): void;
+  onSubmitHandler(query: string): void;
+  onFocusHandler?(): void;
 }
 
 interface AutocompleteState {
@@ -25,18 +27,22 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   };
 
   handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({query: e.currentTarget.value})
+    this.setState({ query: e.currentTarget.value });
     this.props.onChangeHandler(e.currentTarget.value);
-  }
+    console.log(e.currentTarget.value);
+  };
 
   handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
     this.props.onSubmitHandler(this.state.query);
-  }
+  };
   handleOnFocus = () => {
     this.setState(prevState => {
       return { isFocus: !prevState.isFocus };
     });
+    if(typeof this.props.onFocusHandler === "function") {
+      this.props.onFocusHandler();
+    }
   };
 
   handleIconHover = () => {
@@ -62,11 +68,11 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
       <input
         type="search"
         name="query"
-        value = {this.state.query}
+        value={this.state.query}
         placeholder={this.props.placeholder}
         aria-describedby="button-addon"
         className={`form-control bg-none border-0 ${focusKlass}`}
-        onChange={(e) => this.handleOnChange(e)}
+        onChange={e => this.handleOnChange(e)}
         onFocus={this.handleOnFocus}
         onBlur={this.handleOnFocus}
       />
@@ -89,14 +95,26 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
       );
     }
 
+    let autoCompleteSuggestionList = this.props.suggestions.map(suggestion => {
+      return (
+        <li key={suggestion.id} className="drop-down-menu-item">
+          <div className="menu-link">{suggestion.name}</div>
+        </li>
+      );
+    });
+
+    let openKlass = this.state.isFocus ? "open" : "";
     return (
-      <div className="autocomplete border">
-        <form className="form-inline" onSubmit={(e) =>this.handleOnSubmit(e)}>
+      <div className={`autocomplete border drop-down ${openKlass}`}>
+        <form className="form-inline" onSubmit={e => this.handleOnSubmit(e)}>
           <div className="input-group">
             {searchInput}
             {searchIcon}
           </div>
         </form>
+        <ul className="autocomplete-suggestions drop-down-menu">
+          {autoCompleteSuggestionList}
+        </ul>
       </div>
     );
   }

@@ -4,7 +4,7 @@ import Cookies from "universal-cookie";
 class ApiRequest {
   private axiosInstance: AxiosInstance;
   constructor() {
-    const config = { baseURL: "http://localhost:8080/api"};
+    const config = { baseURL: "http://192.168.1.151:8080/api"};
     this.axiosInstance = axios.create(config);
   }
 

@@ -19,9 +19,19 @@
      flex: 1;
      padding-right: 10px;
  }
- /* Medium devices (tablets, 768px and down) */
  
- @media (max-width: 768px) {
+ #side-drawer-toggler {
+     display: none;
+ }
+ 
+ @media only screen and (max-width: 414px) {
+     #side-drawer-toggler {
+         display: initial;
+         align-self: flex-end;
+     }
+ }
+ 
+ @media (max-width: 900px) {
      #navbarSupportedContent {
          display: none;
      }

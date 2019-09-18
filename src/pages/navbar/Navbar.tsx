@@ -2,13 +2,17 @@ import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Autocomplete from "../../components/autocomplete/Autocomplete";
 
-import DrawerToggleButton from "../sidedrawer/DrawerToggleButton";
-
 import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
 import DropDownMenu from "./DropDownMenu";
 import { NavLink } from "react-router-dom";
-import {ModalIdentifier } from "../../settings/DataTypes";
+import {
+  ModalIdentifier,
+  ILinkItem,
+  ISearchRequest
+} from "../../settings/DataTypes";
+import ApiManager from "../../dataManagers/ApiManager";
+import ToggleBar from "../../components/togglebar/ToggleBar";
 
 interface IProbs {
   drawerToggleHandler: () => void;
@@ -16,36 +20,68 @@ interface IProbs {
   modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
 }
 
-class NavbarNew extends Component<IProbs, {}> {
+interface IStates {
+  suggestions: ILinkItem[];
+  showBrandName: boolean;
+}
 
-
-  handleAutoCompleteOnChange = (query:string) => {
-    console.log("query:", query);
+class NavbarNew extends Component<IProbs, IStates> {
+  private apiManager: ApiManager;
+  constructor(props: IProbs) {
+    super(props);
+    this.state = {
+      suggestions: [],
+      showBrandName: true
+    };
+    this.apiManager = new ApiManager();
+  }
+  handleAutoCompleteOnChange = (query: string) => {
+    if (query.length < 2) {
+      this.setState({ suggestions: [] });
+      return;
+    }
+    let payload: ISearchRequest = { query };
+    this.apiManager
+      .getAutoSuggestForCourse(payload)
+      .then(response => {
+        this.setState({ suggestions: response.data });
+      })
+      .catch(error => {
+        console.log(error.response.data);
+      });
   };
 
-  handleAutoCompleteOnSubmit = (query:string) => {
+  handleAutoCompleteOnSubmit = (query: string) => {
     console.log("autocomplete submited with: ", query);
-  }
+  };
+
+  handleShowBrandNameToggle = () => {
+    this.setState(prevState => {
+      return { showBrandName: !prevState.showBrandName };
+    });
+  };
 
   showLoginModal = () => {
     this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
-   };
+  };
 
   showSignupModal = () => {
     this.props.modalSwitcher(ModalIdentifier.SIGNUP_MODAL);
   };
 
-
-
   render() {
+    let brandNameDisplayKlass = this.state.showBrandName ? "d-lg-inline-block" : "d-md-none d-sm-none d-lg-inline-block"
     return (
       <header className="shadow-sm bg-white rounded top-header">
         <nav className="navbar navbar-expand-md navbar-light bg-light nav-container">
-          <DrawerToggleButton onClikHandler={this.props.drawerToggleHandler} />
+          <ToggleBar
+            id="side-drawer-toggler"
+            onClikHandler={this.props.drawerToggleHandler}
+          />
 
           <div className="mobile-spacer" />
 
-          <NavLink to="/" className="navbar-brand">
+          <NavLink to="/" className="navbar-brand d-flex">
             <img
               src={logo}
               width="30"
@@ -53,7 +89,7 @@ class NavbarNew extends Component<IProbs, {}> {
               className="d-inline-block align-top"
               alt=""
             />
-            Rohingya Academy
+            <div className={`brand-title ${brandNameDisplayKlass}`}>Rohingya Academy</div>
           </NavLink>
 
           <div className="navbar-collapse" id="navbarSupportedContent">
@@ -63,11 +99,16 @@ class NavbarNew extends Component<IProbs, {}> {
               </li>
               <li className="nav-item nav-search">
                 <Autocomplete
-                  suggestions={[]}
-                  placeholder="Search for anything ..."
+                  suggestions={this.state.suggestions}
+                  placeholder="Search courses ..."
                   icon="search"
-                  onChangeHandler={(q:string) =>this.handleAutoCompleteOnChange(q)}
-                  onSubmitHandler={(q:string) =>this.handleAutoCompleteOnSubmit(q)}
+                  onChangeHandler={(q: string) =>
+                    this.handleAutoCompleteOnChange(q)
+                  }
+                  onSubmitHandler={(q: string) =>
+                    this.handleAutoCompleteOnSubmit(q)
+                  }
+                  onFocusHandler={this.handleShowBrandNameToggle}
                 />
               </li>
             </ul>

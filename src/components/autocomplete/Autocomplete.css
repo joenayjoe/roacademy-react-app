@@ -22,3 +22,20 @@
     font-size: 0.95rem;
     color: #aaa;
 }
+
+
+/* .autocomplete .autocomplete-suggestions {
+    list-style: none;
+    z-index: 100;
+    background-color: #fff;
+    box-shadow: 0 4px 16px rgba(20, 23, 28, .25);
+    max-height: 500px;
+    padding: 0;
+    position: absolute;
+    box-sizing: border-box;
+    padding: 0;
+    margin-top: 2px;
+    left: 1px;
+    right: 1px;
+    top: 100%;
+} */

@@ -9,7 +9,7 @@ export enum ModalIdentifier {
 
 export type MenuItemType = ICategory | IGrade | ICourse;
 
-interface ILinkItem {
+export interface ILinkItem {
   id: number;
   name: string;
   url: string;
@@ -42,4 +42,12 @@ export interface ILoginRequest {
 export interface ILoginResponse {
   accessToken: string;
   tokenType: string;
+}
+
+export interface ISearchRequest {
+  query:string;
+}
+export interface IAutoSuggest {
+  name: string;
+  url: string;
 }

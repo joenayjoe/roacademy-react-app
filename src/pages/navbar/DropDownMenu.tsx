@@ -127,7 +127,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
         this.setState({ categories: response.data });
       })
       .catch(error => {
-        console.log("Error = ", error.response.data);
+        // console.log("Error = ", error.response.data);
       });
 
     document.addEventListener("mousedown", e => this.handleOnClick(e), false);
