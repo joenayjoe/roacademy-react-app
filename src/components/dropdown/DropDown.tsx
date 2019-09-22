@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "./DropDown.css";
 
 interface iProps {
   name: string;
-  classNames?: string;
+  showDropDown?: boolean;
   id?: string;
   icon?: IconProp;
   dropDownBtnRef?: any;
@@ -12,8 +13,10 @@ interface iProps {
 
 class DropDown extends Component<iProps, {}> {
   render() {
+
+    let openKlass = this.props.showDropDown ? "open" : ""
     return (
-      <div id={this.props.id} className={this.props.classNames}>
+      <div id={this.props.id} className={`drop-down ${openKlass}`}>
         <button className="btn btn-primary-outline nav-link drop-down-btn" ref={this.props.dropDownBtnRef}>
           {this.props.icon ? (
             <span className="ra-icon">

@@ -21,7 +21,8 @@ import {
   faCaretUp,
   faEnvelope,
   faLock,
-  faUser
+  faUser,
+  faTimes
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -45,7 +46,8 @@ library.add(
   faGoogle,
   faEnvelope,
   faLock,
-  faUser
+  faUser,
+  faTimes
 );
 
 ReactDOM.render(<App />, document.getElementById("root"));

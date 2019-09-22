@@ -12,27 +12,28 @@ import {
 import ApiManager from "../../dataManagers/ApiManager";
 
 import "./DropDownMenu.css";
+import {withRouter, RouteComponentProps } from "react-router";
 
-interface DropDownProps {
+interface IProps extends RouteComponentProps {
   displayName: string;
   icon?: IconProp;
 }
 
-interface DropDownState {
-  isToggle: boolean;
+interface IStates {
+  showDropDownMenu: boolean;
   selectedMenuItem: string | null;
   levelTwoParent: string | null;
   categories: ICategory[];
 }
 
-class DropDownMenu extends Component<DropDownProps, DropDownState> {
+class DropDownMenu extends Component<IProps, IStates> {
   private apiManager: ApiManager;
-  constructor(props: DropDownProps) {
+  constructor(props: IProps) {
     super(props);
     this.apiManager = new ApiManager();
   }
-  state: DropDownState = {
-    isToggle: false,
+  state: IStates = {
+    showDropDownMenu: false,
     selectedMenuItem: null,
     levelTwoParent: null,
     categories: []
@@ -68,7 +69,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
         selectedMenuItem: item.url
       });
     } else {
-      console.log("load page for ", item.url);
+      this.props.history.push("/categories/"+item.id);
     }
   };
 
@@ -112,11 +113,12 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
 
   handleOnClick = (e: Event) => {
     if (this.menuBtnNode.current.contains(e.target)) {
+      console.log("inside menuBtnNode");
       this.setState(prevState => {
-        return { isToggle: !prevState.isToggle };
+        return { showDropDownMenu: !prevState.showDropDownMenu };
       });
     } else if (!isMobile || (isMobile && !this.menuNode.contains(e.target))) {
-      this.setState({ isToggle: false });
+      this.setState({ showDropDownMenu: false });
     }
   };
 
@@ -144,7 +146,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
   dropDownMenuLevelThree(data: IGrade) {
     let dropDownMenuItem = data.courses.map((item: ICourse) => {
       return (
-        <li key={item.id} className="drop-down-menu-item">
+        <li key={item.id} className="drop-down-list-item">
           <div className="menu-link" onClick={() => this.loadPage(item)}>
             <span>{item.name}</span>
           </div>
@@ -153,11 +155,11 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
     });
 
     return (
-      <ul className="drop-down-menu drop-down-menu-level-three">
+      <ul className="drop-down-list drop-down-list-level-three">
         {isMobile ? (
           <li
             key="back-l-3"
-            className="drop-down-menu-item back-menu-link"
+            className="drop-down-list-item back-menu-link"
             onClick={this.handleBackBtnClick}
           >
             <div>
@@ -166,7 +168,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
             </div>
           </li>
         ) : null}
-        <li key={data.id} className="drop-down-menu-item">
+        <li key={data.id} className="drop-down-list-item">
           <div className="menu-link" onClick={() => this.loadPage(data)}>
             <span>All {data.name}</span>
           </div>
@@ -196,7 +198,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
       return (
         <li
           key={item.id}
-          className={`drop-down-menu-item ${openKlass}`}
+          className={`drop-down-list-item ${openKlass}`}
           onMouseEnter={() => this.handleOnHoverForGrade(item)}
         >
           <div
@@ -212,11 +214,11 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
     });
 
     return (
-      <ul className="drop-down-menu drop-down-menu-level-two">
+      <ul className="drop-down-list drop-down-list-level-two">
         {isMobile ? (
           <li
             key="back-l-2"
-            className="drop-down-menu-item back-menu-link"
+            className="drop-down-list-item back-menu-link"
             onClick={this.handleBackBtnClick}
           >
             <div>
@@ -225,7 +227,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
             </div>
           </li>
         ) : null}
-        <li key={data.id} className="drop-down-menu-item">
+        <li key={data.id} className="drop-down-list-item">
           <div className="menu-link" onClick={() => this.loadPage(data)}>
             <span> All {data.name}</span>
           </div>
@@ -244,7 +246,6 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
         this.state.levelTwoParent === item.url
           ? "open-sub-menu"
           : "";
-
       expander = (
         <span>
           <FontAwesomeIcon icon="angle-right"></FontAwesomeIcon>
@@ -254,7 +255,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
       submenu = this.dropDownMenuLevelTwo(item);
 
       return (
-        <li key={item.id} className={`drop-down-menu-item ${openKlass}`}>
+        <li key={item.id} className={`drop-down-list-item ${openKlass}`}>
           <div
             className="menu-link"
             onClick={() => this.handleMenuLinkClick(item)}
@@ -269,7 +270,7 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
 
     return (
       <ul
-        className="drop-down-menu drop-down-menu-level-one"
+        className={`drop-down-list drop-down-list-level-one`}
         ref={node => (this.menuNode = node)}
       >
         {dropDownMenuItem}
@@ -278,15 +279,10 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
   }
 
   render() {
-    let showKlass = "";
-    if (this.state.isToggle) {
-      showKlass = "open";
-    }
     return (
       <DropDown
         name="Categories"
-        id="drop-down-menu"
-        classNames={`drop-down ${showKlass}`}
+        showDropDown={this.state.showDropDownMenu}
         icon="th-list"
         dropDownBtnRef={this.menuBtnNode}
       >
@@ -295,4 +291,4 @@ class DropDownMenu extends Component<DropDownProps, DropDownState> {
     );
   }
 }
-export default DropDownMenu;
+export default withRouter(DropDownMenu);

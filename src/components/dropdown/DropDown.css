@@ -1,0 +1,38 @@
+/* Dropdown styles */
+
+.drop-down {
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
+.drop-down-list {
+    list-style: none;
+    z-index: 100;
+    background-color: #fff;
+    box-shadow: 0 4px 16px rgba(20, 23, 28, .25);
+    padding: 0;
+    display: none;
+    position: absolute;
+    margin: 0;
+    left: -1px;
+    right: -1px;
+    top: 100%;
+}
+
+.drop-down-list-item {
+    padding: 7px 7px 7px 15px;
+}
+
+.drop-down.open>.drop-down-list {
+    display: block;
+}
+
+@media only screen and (max-width: 768px) {
+    .drop-down-list {
+        overflow: auto;
+    }
+}
+
+
+/* Dropdown END */

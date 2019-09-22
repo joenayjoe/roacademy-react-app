@@ -5,7 +5,7 @@ import Autocomplete from "../../components/autocomplete/Autocomplete";
 import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
 import DropDownMenu from "./DropDownMenu";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import {
   ModalIdentifier,
   ILinkItem,
@@ -13,6 +13,7 @@ import {
 } from "../../settings/DataTypes";
 import ApiManager from "../../dataManagers/ApiManager";
 import ToggleBar from "../../components/togglebar/ToggleBar";
+import AutocompleteMobile from "../../components/autocomplete/AutocompleteMobile";
 
 interface IProbs {
   drawerToggleHandler: () => void;
@@ -23,6 +24,7 @@ interface IProbs {
 interface IStates {
   suggestions: ILinkItem[];
   showBrandName: boolean;
+  showMobileSearch: boolean;
 }
 
 class NavbarNew extends Component<IProbs, IStates> {
@@ -31,7 +33,8 @@ class NavbarNew extends Component<IProbs, IStates> {
     super(props);
     this.state = {
       suggestions: [],
-      showBrandName: true
+      showBrandName: true,
+      showMobileSearch: false
     };
     this.apiManager = new ApiManager();
   }
@@ -49,6 +52,15 @@ class NavbarNew extends Component<IProbs, IStates> {
       .catch(error => {
         console.log(error.response.data);
       });
+  };
+
+  handleMobileSearchToggle = () => {
+    this.setState(prevState => {
+      return {
+        showMobileSearch: !prevState.showMobileSearch,
+        suggestions: []
+      };
+    });
   };
 
   handleAutoCompleteOnSubmit = (query: string) => {
@@ -70,27 +82,58 @@ class NavbarNew extends Component<IProbs, IStates> {
   };
 
   render() {
-    let brandNameDisplayKlass = this.state.showBrandName ? "d-lg-inline-block" : "d-md-none d-sm-none d-lg-inline-block"
+    let brandNameDisplayKlass = this.state.showBrandName
+      ? "d-lg-inline-block"
+      : "d-md-none d-sm-none d-none d-lg-inline-block";
+
+    let hideForMobileSearch = this.state.showMobileSearch ? "d-none" : "";
+
+    let mobileAutoComplete;
+    if (this.state.showMobileSearch) {
+      mobileAutoComplete = (
+        <div className={`autocomplete-mobile`}>
+          <AutocompleteMobile
+            suggestions={this.state.suggestions}
+            placeholder="Search courses ..."
+            onChangeHandler={(q: string) => this.handleAutoCompleteOnChange(q)}
+            onSubmitHandler={(q: string) => this.handleAutoCompleteOnSubmit(q)}
+            onCloseHandler={this.handleMobileSearchToggle}
+          />
+        </div>
+      );
+    }
     return (
       <header className="shadow-sm bg-white rounded top-header">
         <nav className="navbar navbar-expand-md navbar-light bg-light nav-container">
           <ToggleBar
+            classNames={hideForMobileSearch}
             id="side-drawer-toggler"
             onClikHandler={this.props.drawerToggleHandler}
           />
 
+          <div
+            className={`mobile-search-icon pl-3 ${hideForMobileSearch}`}
+            onClick={this.handleMobileSearchToggle}
+          >
+            <FontAwesomeIcon icon="search" />
+          </div>
+          {mobileAutoComplete}
           <div className="mobile-spacer" />
 
-          <NavLink to="/" className="navbar-brand d-flex">
-            <img
-              src={logo}
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-              alt=""
-            />
-            <div className={`brand-title ${brandNameDisplayKlass}`}>Rohingya Academy</div>
-          </NavLink>
+          <div className={`${hideForMobileSearch}`}>
+            <Link to="/" className={`navbar-brand d-flex`}>
+              <img
+                src={logo}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+                alt=""
+              />
+              <div className={`brand-title ${brandNameDisplayKlass}`}>
+                Rohingya Academy
+              </div>
+            </Link>
+          </div>
 
           <div className="navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto nav-left">

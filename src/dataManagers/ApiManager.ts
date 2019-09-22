@@ -13,6 +13,11 @@ class ApiManager {
         return await this.apiRequest.get<ICategory[]>("/categories");
     }
 
+    public async getCategory(categoryId:string): Promise<AxiosResponse<ICategory>>{
+        const url = "/categories/"+categoryId;
+        return await this.apiRequest.get<ICategory>(url);
+    }
+
     public async getCoursesForGrade(grade: IGrade): Promise<AxiosResponse<ICourse[]>> {
         const url = `/categories/${grade.categoryId}/grades/${grade.id}/courses`;
         return  await this.apiRequest.get<ICourse[]>(url);

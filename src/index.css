@@ -14,6 +14,13 @@ body a,
 body a:hover,
 body a:focus {
     text-decoration: none;
+    outline: 0;
+}
+
+body button:focus,
+body .btn:focus {
+    outline: 0;
+    box-shadow: none;
 }
 
 #root {

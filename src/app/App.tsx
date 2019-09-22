@@ -7,11 +7,10 @@ import Home from "../pages/home/Home";
 
 import "./App.css";
 
-import {
-  ModalIdentifier
-} from "../settings/DataTypes";
+import { ModalIdentifier } from "../settings/DataTypes";
 import SideDrawerNew from "../pages/sidedrawer/SideDrawerNew";
 import ModalSelector from "../components/modal/ModalSelector";
+import Category from "../pages/category/Category";
 
 interface AppState {
   isSideDrawerOpen: boolean;
@@ -53,7 +52,7 @@ class App extends Component<{}, AppState> {
         <ModalSelector
           modalIdentifier={this.state.currentModal}
           closeHandler={this.closeModal}
-          modalSwitcher={(identifier) => this.switchModal(identifier)}
+          modalSwitcher={identifier => this.switchModal(identifier)}
         />
 
         <Navbar
@@ -73,6 +72,12 @@ class App extends Component<{}, AppState> {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/donation" component={Donation} />
+            <Route
+              path="/categories/:id"
+              render={props => (
+                <Category key={props.match.params.id} {...props} />
+              )}
+            />
           </Switch>
         </div>
       </BrowserRouter>
