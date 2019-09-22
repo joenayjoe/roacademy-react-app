@@ -3,15 +3,17 @@ import {
   ICategory,
   IGrade,
   MenuItemType,
-  ModalIdentifier
+  ModalIdentifier,
+  ICourse
 } from "../../settings/DataTypes";
 
 import "./SideDrawerNew.css";
 import ApiManager from "../../dataManagers/ApiManager";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AxiosError } from "axios";
+import { RouteComponentProps, withRouter } from "react-router";
 
-interface IProps {
+interface IProps extends RouteComponentProps {
   isOpen: boolean;
   modalCloseHandler: () => void;
   backdropClickHandler: () => void;
@@ -124,6 +126,16 @@ class SideDrawerNew extends Component<IProps, IStates> {
     );
   };
 
+  getShowAllItemLink = (data: MenuItemType) => {
+    return (
+      <li key={data.url}>
+      <div className="menu-link" onClick={() => this.loadPage(data)}>
+        All {data.name}
+      </div>
+    </li>
+    );
+  };
+
   getExpander = () => {
     return (
       <span>
@@ -132,14 +144,25 @@ class SideDrawerNew extends Component<IProps, IStates> {
     );
   };
 
-  loadPage(data: MenuItemType) {
-    console.log("load page");
+  loadPage(item: MenuItemType) {
+    let url: string;
+
+    if ((item as IGrade).categoryId) {
+      item = item as IGrade;
+      url = "/categories/" + item.categoryId + "/grades/" + item.id;
+    } else if ((item as ICourse).gradeId) {
+      url = "/courses/" + item.id;
+    } else {
+      url = "/categories/" + item.id;
+    }
+    this.props.backdropClickHandler();
+    this.props.history.push(url);
   }
 
   getLevelThreeMenuItems(grade: IGrade) {
     const levelThreeMenuItems = grade.courses.map(course => {
       return (
-        <li key={course.id}>
+        <li key={course.url}>
           <div className="menu-link" onClick={() => this.loadPage(course)}>
             {course.name}
           </div>
@@ -150,11 +173,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
     return (
       <ul className="side-drawer-level-three">
         {this.getBackButtonLink(grade)}
-        <li key={grade.id}>
-          <div className="menu-link" onClick={() => this.loadPage(grade)}>
-            All {grade.name}
-          </div>
-        </li>
+        {this.getShowAllItemLink(grade)}
         {levelThreeMenuItems}
       </ul>
     );
@@ -164,7 +183,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
       let openKlass =
         this.state.selectedMenuItem === grade.url ? "open-sub-menu" : "";
       return (
-        <li key={grade.id} className={openKlass}>
+        <li key={grade.url} className={openKlass}>
           <div
             className="menu-link"
             onClick={() => this.handleMenuLinkClick(grade)}
@@ -181,6 +200,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
     return (
       <ul className="side-drawer-level-two">
         {this.getBackButtonLink(category)}
+        {this.getShowAllItemLink(category)}
         {levelTwoMenuItems}
       </ul>
     );
@@ -194,7 +214,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
           ? "open-sub-menu"
           : "";
       return (
-        <li key={category.id} className={openKlass}>
+        <li key={category.url} className={openKlass}>
           <div
             className="menu-link"
             onClick={() => this.handleMenuLinkClick(category)}
@@ -245,4 +265,4 @@ class SideDrawerNew extends Component<IProps, IStates> {
   }
 }
 
-export default SideDrawerNew;
+export default withRouter(SideDrawerNew);

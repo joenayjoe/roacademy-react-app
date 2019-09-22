@@ -30,6 +30,10 @@ export interface ICourse extends ILinkItem {
   tags: ITag[];
 }
 
+export interface IChapter extends ILinkItem {
+  courseId: number;
+}
+
 export interface ITag {
   id: number;
   name: string;

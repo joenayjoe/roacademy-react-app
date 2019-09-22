@@ -9,15 +9,22 @@ interface iProps {
   id?: string;
   icon?: IconProp;
   dropDownBtnRef?: any;
+  handleMouseEnter?(): void;
 }
 
 class DropDown extends Component<iProps, {}> {
   render() {
-
-    let openKlass = this.props.showDropDown ? "open" : ""
+    let openKlass = this.props.showDropDown ? "open" : "";
     return (
-      <div id={this.props.id} className={`drop-down ${openKlass}`}>
-        <button className="btn btn-primary-outline nav-link drop-down-btn" ref={this.props.dropDownBtnRef}>
+      <div
+        id={this.props.id}
+        className={`drop-down ${openKlass}`}
+        onMouseEnter={this.props.handleMouseEnter}
+      >
+        <button
+          className="btn btn-primary-outline nav-link drop-down-btn"
+          ref={this.props.dropDownBtnRef}
+        >
           {this.props.icon ? (
             <span className="ra-icon">
               <FontAwesomeIcon icon={this.props.icon} />

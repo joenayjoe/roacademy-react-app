@@ -12,7 +12,7 @@ import {
 import ApiManager from "../../dataManagers/ApiManager";
 
 import "./DropDownMenu.css";
-import {withRouter, RouteComponentProps } from "react-router";
+import { withRouter, RouteComponentProps } from "react-router";
 
 interface IProps extends RouteComponentProps {
   displayName: string;
@@ -24,6 +24,7 @@ interface IStates {
   selectedMenuItem: string | null;
   levelTwoParent: string | null;
   categories: ICategory[];
+  showLgScreenDropDownMenu: boolean;
 }
 
 class DropDownMenu extends Component<IProps, IStates> {
@@ -36,20 +37,29 @@ class DropDownMenu extends Component<IProps, IStates> {
     showDropDownMenu: false,
     selectedMenuItem: null,
     levelTwoParent: null,
-    categories: []
+    categories: [],
+    showLgScreenDropDownMenu: false
   };
 
   menuBtnNode: any = createRef();
   menuNode: any = createRef();
 
   loadPage = (item: MenuItemType) => {
+    let url: string;
+
     if ((item as IGrade).categoryId) {
-      console.log("load data for grade ", item.name);
+      item = item as IGrade;
+      url = "/categories/" + item.categoryId + "/grades/" + item.id;
     } else if ((item as ICourse).gradeId) {
-      console.log("load data for courde ", item.name);
+      url = "/courses/" + item.id;
     } else {
-      console.log("load data fro category ", item.name);
+      url = "/categories/" + item.id;
     }
+    this.props.history.push(url);
+    this.setState({
+      showLgScreenDropDownMenu: false,
+      showDropDownMenu: false
+    });
   };
   handleMenuLinkClick = (item: MenuItemType) => {
     if (isMobile) {
@@ -69,7 +79,7 @@ class DropDownMenu extends Component<IProps, IStates> {
         selectedMenuItem: item.url
       });
     } else {
-      this.props.history.push("/categories/"+item.id);
+      this.loadPage(item);
     }
   };
 
@@ -111,12 +121,18 @@ class DropDownMenu extends Component<IProps, IStates> {
     }
   };
 
+  handleDropDownMouseEnter = () => {
+    this.setState({ showLgScreenDropDownMenu: true });
+  };
+
   handleOnClick = (e: Event) => {
     if (this.menuBtnNode.current.contains(e.target)) {
-      console.log("inside menuBtnNode");
       this.setState(prevState => {
         return { showDropDownMenu: !prevState.showDropDownMenu };
       });
+      if(isMobile) {
+        this.setState({showLgScreenDropDownMenu: true});
+      }
     } else if (!isMobile || (isMobile && !this.menuNode.contains(e.target))) {
       this.setState({ showDropDownMenu: false });
     }
@@ -268,9 +284,10 @@ class DropDownMenu extends Component<IProps, IStates> {
       );
     });
 
+    let disPlayKlass = this.state.showLgScreenDropDownMenu ? "" : "d-none";
     return (
       <ul
-        className={`drop-down-list drop-down-list-level-one`}
+        className={`drop-down-list drop-down-list-level-one ${disPlayKlass}`}
         ref={node => (this.menuNode = node)}
       >
         {dropDownMenuItem}
@@ -285,6 +302,7 @@ class DropDownMenu extends Component<IProps, IStates> {
         showDropDown={this.state.showDropDownMenu}
         icon="th-list"
         dropDownBtnRef={this.menuBtnNode}
+        handleMouseEnter={this.handleDropDownMouseEnter}
       >
         {this.dropDownMenuLevelOne(this.state.categories)}
       </DropDown>

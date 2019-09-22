@@ -2,11 +2,11 @@ import React, { Component } from "react";
 
 import "./Category.css";
 import { RouteComponentProps, withRouter } from "react-router";
-import { ICategory } from "../../settings/DataTypes";
+import { ICategory} from "../../settings/DataTypes";
 import ApiManager from "../../dataManagers/ApiManager";
 
 interface MatchParams {
-  id: string;
+  category_id: string;
 }
 interface IProps extends RouteComponentProps<MatchParams> {}
 
@@ -15,12 +15,12 @@ interface IStates {
 }
 
 class Category extends Component<IProps, IStates> {
-  private courseId: string;
+  private categoryId: string;
   private apiManager: ApiManager;
 
   constructor(props: IProps) {
     super(props);
-    this.courseId = this.props.match.params.id;
+    this.categoryId = this.props.match.params.category_id;
     this.apiManager = new ApiManager();
     this.state = {
       category: null
@@ -28,7 +28,7 @@ class Category extends Component<IProps, IStates> {
   }
   componentDidMount() {
     this.apiManager
-      .getCategory(this.courseId)
+      .getCategory(this.categoryId)
       .then(response => {
         this.setState({ category: response.data });
       })

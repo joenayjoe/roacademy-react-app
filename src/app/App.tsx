@@ -11,6 +11,8 @@ import { ModalIdentifier } from "../settings/DataTypes";
 import SideDrawerNew from "../pages/sidedrawer/SideDrawerNew";
 import ModalSelector from "../components/modal/ModalSelector";
 import Category from "../pages/category/Category";
+import Grade from "../pages/grade/Grade";
+import Course from "../pages/course/Course";
 
 interface AppState {
   isSideDrawerOpen: boolean;
@@ -73,9 +75,21 @@ class App extends Component<{}, AppState> {
             <Route exact path="/" component={Home} />
             <Route exact path="/donation" component={Donation} />
             <Route
-              path="/categories/:id"
+              path="/categories/:category_id/grades/:grade_id"
               render={props => (
-                <Category key={props.match.params.id} {...props} />
+                <Grade key={props.match.params.grade_id} {...props} />
+              )}
+            />
+              <Route
+              path="/courses/:course_id"
+              render={props => (
+                <Course key={props.match.params.course_id} {...props} />
+              )}
+            />
+            <Route
+              path="/categories/:category_id"
+              render={props => (
+                <Category key={props.match.params.category_id} {...props} />
               )}
             />
           </Switch>
