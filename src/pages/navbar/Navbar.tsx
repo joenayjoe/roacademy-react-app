@@ -5,7 +5,12 @@ import Autocomplete from "../../components/autocomplete/Autocomplete";
 import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
 import DropDownMenu from "./DropDownMenu";
-import { NavLink, Link, RouteComponentProps, withRouter } from "react-router-dom";
+import {
+  NavLink,
+  Link,
+  RouteComponentProps,
+  withRouter
+} from "react-router-dom";
 import {
   ModalIdentifier,
   ILinkItem,
@@ -13,7 +18,6 @@ import {
 } from "../../settings/DataTypes";
 import ApiManager from "../../dataManagers/ApiManager";
 import ToggleBar from "../../components/togglebar/ToggleBar";
-import AutocompleteMobile from "../../components/autocomplete/AutocompleteMobile";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -54,17 +58,19 @@ class NavbarNew extends Component<IProbs, IStates> {
       });
   };
 
-  handleMobileSearchToggle = () => {
-    this.setState(prevState => {
-      return {
-        showMobileSearch: !prevState.showMobileSearch,
-        suggestions: []
-      };
+  handleAutocompleteOnClose = () => {
+    this.setState({
+      showMobileSearch: false,
+      suggestions: []
     });
   };
 
+  showMobileAutocomplete = () => {
+    this.setState({ showMobileSearch: true, suggestions: [] });
+  };
+
   handleAutoCompleteOnSubmit = (query: string) => {
-    this.props.history.push("/search?query="+query);
+    this.props.history.push("/search?query=" + query);
   };
 
   handleShowBrandNameToggle = () => {
@@ -92,12 +98,15 @@ class NavbarNew extends Component<IProbs, IStates> {
     if (this.state.showMobileSearch) {
       mobileAutoComplete = (
         <div className={`autocomplete-mobile`}>
-          <AutocompleteMobile
+          <Autocomplete
+            autoFoucs
+            backdrop
+            icon="search"
             suggestions={this.state.suggestions}
             placeholder="Search courses ..."
             onChangeHandler={(q: string) => this.handleAutoCompleteOnChange(q)}
             onSubmitHandler={(q: string) => this.handleAutoCompleteOnSubmit(q)}
-            onCloseHandler={this.handleMobileSearchToggle}
+            onCloseHandler={this.handleAutocompleteOnClose}
           />
         </div>
       );
@@ -113,7 +122,7 @@ class NavbarNew extends Component<IProbs, IStates> {
 
           <div
             className={`mobile-search-icon pl-3 ${hideForMobileSearch}`}
-            onClick={this.handleMobileSearchToggle}
+            onClick={this.showMobileAutocomplete}
           >
             <FontAwesomeIcon icon="search" />
           </div>
