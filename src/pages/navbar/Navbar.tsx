@@ -29,6 +29,7 @@ interface IStates {
   suggestions: ILinkItem[];
   showBrandName: boolean;
   showMobileSearch: boolean;
+  searchQuery:string;
 }
 
 class NavbarNew extends Component<IProbs, IStates> {
@@ -38,13 +39,14 @@ class NavbarNew extends Component<IProbs, IStates> {
     this.state = {
       suggestions: [],
       showBrandName: true,
-      showMobileSearch: false
+      showMobileSearch: false,
+      searchQuery:""
     };
     this.apiManager = new ApiManager();
   }
   handleAutoCompleteOnChange = (query: string) => {
     if (query.length < 2) {
-      this.setState({ suggestions: [] });
+      this.setState({ suggestions: [], searchQuery: query });
       return;
     }
     let payload: ISearchRequest = { query };
@@ -70,6 +72,7 @@ class NavbarNew extends Component<IProbs, IStates> {
   };
 
   handleAutoCompleteOnSubmit = (query: string) => {
+    this.setState({searchQuery: query});
     this.props.history.push("/search?query=" + query);
   };
 
@@ -99,6 +102,7 @@ class NavbarNew extends Component<IProbs, IStates> {
       mobileAutoComplete = (
         <div className={`autocomplete-mobile`}>
           <Autocomplete
+            query={this.state.searchQuery}
             autoFoucs
             backdrop
             icon="search"
@@ -151,6 +155,7 @@ class NavbarNew extends Component<IProbs, IStates> {
               </li>
               <li className="nav-item nav-search">
                 <Autocomplete
+                  query={this.state.searchQuery}
                   suggestions={this.state.suggestions}
                   placeholder="Search courses ..."
                   icon="search"

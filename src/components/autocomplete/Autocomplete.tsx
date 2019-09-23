@@ -6,6 +6,7 @@ import { ILinkItem } from "../../settings/DataTypes";
 import Backdrop from "../backdrop/Backdrop";
 
 interface AutocompleteProps {
+  query:string;
   suggestions: ILinkItem[];
   placeholder: string;
   icon?: IconProp;
@@ -25,7 +26,7 @@ interface AutocompleteState {
 class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   state: AutocompleteState = {
     isFocus: false,
-    query: ""
+    query: this.props.query
   };
 
   autocompleInputRef: any = createRef();
@@ -83,7 +84,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
         onChange={e => this.handleOnChange(e)}
         onFocus={this.toogleOnFocus}
         onBlur={this.toogleOnFocus}
-        autoFocus={this.props.autoFoucs}
+        autoFocus={this.props.autoFoucs && this.props.query.length === 0}
         ref={node => (this.autocompleInputRef = node)}
       />
     );
