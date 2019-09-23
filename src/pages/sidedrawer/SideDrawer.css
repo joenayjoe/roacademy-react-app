@@ -49,6 +49,7 @@
     color: rgb(11, 145, 168);
     font-weight: bold;
     cursor: pointer;
+    height: 57px;
 }
 
 .side-drawer-level-two,

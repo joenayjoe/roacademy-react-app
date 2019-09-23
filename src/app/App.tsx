@@ -1,18 +1,20 @@
 import React, { Component } from "react";
 import Navbar from "../pages/navbar/Navbar";
 
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import Donation from "../pages/donation/Donation";
 import Home from "../pages/home/Home";
 
 import "./App.css";
 
 import { ModalIdentifier } from "../settings/DataTypes";
-import SideDrawerNew from "../pages/sidedrawer/SideDrawerNew";
+import SideDrawer from "../pages/sidedrawer/SideDrawer";
 import ModalSelector from "../components/modal/ModalSelector";
 import Category from "../pages/category/Category";
 import Grade from "../pages/grade/Grade";
 import Course from "../pages/course/Course";
+import SearchResult from "../pages/searchresult/SearchResult";
+import PublicRoute from "../components/route/PublicRoute";
 
 interface AppState {
   isSideDrawerOpen: boolean;
@@ -63,7 +65,7 @@ class App extends Component<{}, AppState> {
           modalSwitcher={identifier => this.switchModal(identifier)}
         />
 
-        <SideDrawerNew
+        <SideDrawer
           isOpen={this.state.isSideDrawerOpen}
           modalSwitcher={identifier => this.switchModal(identifier)}
           modalCloseHandler={this.closeModal}
@@ -72,26 +74,24 @@ class App extends Component<{}, AppState> {
 
         <div className="content-wrapper">
           <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/donation" component={Donation} />
-            <Route
+            <PublicRoute
+              restricted
+              exact
+              path="/donation"
+              component={Donation}
+            />
+            <PublicRoute
               path="/categories/:category_id/grades/:grade_id"
-              render={props => (
-                <Grade key={props.match.params.grade_id} {...props} />
-              )}
+              component={Grade}
             />
-              <Route
-              path="/courses/:course_id"
-              render={props => (
-                <Course key={props.match.params.course_id} {...props} />
-              )}
-            />
-            <Route
+            <PublicRoute exact path="/courses/:course_id" component={Course} />
+            <PublicRoute
+              exact
               path="/categories/:category_id"
-              render={props => (
-                <Category key={props.match.params.category_id} {...props} />
-              )}
+              component={Category}
             />
+            <PublicRoute exact path="/search" component={SearchResult} />
+            <PublicRoute component={Home} />
           </Switch>
         </div>
       </BrowserRouter>

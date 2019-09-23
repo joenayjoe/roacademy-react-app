@@ -31,10 +31,18 @@ class AutocompleteMobile extends Component<IProps, IStates> {
 
   handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (this.props.onCloseHandler) {
+      this.props.onCloseHandler();
+    }
     this.props.onSubmitHandler(this.state.query);
   };
+
+  handleOnSelect = (suggestion: ILinkItem) => {
+    this.setState({ query: suggestion.name });
+    this.props.onSubmitHandler(suggestion.name);
+  };
+
   toogleOnFocus = () => {
-    console.log("focus");
     this.setState(prevState => {
       return { isFocus: !prevState.isFocus };
     });
@@ -73,11 +81,7 @@ class AutocompleteMobile extends Component<IProps, IStates> {
 
     let searchIcon = (
       <div className={`input-group-append border-0 ${focusKlass}`}>
-        <button
-          id="button-addon"
-          type="submit"
-          className="btn btn-link"
-        >
+        <button id="button-addon" type="submit" className="btn btn-link">
           <FontAwesomeIcon icon="search" />
         </button>
       </div>
@@ -88,11 +92,7 @@ class AutocompleteMobile extends Component<IProps, IStates> {
         className={`input-group-append border-0 ${focusKlass}`}
         onClick={this.props.onCloseHandler}
       >
-        <button
-          id="button-addon2"
-          type="reset"
-          className="btn btn-link"
-        >
+        <button id="button-addon2" type="reset" className="btn btn-link">
           <FontAwesomeIcon icon="times" />
         </button>
       </div>
@@ -101,7 +101,12 @@ class AutocompleteMobile extends Component<IProps, IStates> {
     let autoCompleteSuggestionList = this.props.suggestions.map(suggestion => {
       return (
         <li key={suggestion.id} className="drop-down-list-item">
-          <div className="menu-link">{suggestion.name}</div>
+          <div
+            className="menu-link"
+            onMouseDown={() => this.handleOnSelect(suggestion)}
+          >
+            {suggestion.name}
+          </div>
         </li>
       );
     });

@@ -7,7 +7,7 @@ import {
   ICourse
 } from "../../settings/DataTypes";
 
-import "./SideDrawerNew.css";
+import "./SideDrawer.css";
 import ApiManager from "../../dataManagers/ApiManager";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AxiosError } from "axios";

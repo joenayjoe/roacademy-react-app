@@ -1,4 +1,4 @@
-import React, { Component, FormEvent, ChangeEvent } from "react";
+import React, { Component, FormEvent, ChangeEvent, createRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -25,6 +25,8 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     query: ""
   };
 
+  autocompleInputRef:any = createRef();
+
   handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     this.setState({ query: e.currentTarget.value });
     this.props.onChangeHandler(e.currentTarget.value);
@@ -32,8 +34,15 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
 
   handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
+    this.autocompleInputRef.blur();
     this.props.onSubmitHandler(this.state.query);
   };
+
+  handleOnSelect = (suggestion: ILinkItem) => {
+    this.setState({query: suggestion.name})
+    this.props.onSubmitHandler(suggestion.name);
+  }
+
   toogleOnFocus = () => {
     this.setState(prevState => {
       return { isFocus: !prevState.isFocus };
@@ -68,6 +77,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
         onChange={e => this.handleOnChange(e)}
         onFocus={this.toogleOnFocus}
         onBlur={this.toogleOnFocus}
+        ref={node => (this.autocompleInputRef = node)}
       />
     );
     if (this.props.icon != null) {
@@ -87,7 +97,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     let autoCompleteSuggestionList = this.props.suggestions.map(suggestion => {
       return (
         <li key={suggestion.id} className="drop-down-list-item">
-          <div className="menu-link">{suggestion.name}</div>
+          <div className="menu-link" onMouseDown={() =>this.handleOnSelect(suggestion)}>{suggestion.name}</div>
         </li>
       );
     });

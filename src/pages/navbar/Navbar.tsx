@@ -5,7 +5,7 @@ import Autocomplete from "../../components/autocomplete/Autocomplete";
 import "./Navbar.css";
 import logo from "../../assets/images/logo.svg";
 import DropDownMenu from "./DropDownMenu";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, RouteComponentProps, withRouter } from "react-router-dom";
 import {
   ModalIdentifier,
   ILinkItem,
@@ -15,7 +15,7 @@ import ApiManager from "../../dataManagers/ApiManager";
 import ToggleBar from "../../components/togglebar/ToggleBar";
 import AutocompleteMobile from "../../components/autocomplete/AutocompleteMobile";
 
-interface IProbs {
+interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
   modalCloseHandler: () => void;
   modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
@@ -64,7 +64,7 @@ class NavbarNew extends Component<IProbs, IStates> {
   };
 
   handleAutoCompleteOnSubmit = (query: string) => {
-    console.log("autocomplete submited with: ", query);
+    this.props.history.push("/search?query="+query);
   };
 
   handleShowBrandNameToggle = () => {
@@ -185,4 +185,4 @@ class NavbarNew extends Component<IProbs, IStates> {
   }
 }
 
-export default NavbarNew;
+export default withRouter(NavbarNew);

@@ -6,7 +6,8 @@ import {
   ILoginRequest,
   ILoginResponse,
   ICategory,
-  ISearchRequest
+  ISearchRequest,
+  IUser
 } from "../settings/DataTypes";
 
 class ApiManager {
@@ -50,7 +51,7 @@ class ApiManager {
   // Methods for Course
 
   public async getCourse(courseId: string): Promise<AxiosResponse<ICourse>> {
-    const url = "/courses/"+courseId;
+    const url = "/courses/" + courseId;
     return await this.apiRequest.get(url);
   }
 
@@ -61,6 +62,13 @@ class ApiManager {
     return await this.apiRequest.post<ISearchRequest, ICourse[]>(url, query);
   }
   // Methods for Course END
+
+  // Methods for User
+
+  public async getCurrentUser(): Promise<AxiosResponse<IUser>> {
+    const url = "/users/currentUser";
+    return await this.apiRequest.get<IUser>(url);
+  }
 
   // Methods for Authentication
   public async login(

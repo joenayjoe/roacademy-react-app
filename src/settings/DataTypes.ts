@@ -39,6 +39,14 @@ export interface ITag {
   name: string;
 }
 
+export interface IUser {
+  id: number;
+  firstName: string;
+  lastName:string;
+  email:string;
+  url:string;
+}
+
 export interface ILoginRequest {
   email: string;
   password: string;
