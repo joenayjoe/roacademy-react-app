@@ -14,8 +14,14 @@ class PublicRoute extends Component<IProps, {}> {
       <Route
         {...rest}
         render={props =>
-          isLoggedIn && restricted ? (
-            <Redirect to="/home" />
+          isLoggedIn() && restricted ? (
+            <Redirect to={{
+              pathname: "/",
+              state: {
+                from: props.location,
+                message: "Access denied"
+              }
+            }} />
           ) : (
             <Component
               key={`${props.location.pathname} ${props.location.search}`}
