@@ -83,7 +83,7 @@ class SignupModal extends Component<IProps, {}> {
               <div className="dropdown-divider mt-3 mb-2"></div>
 
               <div>
-                <span className="pr-2">Alredy have an account?</span>
+                <span className="pr-2">Already have an account?</span>
                 <span
                   className="span-as-link"
                   onClick={() => this.props.showLoginModalHandler(ModalIdentifier.LOGIN_MODAL)}

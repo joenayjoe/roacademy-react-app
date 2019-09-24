@@ -15,6 +15,8 @@ import Grade from "../pages/grade/Grade";
 import Course from "../pages/course/Course";
 import SearchResult from "../pages/searchresult/SearchResult";
 import PublicRoute from "../components/route/PublicRoute";
+import PageNotFound from "../components/route/PageNotFound";
+import Footer from "../pages/footer/Footer";
 
 interface AppState {
   isSideDrawerOpen: boolean;
@@ -72,14 +74,9 @@ class App extends Component<{}, AppState> {
           backdropClickHandler={this.backdropClickHandler}
         />
 
-        <div className="content-wrapper">
+        <div className="content-wrapper width-75">
           <Switch>
-            <PublicRoute
-              restricted
-              exact
-              path="/donation"
-              component={Donation}
-            />
+            <PublicRoute exact path="/donation" component={Donation} />
             <PublicRoute
               path="/categories/:category_id/grades/:grade_id"
               component={Grade}
@@ -91,9 +88,11 @@ class App extends Component<{}, AppState> {
               component={Category}
             />
             <PublicRoute exact path="/search" component={SearchResult} />
-            <PublicRoute component={Home} />
+            <PublicRoute exact path="/" component={Home} />
+            <PublicRoute component={PageNotFound} />
           </Switch>
         </div>
+        <Footer />
       </BrowserRouter>
     );
   }

@@ -111,6 +111,11 @@ class SideDrawerNew extends Component<IProps, IStates> {
     });
   };
 
+  handleDonateLinkClick = () => {
+    this.props.backdropClickHandler();
+    this.props.history.push("/donation");
+  };
+
   getBackButtonLink = (data: MenuItemType) => {
     return (
       <li
@@ -129,10 +134,10 @@ class SideDrawerNew extends Component<IProps, IStates> {
   getShowAllItemLink = (data: MenuItemType) => {
     return (
       <li key={data.url}>
-      <div className="menu-link" onClick={() => this.loadPage(data)}>
-        All {data.name}
-      </div>
-    </li>
+        <div className="menu-link" onClick={() => this.loadPage(data)}>
+          All {data.name}
+        </div>
+      </li>
     );
   };
 
@@ -238,6 +243,16 @@ class SideDrawerNew extends Component<IProps, IStates> {
           <div>Sign Up / Log In</div>
         </li>
         {levelOneMenuItems}
+        <li
+          key="auth-link"
+          className="auth-link border-top"
+          onClick={this.handleDonateLinkClick}
+        >
+          <div>
+            <FontAwesomeIcon icon="donate" className="ra-icon" size="lg" />
+            Donate
+          </div>
+        </li>
       </ul>
     );
   }

@@ -117,7 +117,7 @@ class NavbarNew extends Component<IProbs, IStates> {
     }
     return (
       <header className="shadow-sm bg-white rounded top-header">
-        <nav className="navbar navbar-expand-md navbar-light bg-light nav-container">
+        <nav className="navbar navbar-expand-md navbar-light nav-container">
           <ToggleBar
             classNames={hideForMobileSearch}
             id="side-drawer-toggler"

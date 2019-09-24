@@ -1,0 +1,17 @@
+.error-container {
+    margin: 20vh auto;
+    text-align: center;
+}
+
+.error-heading {
+    color: #e8e9eb;
+    font-size: 124px;
+    font-weight: 300;
+    letter-spacing: -5px;
+    line-height: 178px;
+}
+
+.error-body {
+    margin: 0 auto;
+    max-width: 440px;
+}
