@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Navbar from "../pages/navbar/Navbar";
+import Navbar from "../components/navbar/Navbar";
 
 import { BrowserRouter, Switch } from "react-router-dom";
 import Donation from "../pages/donation/Donation";
@@ -8,15 +8,17 @@ import Home from "../pages/home/Home";
 import "./App.css";
 
 import { ModalIdentifier } from "../settings/DataTypes";
-import SideDrawer from "../pages/sidedrawer/SideDrawer";
+import SideDrawer from "../components/sidedrawer/SideDrawer";
 import ModalSelector from "../components/modal/ModalSelector";
 import Category from "../pages/category/Category";
 import Grade from "../pages/grade/Grade";
 import Course from "../pages/course/Course";
 import SearchResult from "../pages/searchresult/SearchResult";
-import PublicRoute from "../components/route/PublicRoute";
-import PageNotFound from "../components/route/PageNotFound";
-import Footer from "../pages/footer/Footer";
+import PublicRoute from "../pages/route/PublicRoute";
+import PrivateRoute from "../pages/route/PrivateRoute"
+import PageNotFound from "../pages/route/PageNotFound";
+import Footer from "../components/footer/Footer";
+import UserDashboard from "../pages/dashboard/UserDashboard";
 
 interface AppState {
   isSideDrawerOpen: boolean;
@@ -89,6 +91,7 @@ class App extends Component<{}, AppState> {
             />
             <PublicRoute exact path="/search" component={SearchResult} />
             <PublicRoute exact path="/" component={Home} />
+            <PrivateRoute exact path="/dashboard" component={UserDashboard} />
             <PublicRoute component={PageNotFound} />
           </Switch>
         </div>

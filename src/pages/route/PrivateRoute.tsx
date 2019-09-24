@@ -13,13 +13,21 @@ class PrivateRoute extends Component<IProps, {}> {
       <Route
         {...rest}
         render={props =>
-          isLoggedIn ? (
+          isLoggedIn() ? (
             <Component
               key={`${props.location.pathname} ${props.location.search}`}
               {...props}
             />
           ) : (
-            <Redirect to={{ pathname: "/", state: { from: props.location } }} />
+            <Redirect
+              to={{
+                pathname: "/",
+                state: {
+                  from: props.location,
+                  message: "You're not log in. Please login to continue."
+                }
+              }}
+            />
           )
         }
       ></Route>

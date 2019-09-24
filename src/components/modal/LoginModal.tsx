@@ -45,7 +45,7 @@ class LoginModal extends Component<IProps, IStates> {
         cookies.set("accessToken", response.data.accessToken, { path: "/" });
         cookies.set("tokenType", response.data.tokenType, { path: "/" });
         this.props.closeHandler();
-        this.props.history.push("/donation");
+        this.props.history.push("/dashboard");
       })
       .catch(error => {
         const errorMessages: string[] = parseError(error);
@@ -59,6 +59,10 @@ class LoginModal extends Component<IProps, IStates> {
 
   render() {
     const heading = "Login to Your Account";
+    let flashError;
+    if (this.state.errorMessages.length) {
+     flashError = <ErrorFlash errors={this.state.errorMessages} />;
+    }
     return (
       <Modal
         heading={heading}
@@ -93,10 +97,10 @@ class LoginModal extends Component<IProps, IStates> {
               </a>
             </div>
           </div>
-          <div className="dropdown-divider mt-3 mb-3"></div>
+          <div className="dropdown-divider"></div>
           <div>
             <form onSubmit={this.handleLoginOnSubmit}>
-              <ErrorFlash errors={this.state.errorMessages} />
+              {flashError}
               <div className="form-group">
                 <div className="input-group mb-3">
                   <div className="input-group-prepend">

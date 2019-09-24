@@ -2,7 +2,7 @@ import React, { Component, createRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { isMobile } from "react-device-detect";
-import DropDown from "../../components/dropdown/DropDown";
+import DropDown from "../dropdown/DropDown";
 import {
   ICategory,
   IGrade,
