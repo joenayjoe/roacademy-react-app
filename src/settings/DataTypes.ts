@@ -42,9 +42,15 @@ export interface ITag {
 export interface IUser {
   id: number;
   firstName: string;
-  lastName:string;
-  email:string;
-  url:string;
+  lastName: string;
+  email: string;
+  roles: IRole[];
+  url: string;
+}
+
+export interface IRole {
+  id: number;
+  name: string;
 }
 
 export interface ILoginRequest {
@@ -57,7 +63,7 @@ export interface ILoginResponse {
 }
 
 export interface ISearchRequest {
-  query:string;
+  query: string;
 }
 export interface IAutoSuggest {
   name: string;

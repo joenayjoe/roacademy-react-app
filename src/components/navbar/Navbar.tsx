@@ -91,7 +91,7 @@ class NavbarNew extends Component<IProbs, IStates> {
     this.cookiesService.remove("accessToken");
     this.cookiesService.remove("tokenType");
     this.props.history.push("/");
-  }
+  };
 
   showLoginModal = () => {
     this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
@@ -202,7 +202,6 @@ class NavbarNew extends Component<IProbs, IStates> {
             </ul>
 
             <div className="nav-right">
-              {authLinks}
               <div className="donate nav-link">
                 <NavLink to="/donation">
                   <button className="btn btn-outline-success">
@@ -215,6 +214,7 @@ class NavbarNew extends Component<IProbs, IStates> {
                   </button>
                 </NavLink>
               </div>
+              {authLinks}
             </div>
           </div>
         </nav>
