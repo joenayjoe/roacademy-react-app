@@ -1,11 +1,13 @@
 import axios, { AxiosInstance, AxiosPromise, AxiosRequestConfig } from "axios";
-import Cookies from "universal-cookie";
+import { CookiesService } from "./CookiesService";
 
 class ApiRequest {
   private axiosInstance: AxiosInstance;
+  private cookiesService: CookiesService;
   constructor() {
     const config = { baseURL: "http://192.168.1.151:8080/api"};
     this.axiosInstance = axios.create(config);
+    this.cookiesService = new CookiesService();
   }
 
   get<TResponse>(url: string): AxiosPromise<TResponse> {
@@ -31,12 +33,12 @@ class ApiRequest {
   }
 
   private axiosConfig(): AxiosRequestConfig {
-    let cookies = new Cookies();
-    let accessToken = cookies.get("accessToken");
-    let tokenType = cookies.get("tokenType");
+
+    let accessToken = this.cookiesService.get("accessToken");
+    let tokenType = this.cookiesService.get("tokenType");
     let headers = {};
 
-    if (accessToken !== undefined || accessToken != null) {
+    if (accessToken !== undefined && accessToken !== undefined) {
       headers = { Authorization: `${tokenType} ${accessToken}` };
     }
     return {headers: headers};

@@ -1,4 +1,4 @@
-import Cookies from "universal-cookie";
+import { CookiesService } from "../services/CookiesService";
 
 export const parseError = (error: any): string[] => {
   let errorMessages: string[] = [];
@@ -14,22 +14,21 @@ export const parseError = (error: any): string[] => {
   return errorMessages;
 };
 
-export const parseQueryParams = (query:any) => {
+export const parseQueryParams = (query: any) => {
   query = query.substring(1);
   let params = query.split("&");
-  let paramMap:any = {};
-  for(let i of params) {
-      let j = i.split("=");
-      let k:string = j[0]
-      let v:any = j[1];
-      paramMap[k] = v;
+  let paramMap: any = {};
+  for (let i of params) {
+    let j = i.split("=");
+    let k: string = j[0];
+    let v: any = j[1];
+    paramMap[k] = v;
   }
   return paramMap;
-
-}
+};
 
 export const isLoggedIn = () => {
-  let cookies = new Cookies();
-  let accessToken = cookies.get("accessToken");
-  return accessToken !== undefined || accessToken != null
-}
+  let cookiesService = new CookiesService();
+  let accessToken = cookiesService.get("accessToken");
+  return accessToken !== undefined;
+};

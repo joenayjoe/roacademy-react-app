@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import "./Category.css";
 import { RouteComponentProps, withRouter } from "react-router";
 import { ICategory} from "../../settings/DataTypes";
-import ApiManager from "../../dataManagers/ApiManager";
+import { CategoryService } from "../../services/CategoryService";
 
 interface MatchParams {
   category_id: string;
@@ -16,18 +16,18 @@ interface IStates {
 
 class Category extends Component<IProps, IStates> {
   private categoryId: string;
-  private apiManager: ApiManager;
+  private categoryService: CategoryService;
 
   constructor(props: IProps) {
     super(props);
     this.categoryId = this.props.match.params.category_id;
-    this.apiManager = new ApiManager();
+    this.categoryService = new CategoryService();
     this.state = {
       category: null
     };
   }
   componentDidMount() {
-    this.apiManager
+    this.categoryService
       .getCategory(this.categoryId)
       .then(response => {
         this.setState({ category: response.data });

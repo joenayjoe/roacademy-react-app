@@ -8,10 +8,13 @@ import {
 } from "../../settings/DataTypes";
 
 import "./SideDrawer.css";
-import ApiManager from "../../dataManagers/ApiManager";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AxiosError } from "axios";
 import { RouteComponentProps, withRouter } from "react-router";
+import { CategoryService } from "../../services/CategoryService";
+import { GradeService } from "../../services/GradeService";
+import { isLoggedIn } from "../../utils/Helper";
+import { CookiesService } from "../../services/CookiesService";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -27,10 +30,14 @@ interface IStates {
 }
 
 class SideDrawerNew extends Component<IProps, IStates> {
-  private apiManager: ApiManager;
+  private categoryService: CategoryService;
+  private gradeService: GradeService;
+  private cookiesService: CookiesService;
   constructor(props: IProps) {
     super(props);
-    this.apiManager = new ApiManager();
+    this.categoryService = new CategoryService();
+    this.gradeService = new GradeService();
+    this.cookiesService = new CookiesService();
 
     this.state = {
       categories: [],
@@ -40,7 +47,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
   }
 
   componentDidMount() {
-    this.apiManager
+    this.categoryService
       .getCategories()
       .then(response => {
         this.setState({ categories: response.data });
@@ -58,14 +65,14 @@ class SideDrawerNew extends Component<IProps, IStates> {
     this.props.modalSwitcher(ModalIdentifier.SIGNUP_MODAL);
   };
 
-  handleAuthLinkClick = () => {
+  handleSignUpClick = () => {
     this.showSignupModal();
   };
 
   async getCoursesFor(grade: IGrade) {
     if (grade.catched === undefined || !grade.catched) {
       try {
-        const response = await this.apiManager.getCoursesForGrade(grade);
+        const response = await this.gradeService.getCoursesForGrade(grade);
         // update state
         let oldCategories = this.state.categories;
         let updatedCategories = oldCategories.map((cat: ICategory) => {
@@ -115,6 +122,13 @@ class SideDrawerNew extends Component<IProps, IStates> {
     this.props.backdropClickHandler();
     this.props.history.push("/donation");
   };
+
+  handleLogOut = () => {
+    this.cookiesService.remove("accessToken");
+    this.cookiesService.remove("tokenType");
+    this.props.backdropClickHandler();
+    this.props.history.push("/");
+  }
 
   getBackButtonLink = (data: MenuItemType) => {
     return (
@@ -233,18 +247,36 @@ class SideDrawerNew extends Component<IProps, IStates> {
       );
     });
 
-    return (
-      <ul className="side-drawer-level-one">
+    let authLink;
+
+    if (isLoggedIn()) {
+      authLink = (
         <li
           key="auth-link"
           className="auth-link border-bottom"
-          onClick={this.handleAuthLinkClick}
+          onClick={this.handleLogOut}
+        >
+          <div>Log Out</div>
+        </li>
+      );
+    } else {
+      authLink = (
+        <li
+          key="auth-link"
+          className="auth-link border-bottom"
+          onClick={this.handleSignUpClick}
         >
           <div>Sign Up / Log In</div>
         </li>
+      );
+    }
+
+    return (
+      <ul className="side-drawer-level-one">
+        {authLink}
         {levelOneMenuItems}
         <li
-          key="auth-link"
+          key="donate-link"
           className="auth-link border-top"
           onClick={this.handleDonateLinkClick}
         >

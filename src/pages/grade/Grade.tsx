@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import "./Grade.css";
 import { RouteComponentProps } from "react-router";
 import { IGrade } from "../../settings/DataTypes";
-import ApiManager from "../../dataManagers/ApiManager";
+import { GradeService } from "../../services/GradeService";
 
 interface matchedParams {
   category_id: string;
@@ -19,18 +19,18 @@ interface IStates {
 class Grade extends Component<IProps, IStates> {
   private categoryId: string;
   private gradeId: string;
-  private apiManager: ApiManager;
+  private gradeService: GradeService;
 
   constructor(props: IProps) {
     super(props);
     this.categoryId = this.props.match.params.category_id;
     this.gradeId = this.props.match.params.grade_id;
-    this.apiManager = new ApiManager();
+    this.gradeService = new GradeService();
     this.state = { grade: null };
   }
 
   componentDidMount() {
-    this.apiManager.getGrade(this.categoryId, this.gradeId).then(response => {
+    this.gradeService.getGrade(this.categoryId, this.gradeId).then(response => {
       this.setState({ grade: response.data });
     });
   }

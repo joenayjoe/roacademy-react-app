@@ -16,8 +16,10 @@ import {
   ILinkItem,
   ISearchRequest
 } from "../../settings/DataTypes";
-import ApiManager from "../../dataManagers/ApiManager";
 import ToggleBar from "../../components/togglebar/ToggleBar";
+import { isLoggedIn } from "../../utils/Helper";
+import { CourseService } from "../../services/CourseService";
+import { CookiesService } from "../../services/CookiesService";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -29,28 +31,31 @@ interface IStates {
   suggestions: ILinkItem[];
   showBrandName: boolean;
   showMobileSearch: boolean;
-  searchQuery:string;
+  searchQuery: string;
 }
 
 class NavbarNew extends Component<IProbs, IStates> {
-  private apiManager: ApiManager;
+  private courseService: CourseService;
+  private cookiesService: CookiesService;
   constructor(props: IProbs) {
     super(props);
     this.state = {
       suggestions: [],
       showBrandName: true,
       showMobileSearch: false,
-      searchQuery:""
+      searchQuery: ""
     };
-    this.apiManager = new ApiManager();
+    this.courseService = new CourseService();
+    this.cookiesService = new CookiesService();
   }
+
   handleAutoCompleteOnChange = (query: string) => {
     if (query.length < 2) {
       this.setState({ suggestions: [], searchQuery: query });
       return;
     }
     let payload: ISearchRequest = { query };
-    this.apiManager
+    this.courseService
       .getAutoSuggestForCourse(payload)
       .then(response => {
         this.setState({ suggestions: response.data });
@@ -72,7 +77,7 @@ class NavbarNew extends Component<IProbs, IStates> {
   };
 
   handleAutoCompleteOnSubmit = (query: string) => {
-    this.setState({searchQuery: query});
+    this.setState({ searchQuery: query });
     this.props.history.push("/search?query=" + query);
   };
 
@@ -81,6 +86,12 @@ class NavbarNew extends Component<IProbs, IStates> {
       return { showBrandName: !prevState.showBrandName };
     });
   };
+
+  handleLogOut = () => {
+    this.cookiesService.remove("accessToken");
+    this.cookiesService.remove("tokenType");
+    this.props.history.push("/");
+  }
 
   showLoginModal = () => {
     this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
@@ -113,6 +124,26 @@ class NavbarNew extends Component<IProbs, IStates> {
             onCloseHandler={this.handleAutocompleteOnClose}
           />
         </div>
+      );
+    }
+
+    let authLinks;
+    if (isLoggedIn()) {
+      authLinks = (
+        <div className="login nav-link" onClick={this.handleLogOut}>
+          <button className="btn btn-outline-primary nav-btn">Log Out</button>
+        </div>
+      );
+    } else {
+      authLinks = (
+        <React.Fragment>
+          <div className="login nav-link" onClick={this.showLoginModal}>
+            <button className="btn btn-outline-primary nav-btn">Log In</button>
+          </div>
+          <div className="signup nav-link" onClick={this.showSignupModal}>
+            <button className="btn btn-primary nav-btn">Sign Up </button>
+          </div>
+        </React.Fragment>
       );
     }
     return (
@@ -171,14 +202,7 @@ class NavbarNew extends Component<IProbs, IStates> {
             </ul>
 
             <div className="nav-right">
-              <div className="login nav-link" onClick={this.showLoginModal}>
-                <button className="btn btn-outline-primary nav-btn">
-                  Log In
-                </button>
-              </div>
-              <div className="signup nav-link" onClick={this.showSignupModal}>
-                <button className="btn btn-primary nav-btn">Sign Up </button>
-              </div>
+              {authLinks}
               <div className="donate nav-link">
                 <NavLink to="/donation">
                   <button className="btn btn-outline-success">

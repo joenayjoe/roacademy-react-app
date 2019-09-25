@@ -1,6 +1,5 @@
 import React, { Component, FormEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ApiManager from "../../dataManagers/ApiManager";
 
 import "./LoginModal.css";
 import Cookies from "universal-cookie";
@@ -9,6 +8,7 @@ import Modal from "./Modal";
 import { withRouter, RouteComponentProps } from "react-router";
 import { parseError } from "../../utils/Helper";
 import ErrorFlash from "../flash/ErrorFlash";
+import { UserService } from "../../services/UserService";
 
 interface IProps extends RouteComponentProps {
   showSignupModalHandler: (modalIdentifier: ModalIdentifier) => void;
@@ -20,10 +20,10 @@ interface IStates {
   errorMessages: string[];
 }
 class LoginModal extends Component<IProps, IStates> {
-  private apiManager: ApiManager;
+  private userService: UserService;
   constructor(props: IProps) {
     super(props);
-    this.apiManager = new ApiManager();
+    this.userService = new UserService();
   }
   state: IStates = {
     email: "",
@@ -38,7 +38,7 @@ class LoginModal extends Component<IProps, IStates> {
       email: this.state.email,
       password: this.state.password
     };
-    this.apiManager
+    this.userService
       .login(formData)
       .then(response => {
         const cookies = new Cookies();
@@ -137,7 +137,6 @@ class LoginModal extends Component<IProps, IStates> {
                     aria-label="Password"
                     aria-describedby="basic-addon2"
                     required
-                    minLength={8}
                     onChange={e => this.handleOnChange(e)}
                   />
                 </div>

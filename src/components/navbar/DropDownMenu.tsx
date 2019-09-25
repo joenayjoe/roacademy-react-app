@@ -9,10 +9,11 @@ import {
   ICourse,
   MenuItemType
 } from "../../settings/DataTypes";
-import ApiManager from "../../dataManagers/ApiManager";
 
 import "./DropDownMenu.css";
 import { withRouter, RouteComponentProps } from "react-router";
+import { CategoryService } from "../../services/CategoryService";
+import { GradeService } from "../../services/GradeService";
 
 interface IProps extends RouteComponentProps {
   displayName: string;
@@ -28,10 +29,12 @@ interface IStates {
 }
 
 class DropDownMenu extends Component<IProps, IStates> {
-  private apiManager: ApiManager;
+  private categoryService: CategoryService;
+  private gradeService: GradeService;
   constructor(props: IProps) {
     super(props);
-    this.apiManager = new ApiManager();
+    this.categoryService = new CategoryService();
+    this.gradeService = new GradeService();
   }
   state: IStates = {
     showDropDownMenu: false,
@@ -94,7 +97,7 @@ class DropDownMenu extends Component<IProps, IStates> {
   async fetchCoursesFor(grade: IGrade) {
     if (grade.catched === undefined || !grade.catched) {
       try {
-        const response = await this.apiManager.getCoursesForGrade(grade);
+        const response = await this.gradeService.getCoursesForGrade(grade);
 
         let oldCategories = this.state.categories;
         let updatedCategories = oldCategories.map(cat => {
@@ -139,7 +142,7 @@ class DropDownMenu extends Component<IProps, IStates> {
   };
 
   componentDidMount() {
-    this.apiManager
+    this.categoryService
       .getCategories()
       .then(response => {
         this.setState({ categories: response.data });

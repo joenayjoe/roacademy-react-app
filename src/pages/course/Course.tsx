@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import "./Course.css";
 import { RouteComponentProps } from "react-router";
 import { ICourse } from "../../settings/DataTypes";
-import ApiManager from "../../dataManagers/ApiManager";
+import { CourseService } from "../../services/CourseService";
 
 interface matchedParams {
   course_id: string;
@@ -15,18 +15,18 @@ interface IStates {
 
 class Course extends Component<IProps, IStates> {
   private courseId: string;
-  private apiManager: ApiManager;
+  private courseService: CourseService;
 
   constructor(props: IProps) {
     super(props);
     this.courseId = this.props.match.params.course_id;
-    this.apiManager = new ApiManager();
+    this.courseService = new CourseService();
     this.state = {
       course: null
     };
   }
   componentDidMount() {
-    this.apiManager
+    this.courseService
       .getCourse(this.courseId)
       .then(response => {
         this.setState({ course: response.data });
