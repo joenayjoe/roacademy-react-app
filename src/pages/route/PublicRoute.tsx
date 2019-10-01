@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import { isLoggedIn } from "../../utils/Helper";
+import { isLoggedIn } from "../../utils/authHelper";
 
 interface IProps extends RouteProps {
   component: any;

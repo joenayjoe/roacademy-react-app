@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 
-import { ICourse, ISearchRequest } from "../settings/DataTypes";
+import { ICourse, ISearchRequest } from "../datatypes/types";
 import ApiRequest from "./ApiRequest";
 
 interface ICourseService {

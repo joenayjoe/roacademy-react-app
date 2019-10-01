@@ -2,7 +2,7 @@ import React, { Component, FormEvent, ChangeEvent, createRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { ILinkItem } from "../../settings/DataTypes";
+import { ILinkItem } from "../../datatypes/types";
 import Backdrop from "../backdrop/Backdrop";
 
 interface AutocompleteProps {

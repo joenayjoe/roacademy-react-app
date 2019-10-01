@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ModalIdentifier } from "../../settings/DataTypes";
+import { ModalIdentifier } from "../../datatypes/types";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
 

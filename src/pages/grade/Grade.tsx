@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import "./Grade.css";
 import { RouteComponentProps } from "react-router";
-import { IGrade } from "../../settings/DataTypes";
+import { IGrade } from "../../datatypes/types";
 import { GradeService } from "../../services/GradeService";
 
 interface matchedParams {

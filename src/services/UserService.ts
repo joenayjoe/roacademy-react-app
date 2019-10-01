@@ -1,6 +1,6 @@
 import ApiRequest from "./ApiRequest";
 import { AxiosResponse } from "axios";
-import { IUser, ILoginRequest, ILoginResponse } from "../settings/DataTypes";
+import { IUser, ILoginRequest, ILoginResponse } from "../datatypes/types";
 
 interface IUserService {
   getCurrentUser(): Promise<AxiosResponse<IUser>>;

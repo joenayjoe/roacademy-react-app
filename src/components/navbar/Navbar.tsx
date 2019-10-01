@@ -15,9 +15,9 @@ import {
   ModalIdentifier,
   ILinkItem,
   ISearchRequest
-} from "../../settings/DataTypes";
+} from "../../datatypes/types";
 import ToggleBar from "../../components/togglebar/ToggleBar";
-import { isLoggedIn } from "../../utils/Helper";
+import { isLoggedIn } from "../../utils/authHelper";
 import { CourseService } from "../../services/CourseService";
 import { CookiesService } from "../../services/CookiesService";
 

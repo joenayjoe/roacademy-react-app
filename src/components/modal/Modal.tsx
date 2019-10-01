@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ModalType, ModalSize } from "../../settings/DataTypes";
+import { ModalType, ModalSize } from "../../datatypes/types";
 
 import "./Modal.css";
 import Backdrop from "../backdrop/Backdrop";

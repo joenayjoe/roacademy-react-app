@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import "./Category.css";
 import { RouteComponentProps, withRouter } from "react-router";
-import { ICategory} from "../../settings/DataTypes";
+import { ICategory} from "../../datatypes/types";
 import { CategoryService } from "../../services/CategoryService";
 
 interface MatchParams {

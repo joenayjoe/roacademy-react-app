@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import "./UserDashboard.css";
 import { CookiesService } from "../../services/CookiesService";
-import { IUser } from "../../settings/DataTypes";
+import { IUser } from "../../datatypes/types";
 import { UserService } from "../../services/UserService";
 
 interface IProps {}

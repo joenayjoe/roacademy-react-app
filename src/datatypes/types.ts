@@ -19,6 +19,10 @@ export interface ICategory extends ILinkItem {
   grades: IGrade[];
 }
 
+export interface ICreateCategory {
+  name: string;
+}
+
 export interface IGrade extends ILinkItem {
   categoryId: number;
   courses: ICourse[];

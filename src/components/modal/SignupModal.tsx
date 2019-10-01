@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ModalIdentifier } from "../../settings/DataTypes";
+import { ModalIdentifier } from "../../datatypes/types";
 import Modal from "./Modal";
 
 interface IProps {

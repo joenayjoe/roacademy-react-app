@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import "./Course.css";
 import { RouteComponentProps } from "react-router";
-import { ICourse } from "../../settings/DataTypes";
+import { ICourse } from "../../datatypes/types";
 import { CourseService } from "../../services/CourseService";
 
 interface matchedParams {

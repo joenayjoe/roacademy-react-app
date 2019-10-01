@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { ICategory } from "../settings/DataTypes";
+import { ICategory } from "../datatypes/types";
 import ApiRequest from "./ApiRequest";
 
 interface ICategoryService {

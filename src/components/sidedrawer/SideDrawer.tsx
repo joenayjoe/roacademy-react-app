@@ -5,7 +5,7 @@ import {
   MenuItemType,
   ModalIdentifier,
   ICourse
-} from "../../settings/DataTypes";
+} from "../../datatypes/types";
 
 import "./SideDrawer.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,7 +13,7 @@ import { AxiosError } from "axios";
 import { RouteComponentProps, withRouter } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
-import { isLoggedIn } from "../../utils/Helper";
+import { isLoggedIn } from "../../utils/authHelper";
 import { CookiesService } from "../../services/CookiesService";
 
 interface IProps extends RouteComponentProps {
@@ -72,7 +72,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
   async getCoursesFor(grade: IGrade) {
     if (grade.catched === undefined || !grade.catched) {
       try {
-        const response = await this.gradeService.getCoursesForGrade(grade);
+        const response = await this.gradeService.getCoursesForGrade(grade.categoryId, grade.id);
         // update state
         let oldCategories = this.state.categories;
         let updatedCategories = oldCategories.map((cat: ICategory) => {
