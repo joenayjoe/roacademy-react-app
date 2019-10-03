@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router";
 import { ICourse } from "../../settings/DataTypes";
-import { parseQueryParams } from "../../utils/Helper";
+import { parseQueryParams } from "../../utils/queryParser";
 
 
 interface IProps extends RouteComponentProps{}

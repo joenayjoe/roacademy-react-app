@@ -17,7 +17,7 @@ import {
   ISearchRequest
 } from "../../settings/DataTypes";
 import ToggleBar from "../../components/togglebar/ToggleBar";
-import { isLoggedIn } from "../../utils/Helper";
+import { isLoggedIn } from "../../utils/authHelper";
 import { CourseService } from "../../services/CourseService";
 import { CookiesService } from "../../services/CookiesService";
 

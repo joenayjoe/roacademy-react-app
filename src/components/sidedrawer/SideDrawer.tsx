@@ -13,7 +13,7 @@ import { AxiosError } from "axios";
 import { RouteComponentProps, withRouter } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
-import { isLoggedIn } from "../../utils/Helper";
+import { isLoggedIn } from "../../utils/authHelper";
 import { CookiesService } from "../../services/CookiesService";
 import { isGrade, isCourse } from "../../utils/typeChecker";
 

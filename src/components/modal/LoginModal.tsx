@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 import { ILoginRequest, ModalIdentifier } from "../../settings/DataTypes";
 import Modal from "./Modal";
 import { withRouter, RouteComponentProps } from "react-router";
-import { parseError } from "../../utils/Helper";
+import { parseError } from "../../utils/errorParser"
 import ErrorFlash from "../flash/ErrorFlash";
 import { UserService } from "../../services/UserService";
 

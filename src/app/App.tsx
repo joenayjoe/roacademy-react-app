@@ -15,10 +15,11 @@ import Grade from "../pages/grade/Grade";
 import Course from "../pages/course/Course";
 import SearchResult from "../pages/searchresult/SearchResult";
 import PublicRoute from "../pages/route/PublicRoute";
-import PrivateRoute from "../pages/route/PrivateRoute"
+import PrivateRoute from "../pages/route/PrivateRoute";
 import PageNotFound from "../pages/route/PageNotFound";
 import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
+import { isMobileOnly } from "react-device-detect";
 
 interface AppState {
   isSideDrawerOpen: boolean;
@@ -55,6 +56,17 @@ class App extends Component<{}, AppState> {
   }
 
   render() {
+    let sideDrawer;
+    if (isMobileOnly) {
+      sideDrawer = (
+        <SideDrawer
+          isOpen={this.state.isSideDrawerOpen}
+          modalSwitcher={identifier => this.switchModal(identifier)}
+          modalCloseHandler={this.closeModal}
+          backdropClickHandler={this.backdropClickHandler}
+        />
+      );
+    }
     return (
       <BrowserRouter>
         <ModalSelector
@@ -69,12 +81,7 @@ class App extends Component<{}, AppState> {
           modalSwitcher={identifier => this.switchModal(identifier)}
         />
 
-        <SideDrawer
-          isOpen={this.state.isSideDrawerOpen}
-          modalSwitcher={identifier => this.switchModal(identifier)}
-          modalCloseHandler={this.closeModal}
-          backdropClickHandler={this.backdropClickHandler}
-        />
+        {sideDrawer}
 
         <div className="content-wrapper width-75">
           <Switch>
