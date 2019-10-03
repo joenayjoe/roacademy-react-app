@@ -1,4 +1,4 @@
-import { AppState } from "../store";
+import { AppState } from "..";
 import { createSelector } from "reselect";
 
 const getCourseIdsForSelectedGrade = (state: AppState): number[] => {

@@ -1,8 +1,8 @@
 import { ThunkAction } from "redux-thunk";
-import { AppState } from "../store";
+import { AppState } from "..";
 import { Action } from "redux";
-import { GradeService } from "../services/GradeService";
-import { normalizeCourses } from "../utils/normalizer";
+import { GradeService } from "../../services/GradeService";
+import { normalizeCourses } from "../../utils/normalizer";
 import { NormalizedSchema } from "normalizr";
 import {
   GET_COURSES_FOR_GRADE,

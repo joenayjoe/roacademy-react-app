@@ -15,13 +15,13 @@ import { withRouter, RouteComponentProps } from "react-router";
 import { GradeService } from "../../services/GradeService";
 import { connect } from "react-redux";
 import { AppState } from "../../store";
-import { selectCategories } from "../../selectors/categorySelector";
-import { getCategories } from "../../actions/categoryAction";
-import { getGradesForCategory } from "../../actions/gradeAction";
-import { getCoursesForGrade } from "../../actions/courseAction";
-import { toogleShowDropDownMenu } from "../../actions/uiActions";
-import { selectGradesForSelectedCategory } from "../../selectors/gradeSelector";
-import { selectCoursesForSelectedGrade } from "../../selectors/courseSelector";
+import { selectCategories } from "../../store/selectors/categorySelector";
+import { getCategories } from "../../store/actions/categoryAction";
+import { getGradesForCategory } from "../../store/actions/gradeAction";
+import { getCoursesForGrade } from "../../store/actions/courseAction";
+import { toogleShowDropDownMenu } from "../../store/actions/uiActions";
+import { selectGradesForSelectedCategory } from "../../store/selectors/gradeSelector";
+import { selectCoursesForSelectedGrade } from "../../store/selectors/courseSelector";
 
 interface IProps extends RouteComponentProps {
   displayName: string;
@@ -59,7 +59,7 @@ class DropDownMenu extends Component<IProps, IStates> {
   };
 
   menuBtnNode: any = createRef();
-  menuNode: any = createRef();
+  menuDropDownListNode: any = createRef();
 
   loadPage = (item: MenuItemType) => {
     let url: string;
@@ -139,12 +139,12 @@ class DropDownMenu extends Component<IProps, IStates> {
 
   handleOnClick = (e: Event) => {
     if (this.menuBtnNode.current.contains(e.target)) {
-      this.props.toogleShowDropDownMenu(!this.props.showDropDownMenu);
+      this.props.toogleShowDropDownMenu();
       if (isMobile) {
         this.setState({ showLgScreenDropDownMenu: true });
       }
-    } else if (!isMobile || (isMobile && !this.menuNode.contains(e.target))) {
-      this.props.toogleShowDropDownMenu(false);
+    } else if (!isMobile || (isMobile && !this.menuDropDownListNode.contains(e.target))) {
+      // this.props.toogleShowDropDownMenu(false);
     }
   };
 
@@ -294,7 +294,7 @@ class DropDownMenu extends Component<IProps, IStates> {
     return (
       <ul
         className={`drop-down-list drop-down-list-level-one ${disPlayKlass}`}
-        ref={node => (this.menuNode = node)}
+        ref={node => (this.menuDropDownListNode = node)}
       >
         {dropDownMenuItem}
       </ul>
@@ -317,6 +317,7 @@ class DropDownMenu extends Component<IProps, IStates> {
 }
 
 const mapStateToProps = (state: AppState) => {
+  console.log("state = ", state);
   return {
     categories: selectCategories(state),
     grades: selectGradesForSelectedCategory(state),

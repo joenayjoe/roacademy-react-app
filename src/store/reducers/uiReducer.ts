@@ -7,7 +7,8 @@ import {
 const initialState: UiState = {
   showDropDownMenu: false,
   isSideDrawerOpen: false,
-  currentModal: null
+  currentModal: null,
+  isFetching: false
 };
 
 export const uiReducer = (state = initialState, action: UiActionTypes) => {
@@ -15,8 +16,11 @@ export const uiReducer = (state = initialState, action: UiActionTypes) => {
     case TOOGLE_SHOW_DROP_DOWN_MENU:
       return {
         ...state,
-        showDropDownMenu: action.payload
-      };
+        showDropDownMenu:
+          action.payload === undefined
+            ? !state.showDropDownMenu
+            : action.payload
+      } as UiState;
     default:
       return state;
   }

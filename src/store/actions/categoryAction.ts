@@ -1,10 +1,10 @@
-import { GET_CATEGORIES, CategoryActionTypes } from "../actions/actionTypes";
-import { CategoryService } from "../services/CategoryService";
-import { AppState } from "../store";
+import { GET_CATEGORIES, CategoryActionTypes } from "./actionTypes";
+import { CategoryService } from "../../services/CategoryService";
+import { AppState } from "..";
 import { ThunkAction } from "redux-thunk";
 import { Action } from "redux";
 import { NormalizedSchema } from "normalizr";
-import { normalizeCategories } from "../utils/normalizer";
+import { normalizeCategories } from "../../utils/normalizer";
 
 const categoryService = new CategoryService();
 
@@ -13,7 +13,7 @@ export const getCategories = (): ThunkAction<
   AppState,
   null,
   Action<string>
-> => async (dispatch, getState) => {
+> => async dispatch => {
   categoryService.getCategories().then(res => {
     dispatch(getCategoriesAction(normalizeCategories(res.data)));
   });
@@ -21,7 +21,9 @@ export const getCategories = (): ThunkAction<
 
 // action creator
 
-const getCategoriesAction = (categories: NormalizedSchema<any, any>): CategoryActionTypes => {
+const getCategoriesAction = (
+  categories: NormalizedSchema<any, any>
+): CategoryActionTypes => {
   return {
     type: GET_CATEGORIES,
     payload: categories

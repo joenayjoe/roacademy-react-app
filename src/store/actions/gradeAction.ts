@@ -1,7 +1,7 @@
-import { GradeService } from "../services/GradeService";
+import { GradeService } from "../../services/GradeService";
 import { ThunkAction } from "redux-thunk";
-import { AppState } from "../store";
-import { normalizeGrades } from "../utils/normalizer";
+import { AppState } from "..";
+import { normalizeGrades } from "../../utils/normalizer";
 import { NormalizedSchema } from "normalizr";
 import { Action } from "redux";
 import {
@@ -10,7 +10,7 @@ import {
   SET_SELECTED_CATEGORY_ID,
   GradeActionTypes,
   CategoryActionTypes
-} from "../actions/actionTypes";
+} from "./actionTypes";
 
 const gradeService = new GradeService();
 

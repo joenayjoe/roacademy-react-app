@@ -1,6 +1,6 @@
-import { AppState } from "../store";
+import { AppState } from "..";
 import { createSelector } from "reselect";
-import { ICategory } from "../datatypes/types";
+import { ICategory } from "../../datatypes/types";
 
 const getCategories = (state: AppState) => {
     return state.category.categories

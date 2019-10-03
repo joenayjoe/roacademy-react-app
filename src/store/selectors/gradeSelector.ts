@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { AppState } from "../store";
+import { AppState } from "..";
 
 const getGradeIdsForSelectedCategory = (state: AppState): number[] => {
   const selectedCategoryId = state.category.selectedCategoryId;

@@ -21,6 +21,7 @@ import PageNotFound from "../pages/route/PageNotFound";
 import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
 import configureStore from "../store";
+import { isMobileOnly } from "react-device-detect";
 
 interface IStates {
   isSideDrawerOpen: boolean;
@@ -57,6 +58,17 @@ class App extends Component<{}, IStates> {
   }
 
   render() {
+    let sideDrawyer;
+    if (isMobileOnly) {
+      sideDrawyer = (
+        <SideDrawer
+          isOpen={this.state.isSideDrawerOpen}
+          modalSwitcher={identifier => this.switchModal(identifier)}
+          modalCloseHandler={this.closeModal}
+          backdropClickHandler={this.backdropClickHandler}
+        />
+      );
+    }
     const store = configureStore();
     return (
       <Provider store={store}>
@@ -73,12 +85,7 @@ class App extends Component<{}, IStates> {
             modalSwitcher={identifier => this.switchModal(identifier)}
           />
 
-          <SideDrawer
-            isOpen={this.state.isSideDrawerOpen}
-            modalSwitcher={identifier => this.switchModal(identifier)}
-            modalCloseHandler={this.closeModal}
-            backdropClickHandler={this.backdropClickHandler}
-          />
+          {sideDrawyer}
 
           <div className="content-wrapper width-75">
             <Switch>

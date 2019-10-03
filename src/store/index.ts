@@ -1,10 +1,10 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { categoryReducer } from "../reducers/categoryReducer";
-import { gradeReducer } from "../reducers/gradeReducer";
-import { uiReducer } from "../reducers/uiReducer";
-import { courseReducer } from "../reducers/courseReducer";
+import { categoryReducer } from "./reducers/categoryReducer";
+import { gradeReducer } from "./reducers/gradeReducer";
+import { uiReducer } from "./reducers/uiReducer";
+import { courseReducer } from "./reducers/courseReducer";
 
 
 

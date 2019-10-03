@@ -1,5 +1,5 @@
 import { NormalizedSchema } from "normalizr";
-import { ModalIdentifier } from "../datatypes/types";
+import { ModalIdentifier } from "../../datatypes/types";
 
 // action constants
 
@@ -39,6 +39,7 @@ export interface UiState {
   showDropDownMenu: boolean;
   isSideDrawerOpen: boolean;
   currentModal: ModalIdentifier | null;
+  isFetching: false;
 }
 
 // action types
@@ -88,7 +89,7 @@ interface GetCoursesForGradeFromStoreAction {
 
 interface ToogleShowDropDownMenuAction {
   type: typeof TOOGLE_SHOW_DROP_DOWN_MENU;
-  payload: boolean;
+  payload?: boolean;
 }
 
 export type CategoryActionTypes =
