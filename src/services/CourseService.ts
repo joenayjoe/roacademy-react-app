@@ -3,14 +3,7 @@ import { AxiosResponse } from "axios";
 import { ICourse, ISearchRequest } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 
-interface ICourseService {
-  getCourse(courseId: string): Promise<AxiosResponse<ICourse>>;
-  getAutoSuggestForCourse(
-    query: ISearchRequest
-  ): Promise<AxiosResponse<ICourse[]>>;
-}
-
-export class CourseService implements ICourseService {
+export class CourseService {
   private apiRequest = new ApiRequest();
   public async getCourse(courseId: string): Promise<AxiosResponse<ICourse>> {
     const url = "/courses/" + courseId;

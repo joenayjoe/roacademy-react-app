@@ -2,12 +2,7 @@ import { AxiosResponse } from "axios";
 import { ICategory } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 
-interface ICategoryService {
-  getCategories(): Promise<AxiosResponse<ICategory[]>>;
-  getCategory(categoryId: string): Promise<AxiosResponse<ICategory>>;
-}
-
-export class CategoryService implements ICategoryService {
+export class CategoryService {
   private apiRequest = new ApiRequest();
 
   public async getCategories(): Promise<AxiosResponse<ICategory[]>> {

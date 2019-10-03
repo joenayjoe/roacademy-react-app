@@ -17,6 +17,7 @@ export interface ILinkItem {
 
 export interface ICategory extends ILinkItem {
   grades: IGrade[];
+  catched?: boolean;
 }
 
 export interface IGrade extends ILinkItem {

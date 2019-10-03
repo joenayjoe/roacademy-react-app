@@ -2,11 +2,7 @@ import ApiRequest from "./ApiRequest";
 import { AxiosResponse } from "axios";
 import { IGrade, ICourse } from "../settings/DataTypes";
 
-interface IGradeService {
-  getGrade(categoryId: string, gradeId: string): Promise<AxiosResponse<IGrade>>;
-  getCoursesForGrade(grade: IGrade): Promise<AxiosResponse<ICourse[]>>;
-}
-export class GradeService implements IGradeService {
+export class GradeService {
   private apiRequest = new ApiRequest();
 
   public async getGrade(
@@ -17,10 +13,16 @@ export class GradeService implements IGradeService {
     return await this.apiRequest.get<IGrade>(url);
   }
 
+  public async getGradesForCategory(categoryId:number) {
+    const url = `/categories/${categoryId}/grades`;
+    return await this.apiRequest.get<IGrade[]>(url);
+  }
+
   public async getCoursesForGrade(
-    grade: IGrade
+    categoryId: number,
+    gradeId: number
   ): Promise<AxiosResponse<ICourse[]>> {
-    const url = `/categories/${grade.categoryId}/grades/${grade.id}/courses`;
+    const url = `/categories/${categoryId}/grades/${gradeId}/courses`;
     return await this.apiRequest.get<ICourse[]>(url);
   }
 }

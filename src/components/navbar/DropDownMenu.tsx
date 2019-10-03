@@ -14,6 +14,7 @@ import "./DropDownMenu.css";
 import { withRouter, RouteComponentProps } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
+import { isGrade, isCourse } from "../../utils/typeChecker";
 
 interface IProps extends RouteComponentProps {
   displayName: string;
@@ -64,9 +65,20 @@ class DropDownMenu extends Component<IProps, IStates> {
       showDropDownMenu: false
     });
   };
+
+  handleMenuItemMouseEnter = (item: MenuItemType) => {
+    if (isGrade(item)) {
+      this.fetchCoursesForGrade(item as IGrade);
+    } else if (isCourse(item)) {
+      this.loadPage(item);
+    } else {
+      this.fetchGradesForCategory(item as ICategory);
+    }
+  };
+
   handleMenuLinkClick = (item: MenuItemType) => {
     if (isMobile) {
-      if ((item as IGrade).categoryId) {
+      if (isGrade(item)) {
         const grade = item as IGrade;
         let parent: ICategory | null = null;
         for (let cat of this.state.categories) {
@@ -75,8 +87,12 @@ class DropDownMenu extends Component<IProps, IStates> {
             break;
           }
         }
-        this.fetchCoursesFor(grade);
+        this.fetchCoursesForGrade(grade);
         this.setState({ levelTwoParent: parent ? parent.url : null });
+      } else if (isCourse(item)) {
+        this.loadPage(item);
+      } else {
+        this.fetchGradesForCategory(item as ICategory);
       }
       this.setState({
         selectedMenuItem: item.url
@@ -94,35 +110,42 @@ class DropDownMenu extends Component<IProps, IStates> {
     });
   };
 
-  async fetchCoursesFor(grade: IGrade) {
-    if (grade.catched === undefined || !grade.catched) {
-      try {
-        const response = await this.gradeService.getCoursesForGrade(grade);
-
-        let oldCategories = this.state.categories;
-        let updatedCategories = oldCategories.map(cat => {
-          let gradesMap = cat.grades.map(grd => {
-            if (grd.id === grade.id) {
-              grd = { ...grd, courses: response.data, catched: true };
-            }
-            return grd;
-          });
-          let catClone = { ...cat, grades: gradesMap };
-          return catClone;
+  fetchGradesForCategory(category: ICategory) {
+    if (category.catched === undefined || !category.catched) {
+      this.gradeService.getGradesForCategory(category.id).then(resp => {
+        let categories = this.state.categories.map(cat => {
+          if (cat.id === category.id) {
+            cat.grades = resp.data;
+            cat.catched = true;
+          }
+          return cat;
         });
-
-        this.setState({ categories: updatedCategories });
-      } catch (error) {
-        console.log("Error ", error.response);
-      }
+        this.setState({ categories: categories });
+      });
     }
   }
+  fetchCoursesForGrade(grade: IGrade) {
+    if (grade.catched === undefined || !grade.catched) {
+      this.gradeService
+        .getCoursesForGrade(grade.categoryId, grade.id)
+        .then(resp => {
+          let categories = this.state.categories.map(cat => {
+            if (cat.id === grade.categoryId) {
+              cat.grades.map(grd => {
+                if (grd.id === grade.id) {
+                  grd.courses = resp.data;
+                  grd.catched = true;
+                }
+                return grd;
+              });
+            }
+            return cat;
+          });
 
-  handleOnHoverForGrade = (item: IGrade) => {
-    if (!isMobile) {
-      this.fetchCoursesFor(item);
+          this.setState({ categories: categories });
+        });
     }
-  };
+  }
 
   handleDropDownMouseEnter = () => {
     this.setState({ showLgScreenDropDownMenu: true });
@@ -133,8 +156,8 @@ class DropDownMenu extends Component<IProps, IStates> {
       this.setState(prevState => {
         return { showDropDownMenu: !prevState.showDropDownMenu };
       });
-      if(isMobile) {
-        this.setState({showLgScreenDropDownMenu: true});
+      if (isMobile) {
+        this.setState({ showLgScreenDropDownMenu: true });
       }
     } else if (!isMobile || (isMobile && !this.menuNode.contains(e.target))) {
       this.setState({ showDropDownMenu: false });
@@ -166,7 +189,7 @@ class DropDownMenu extends Component<IProps, IStates> {
     let dropDownMenuItem = data.courses.map((item: ICourse) => {
       return (
         <li key={item.id} className="drop-down-list-item">
-          <div className="menu-link" onClick={() => this.loadPage(item)}>
+          <div className="menu-link" onClick={() => this.handleMenuLinkClick(item)}>
             <span>{item.name}</span>
           </div>
         </li>
@@ -218,7 +241,7 @@ class DropDownMenu extends Component<IProps, IStates> {
         <li
           key={item.id}
           className={`drop-down-list-item ${openKlass}`}
-          onMouseEnter={() => this.handleOnHoverForGrade(item)}
+          onMouseEnter={() => this.handleMenuItemMouseEnter(item)}
         >
           <div
             className="menu-link"
@@ -274,7 +297,11 @@ class DropDownMenu extends Component<IProps, IStates> {
       submenu = this.dropDownMenuLevelTwo(item);
 
       return (
-        <li key={item.id} className={`drop-down-list-item ${openKlass}`}>
+        <li
+          key={item.id}
+          className={`drop-down-list-item ${openKlass}`}
+          onMouseEnter={() => this.handleMenuItemMouseEnter(item)}
+        >
           <div
             className="menu-link"
             onClick={() => this.handleMenuLinkClick(item)}
