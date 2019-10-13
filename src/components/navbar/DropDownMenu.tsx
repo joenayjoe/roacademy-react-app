@@ -9,8 +9,6 @@ import {
   ICourse,
   MenuItemType
 } from "../../settings/DataTypes";
-
-import "./DropDownMenu.css";
 import { withRouter, RouteComponentProps } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";

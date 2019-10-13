@@ -31,6 +31,16 @@ input[type="search"]::-webkit-search-results-decoration {
     animation: animatetop 0.4s
 }
 
+.animate-right {
+    position: absolute;
+    animation: animateright 0.4s
+}
+
+.animate-left {
+    position: absolute;
+    animation: animateleft 0.4s
+}
+
 .span-as-link {
     color: #007bff;
     cursor: pointer;
@@ -53,6 +63,26 @@ input[type="search"]::-webkit-search-results-decoration {
 @keyframes animatetop {
     from {
         top: -300px;
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes animateright {
+    from {
+        right: 300px;
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes animateleft {
+    from {
+        left: 300px;
         opacity: 0
     }
     to {

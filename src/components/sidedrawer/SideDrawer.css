@@ -54,18 +54,21 @@
 
 .side-drawer-level-two,
 .side-drawer-level-three {
-    display: none;
     position: absolute;
     left: 0;
     top: 0;
+    transform: translateX(-110%);
+    transition: transform 0.35s ease-in;
 }
 
 .side-drawer-level-one li.open-sub-menu>.side-drawer-level-two {
     display: block;
+    transform: translateX(0);
 }
 
 .side-drawer-level-two li.open-sub-menu>.side-drawer-level-three {
     display: block;
+    transform: translateX(0);
 }
 
 .back-menu-link {
