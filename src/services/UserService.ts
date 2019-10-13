@@ -2,11 +2,7 @@ import ApiRequest from "./ApiRequest";
 import { AxiosResponse } from "axios";
 import { IUser, ILoginRequest, ILoginResponse } from "../settings/DataTypes";
 
-interface IUserService {
-  getCurrentUser(): Promise<AxiosResponse<IUser>>;
-  login(loginData: ILoginRequest): Promise<AxiosResponse<ILoginResponse>>;
-}
-export class UserService implements IUserService {
+export class UserService {
   private apiRequest = new ApiRequest();
 
   public async getCurrentUser(): Promise<AxiosResponse<IUser>> {

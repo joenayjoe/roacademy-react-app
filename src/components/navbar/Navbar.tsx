@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, ContextType } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Autocomplete from "../../components/autocomplete/Autocomplete";
 
@@ -20,6 +20,8 @@ import ToggleBar from "../../components/togglebar/ToggleBar";
 import { isLoggedIn } from "../../utils/authHelper";
 import { CourseService } from "../../services/CourseService";
 import { CookiesService } from "../../services/CookiesService";
+import { AuthContext } from "../../contexts/AuthContext";
+import Avatar from "../avatar/Avatar";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -37,6 +39,9 @@ interface IStates {
 class NavbarNew extends Component<IProbs, IStates> {
   private courseService: CourseService;
   private cookiesService: CookiesService;
+  static contextType = AuthContext;
+  context!: ContextType<typeof AuthContext>;
+
   constructor(props: IProbs) {
     super(props);
     this.state = {
@@ -129,11 +134,7 @@ class NavbarNew extends Component<IProbs, IStates> {
 
     let authLinks;
     if (isLoggedIn()) {
-      authLinks = (
-        <div className="login nav-link" onClick={this.handleLogOut}>
-          <button className="btn btn-outline-primary nav-btn">Log Out</button>
-        </div>
-      );
+      authLinks = <Avatar />;
     } else {
       authLinks = (
         <React.Fragment>
@@ -141,13 +142,13 @@ class NavbarNew extends Component<IProbs, IStates> {
             <button className="btn btn-outline-primary nav-btn">Log In</button>
           </div>
           <div className="signup nav-link" onClick={this.showSignupModal}>
-            <button className="btn btn-primary nav-btn">Sign Up </button>
+            <button className="btn btn-outline-primary nav-btn">Sign Up </button>
           </div>
         </React.Fragment>
       );
     }
     return (
-      <header className="shadow-sm bg-white rounded top-header">
+      <header className="bg-white rounded top-header">
         <nav className="navbar navbar-expand-md navbar-light nav-container">
           <ToggleBar
             classNames={hideForMobileSearch}

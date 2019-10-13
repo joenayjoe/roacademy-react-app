@@ -6,7 +6,7 @@ export class CookiesService {
     this.cookies = new Cookies();
   }
 
-  public get(name: string): Cookies {
+  public get(name: string): string {
     return this.cookies.get(name);
   }
 

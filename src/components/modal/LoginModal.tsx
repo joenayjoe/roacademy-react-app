@@ -1,14 +1,16 @@
-import React, { Component, FormEvent } from "react";
+import React, { Component, FormEvent, ContextType } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "./LoginModal.css";
-import Cookies from "universal-cookie";
 import { ILoginRequest, ModalIdentifier } from "../../settings/DataTypes";
 import Modal from "./Modal";
 import { withRouter, RouteComponentProps } from "react-router";
-import { parseError } from "../../utils/errorParser"
+import { parseError } from "../../utils/errorParser";
 import ErrorFlash from "../flash/ErrorFlash";
 import { UserService } from "../../services/UserService";
+import { getTokenExpirationDate } from "../../utils/authHelper";
+import { CookiesService } from "../../services/CookiesService";
+import { AuthContext } from "../../contexts/AuthContext";
 
 interface IProps extends RouteComponentProps {
   showSignupModalHandler: (modalIdentifier: ModalIdentifier) => void;
@@ -21,10 +23,16 @@ interface IStates {
 }
 class LoginModal extends Component<IProps, IStates> {
   private userService: UserService;
+  private cookiesService: CookiesService;
+  static contextType = AuthContext;
+  context!: ContextType<typeof AuthContext>;
+
   constructor(props: IProps) {
     super(props);
     this.userService = new UserService();
+    this.cookiesService = new CookiesService();
   }
+
   state: IStates = {
     email: "",
     password: "",
@@ -41,10 +49,16 @@ class LoginModal extends Component<IProps, IStates> {
     this.userService
       .login(formData)
       .then(response => {
-        const cookies = new Cookies();
-        cookies.set("accessToken", response.data.accessToken, { path: "/" });
-        cookies.set("tokenType", response.data.tokenType, { path: "/" });
+        this.cookiesService.set("accessToken", response.data.accessToken, {
+          path: "/",
+          expires: getTokenExpirationDate(response.data.accessToken)
+        });
+        this.cookiesService.set("tokenType", response.data.tokenType, {
+          path: "/",
+          expires: getTokenExpirationDate(response.data.accessToken)
+        });
         this.props.closeHandler();
+        this.context && this.context.updateAuthContext();
         this.props.history.push("/dashboard");
       })
       .catch(error => {
@@ -59,9 +73,9 @@ class LoginModal extends Component<IProps, IStates> {
 
   render() {
     const heading = "Login to Your Account";
-    let flashError;
+    let flashError: JSX.Element | undefined;
     if (this.state.errorMessages.length) {
-     flashError = <ErrorFlash errors={this.state.errorMessages} />;
+      flashError = <ErrorFlash errors={this.state.errorMessages} />;
     }
     return (
       <Modal
@@ -116,6 +130,7 @@ class LoginModal extends Component<IProps, IStates> {
                     placeholder="Email"
                     aria-label="Email"
                     aria-describedby="basic-addon1"
+                    autoFocus
                     required
                     onChange={e => this.handleOnChange(e)}
                   />

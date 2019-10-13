@@ -8,7 +8,7 @@ interface IProps {
   closeHandler: () => void;
   modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
 }
-class ModalSelector extends Component<IProps, {}> {
+class ModalSelector extends Component<IProps> {
   render() {
     const identifier = this.props.modalIdentifier;
     let modal: JSX.Element | null;

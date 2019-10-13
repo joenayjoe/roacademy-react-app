@@ -31,7 +31,6 @@ class UserDashboard extends Component<IProps, IStates> {
   }
 
   render() {
-    console.log(this.state.currentUser);
     let greeting;
     if(this.state.currentUser !== null) {
       greeting = <h1>Welcome {this.state.currentUser.firstName}</h1>;

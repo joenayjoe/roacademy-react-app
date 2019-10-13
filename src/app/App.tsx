@@ -20,14 +20,19 @@ import PageNotFound from "../pages/route/PageNotFound";
 import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
 import { isMobileOnly } from "react-device-detect";
+import { UserService } from "../services/UserService";
+import { AuthContextProvider } from "../contexts/AuthContext";
+import Profile from "../pages/profile/Profile";
+import UserCourse from "../pages/course/UserCourse";
 
-interface AppState {
+interface IStates {
   isSideDrawerOpen: boolean;
   currentModal: ModalIdentifier | null;
 }
 
-class App extends Component<{}, AppState> {
-  state: AppState = {
+class App extends Component<{}, IStates> {
+  private userService: UserService = new UserService();
+  state: IStates = {
     isSideDrawerOpen: false,
     currentModal: null
   };
@@ -67,43 +72,52 @@ class App extends Component<{}, AppState> {
         />
       );
     }
+
     return (
-      <BrowserRouter>
-        <ModalSelector
-          modalIdentifier={this.state.currentModal}
-          closeHandler={this.closeModal}
-          modalSwitcher={identifier => this.switchModal(identifier)}
-        />
+      <AuthContextProvider >
+        <BrowserRouter>
+          <ModalSelector
+            modalIdentifier={this.state.currentModal}
+            closeHandler={this.closeModal}
+            modalSwitcher={identifier => this.switchModal(identifier)}
+          />
 
-        <Navbar
-          drawerToggleHandler={this.handleDrawerToggle}
-          modalCloseHandler={this.closeModal}
-          modalSwitcher={identifier => this.switchModal(identifier)}
-        />
+          <Navbar
+            drawerToggleHandler={this.handleDrawerToggle}
+            modalCloseHandler={this.closeModal}
+            modalSwitcher={identifier => this.switchModal(identifier)}
+          />
 
-        {sideDrawer}
+          {sideDrawer}
 
-        <div className="content-wrapper width-75">
-          <Switch>
-            <PublicRoute exact path="/donation" component={Donation} />
-            <PublicRoute
-              path="/categories/:category_id/grades/:grade_id"
-              component={Grade}
-            />
-            <PublicRoute exact path="/courses/:course_id" component={Course} />
-            <PublicRoute
-              exact
-              path="/categories/:category_id"
-              component={Category}
-            />
-            <PublicRoute exact path="/search" component={SearchResult} />
-            <PublicRoute exact path="/" component={Home} />
-            <PrivateRoute exact path="/dashboard" component={UserDashboard} />
-            <PublicRoute component={PageNotFound} />
-          </Switch>
-        </div>
-        <Footer />
-      </BrowserRouter>
+          <div className="content-wrapper width-75">
+            <Switch>
+              <PublicRoute exact path="/donation" component={Donation} />
+              <PublicRoute
+                path="/categories/:category_id/grades/:grade_id"
+                component={Grade}
+              />
+              <PublicRoute
+                exact
+                path="/courses/:course_id"
+                component={Course}
+              />
+              <PublicRoute
+                exact
+                path="/categories/:category_id"
+                component={Category}
+              />
+              <PublicRoute exact path="/search" component={SearchResult} />
+              <PublicRoute exact path="/" component={Home} />
+              <PrivateRoute exact path="/dashboard" component={UserDashboard} />
+              <PrivateRoute exact path="/profile-settings" component={Profile} />
+              <PrivateRoute exact path="/user-courses" component={UserCourse} />
+              <PublicRoute component={PageNotFound} />
+            </Switch>
+          </div>
+          <Footer />
+        </BrowserRouter>
+      </AuthContextProvider>
     );
   }
 }

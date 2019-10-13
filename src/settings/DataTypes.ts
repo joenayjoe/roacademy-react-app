@@ -8,6 +8,14 @@ export enum ModalIdentifier {
 }
 
 export type MenuItemType = ICategory | IGrade | ICourse;
+export enum ButtonVariant {
+  PRIMARY = "btn btn-primary",
+  SECONDARY = "btn btn-secondary",
+  SUCCESS = "btn btn-success",
+  INFO = "btn btn-info",
+  WARNING = "btn btn-warning",
+  DANGER = "btn btn-danger"
+}
 
 export interface ILinkItem {
   id: number;
@@ -44,6 +52,7 @@ export interface IUser {
   id: number;
   firstName: string;
   lastName: string;
+  imageUrl: string;
   email: string;
   roles: IRole[];
   url: string;
@@ -52,6 +61,14 @@ export interface IUser {
 export interface IRole {
   id: number;
   name: string;
+}
+
+export interface ISignupRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export interface ILoginRequest {
@@ -69,4 +86,10 @@ export interface ISearchRequest {
 export interface IAutoSuggest {
   name: string;
   url: string;
+}
+
+export interface IToken {
+  sub: string;
+  exp: number;
+  iat: number;
 }

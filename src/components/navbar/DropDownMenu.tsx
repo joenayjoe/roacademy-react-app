@@ -317,7 +317,7 @@ class DropDownMenu extends Component<IProps, IStates> {
     let disPlayKlass = this.state.showLgScreenDropDownMenu ? "" : "d-none";
     return (
       <ul
-        className={`drop-down-list drop-down-list-level-one ${disPlayKlass}`}
+        className={`drop-down-list drop-down-list-level-one drop-down-list-arrow-left ${disPlayKlass}`}
         ref={node => (this.menuNode = node)}
       >
         {dropDownMenuItem}
@@ -329,8 +329,9 @@ class DropDownMenu extends Component<IProps, IStates> {
     return (
       <DropDown
         name="Categories"
+        classNames="drop-down-on-hover"
         showDropDown={this.state.showDropDownMenu}
-        icon="th-list"
+        icon={this.props.icon}
         dropDownBtnRef={this.menuBtnNode}
         handleMouseEnter={this.handleDropDownMouseEnter}
       >
