@@ -57,11 +57,11 @@ class DropDownMenu extends Component<IProps, IStates> {
     } else {
       url = "/categories/" + item.id;
     }
-    this.props.history.push(url);
     this.setState({
       showLgScreenDropDownMenu: false,
       showDropDownMenu: false
     });
+    this.props.history.push(url);
   };
 
   handleMenuItemMouseEnter = (item: MenuItemType) => {
@@ -154,24 +154,15 @@ class DropDownMenu extends Component<IProps, IStates> {
       this.setState(prevState => {
         return { showDropDownMenu: !prevState.showDropDownMenu };
       });
-      if (isMobile) {
-        this.setState({ showLgScreenDropDownMenu: true });
-      }
     } else if (!isMobile || (isMobile && !this.menuNode.contains(e.target))) {
       this.setState({ showDropDownMenu: false });
     }
   };
 
   componentDidMount() {
-    this.categoryService
-      .getCategories()
-      .then(response => {
-        this.setState({ categories: response.data });
-      })
-      .catch(error => {
-        // console.log("Error = ", error.response.data);
-      });
-
+    this.categoryService.getCategories().then(response => {
+      this.setState({ categories: response.data });
+    });
     document.addEventListener("mousedown", e => this.handleOnClick(e), false);
   }
 
@@ -187,7 +178,10 @@ class DropDownMenu extends Component<IProps, IStates> {
     let dropDownMenuItem = data.courses.map((item: ICourse) => {
       return (
         <li key={item.id} className="drop-down-list-item">
-          <div className="menu-link" onClick={() => this.handleMenuLinkClick(item)}>
+          <div
+            className="menu-link"
+            onClick={() => this.handleMenuLinkClick(item)}
+          >
             <span>{item.name}</span>
           </div>
         </li>

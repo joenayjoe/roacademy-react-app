@@ -1,35 +1,57 @@
-import React, { Component, ContextType } from "react";
+import React, { Component, ContextType, createRef } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { CookiesService } from "../../services/CookiesService";
 import { RouteComponentProps, withRouter } from "react-router";
-import { isMobile } from "react-device-detect";
-import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {}
 interface IStates {
-  isClicked: boolean;
+  showDropDown: boolean;
+  isMenuLinkClicked: boolean;
 }
 
 class Avatar extends Component<IProps, IStates> {
   static contextType = AuthContext;
   context!: ContextType<typeof AuthContext>;
   private cookiesService: CookiesService;
+
+  avatarNode: any = createRef();
+
   constructor(props: IProps) {
     super(props);
     this.cookiesService = new CookiesService();
     this.state = {
-      isClicked: false
+      showDropDown: false,
+      isMenuLinkClicked: false
     };
   }
 
-  handleOnClick = () => {
-    if (isMobile) {
+  componentDidMount() {
+    document.addEventListener("click", e => this.toogleShowAvatarDropDown(e), false);
+  }
+  componentWillUnmount() {
+    document.removeEventListener(
+      "click",
+      e => this.toogleShowAvatarDropDown(e),
+      false
+    );
+  }
+
+  toogleShowAvatarDropDown = (e: Event) => {
+    if (this.avatarNode.contains(e.target)) {
       this.setState(prevState => {
-        return { isClicked: !prevState.isClicked };
+        return {
+          showDropDown: !prevState.showDropDown,
+          isMenuLinkClicked: false
+        };
       });
     } else {
-      this.props.history.push("/profile-settings");
+      this.setState({ showDropDown: false });
     }
+  };
+
+  handleMenuLinkClick = (url: string) => {
+    this.setState({ showDropDown: false, isMenuLinkClicked: true });
+    this.props.history.push(url);
   };
 
   handleLogout = () => {
@@ -57,21 +79,36 @@ class Avatar extends Component<IProps, IStates> {
       }
     }
 
-    let openKlass = this.state.isClicked ? "open" : "";
+    let openKlass = this.state.showDropDown ? "open" : "";
+    let hideMenu = this.state.isMenuLinkClicked ? "d-none" : "";
     return (
       <div
         className={`nav-item user-avatar drop-down drop-down-on-hover ${openKlass}`}
         style={{ width: "48px", height: "48px" }}
+        onMouseEnter={() => this.setState({ isMenuLinkClicked: false })}
       >
-        <div className="nav-link" onClick={this.handleOnClick}>
+        <div className="nav-link" ref={node => (this.avatarNode = node)}>
           {userAvatar}
         </div>
-        <ul className="drop-down-list drop-down-list-arrow-right drop-down-right">
+
+        <ul
+          className={`drop-down-list drop-down-list-arrow-right drop-down-right ${hideMenu}`}
+        >
           <li className="drop-down-list-item">
-            <Link to="user-courses" className="menu-link">My Courses</Link>
+            <div
+              className="menu-link"
+              onClick={e => this.handleMenuLinkClick("/user-courses")}
+            >
+              My Courses
+            </div>
           </li>
           <li className="drop-down-list-item">
-            <Link to="/profile-settings" className="menu-link">My Profile</Link>
+            <div
+              className="menu-link"
+              onClick={e => this.handleMenuLinkClick("/profile-settings")}
+            >
+              My Profile
+            </div>
           </li>
           <li className="drop-down-list-item  border-top">
             <div className="menu-link">Help</div>
