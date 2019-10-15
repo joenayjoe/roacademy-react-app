@@ -21,7 +21,7 @@ import { isLoggedIn } from "../../utils/authHelper";
 import { CourseService } from "../../services/CourseService";
 import { CookiesService } from "../../services/CookiesService";
 import { AuthContext } from "../../contexts/AuthContext";
-import Avatar from "../avatar/Avatar";
+import UserDropDown from "../avatar/UserDropDown";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -134,7 +134,7 @@ class NavbarNew extends Component<IProbs, IStates> {
 
     let authLinks;
     if (isLoggedIn()) {
-      authLinks = <Avatar />;
+      authLinks = <UserDropDown />;
     } else {
       authLinks = (
         <React.Fragment>
@@ -142,7 +142,9 @@ class NavbarNew extends Component<IProbs, IStates> {
             <button className="btn btn-outline-primary nav-btn">Log In</button>
           </div>
           <div className="signup nav-link" onClick={this.showSignupModal}>
-            <button className="btn btn-outline-primary nav-btn">Sign Up </button>
+            <button className="btn btn-outline-primary nav-btn">
+              Sign Up{" "}
+            </button>
           </div>
         </React.Fragment>
       );

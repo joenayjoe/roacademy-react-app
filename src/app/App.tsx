@@ -22,8 +22,9 @@ import UserDashboard from "../pages/dashboard/UserDashboard";
 import { isMobileOnly } from "react-device-detect";
 import { UserService } from "../services/UserService";
 import { AuthContextProvider } from "../contexts/AuthContext";
-import Profile from "../pages/profile/Profile";
+import Profile from "../pages/user/Profile";
 import UserCourse from "../pages/course/UserCourse";
+import Account from "../pages/user/Account";
 
 interface IStates {
   isSideDrawerOpen: boolean;
@@ -110,7 +111,8 @@ class App extends Component<{}, IStates> {
               <PublicRoute exact path="/search" component={SearchResult} />
               <PublicRoute exact path="/" component={Home} />
               <PrivateRoute exact path="/dashboard" component={UserDashboard} />
-              <PrivateRoute exact path="/profile-settings" component={Profile} />
+              <PrivateRoute exact path="/user/account-settings" component={Account} />
+              <PrivateRoute exact path="/user/profile-settings" component={Profile} />
               <PrivateRoute exact path="/user-courses" component={UserCourse} />
               <PublicRoute component={PageNotFound} />
             </Switch>

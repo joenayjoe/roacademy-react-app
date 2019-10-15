@@ -60,6 +60,16 @@ input[type="search"]::-webkit-search-results-decoration {
     margin: 0 auto;
 }
 
+.user-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(104, 111, 122);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+}
+
 @keyframes animatetop {
     from {
         top: -300px;
