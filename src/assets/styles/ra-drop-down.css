@@ -55,7 +55,7 @@
 }
 
 .drop-down-list .back-menu-link {
-    background-color: #f2f3f5;
+    background-color: #f8f8f1;
     color: #686f7a;
     padding: 1rem;
     cursor: pointer;
@@ -71,6 +71,7 @@
     cursor: pointer;
     padding-right: 0.75rem;
     color: #29303b;
+    align-items: center;
 }
 
 .drop-down-list-arrow-left:before {

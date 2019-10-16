@@ -5,6 +5,7 @@
     background: rgba(41, 48, 59, .8);
     opacity: 1;
     z-index: 200;
+    cursor: pointer;
 }
 
 .side-drawer {
@@ -16,7 +17,7 @@
     width: 75%;
     max-width: 400px;
     z-index: 201;
-    transform: translateX(-110%);
+    transform: translateX(-122%);
     transition: transform 0.5s ease-in-out;
 }
 
@@ -34,7 +35,7 @@
 }
 
 .side-drawer ul li {
-    padding: 0.75rem 0 0.75rem 1rem;
+    padding: 0.5rem 0 0.5rem 1rem;
 }
 
 .side-drawer ul li .menu-link {
@@ -42,10 +43,11 @@
     display: flex;
     justify-content: space-between;
     padding-right: 1rem;
+    align-items: center;
 }
 
 .auth-link {
-    padding: 1rem 0 1rem 1rem;
+    padding-left: 1rem;
     color: rgb(11, 145, 168);
     font-weight: bold;
     cursor: pointer;
@@ -58,7 +60,7 @@
     left: 0;
     top: 0;
     transform: translateX(-110%);
-    transition: transform 0.35s ease-in;
+    transition: transform 0.5s ease-in-out;
 }
 
 .side-drawer-level-one li.open-sub-menu>.side-drawer-level-two {
@@ -72,9 +74,18 @@
 }
 
 .back-menu-link {
-    background-color: #f2f3f5;
+    background-color: #f8f8f1;
     color: #686f7a;
-    padding: 1rem;
+    cursor: pointer;
+    padding: 17px 0 16px 16px !important;
+    align-items: center;
+}
+
+.side-drawer-close-btn {
+    top: 12%;
+    right: -20%;
+    position: fixed;
+    z-index: 201;
     cursor: pointer;
 }
 

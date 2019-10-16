@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, ContextType } from "react";
 import {
   ICategory,
   IGrade,
@@ -13,9 +13,16 @@ import { AxiosError } from "axios";
 import { RouteComponentProps, withRouter } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
-import { isLoggedIn } from "../../utils/authHelper";
+import {
+  isLoggedIn,
+  getUserFullName,
+  getUserEmail,
+  getUserNameInitials
+} from "../../utils/authHelper";
 import { CookiesService } from "../../services/CookiesService";
 import { isGrade, isCourse } from "../../utils/typeChecker";
+import { AuthContext } from "../../contexts/AuthContext";
+import Avatar from "../avatar/Avatar";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -28,12 +35,16 @@ interface IStates {
   categories: ICategory[];
   levelTwoParent: string | null;
   selectedMenuItem: string | null;
+  showAuthLinks: boolean;
 }
 
 class SideDrawerNew extends Component<IProps, IStates> {
   private categoryService: CategoryService;
   private gradeService: GradeService;
   private cookiesService: CookiesService;
+  static contextType = AuthContext;
+  context!: ContextType<typeof AuthContext>;
+
   constructor(props: IProps) {
     super(props);
     this.categoryService = new CategoryService();
@@ -43,7 +54,8 @@ class SideDrawerNew extends Component<IProps, IStates> {
     this.state = {
       categories: [],
       levelTwoParent: null,
-      selectedMenuItem: null
+      selectedMenuItem: null,
+      showAuthLinks: false
     };
   }
 
@@ -70,18 +82,18 @@ class SideDrawerNew extends Component<IProps, IStates> {
     this.showSignupModal();
   };
 
-  getGradesForCategory(category:ICategory) {
-    if(category.catched === undefined || !category.catched) {
+  getGradesForCategory(category: ICategory) {
+    if (category.catched === undefined || !category.catched) {
       this.gradeService.getGradesForCategory(category.id).then(resp => {
         let categories = this.state.categories.map(cat => {
-          if(cat.id === category.id) {
+          if (cat.id === category.id) {
             cat.grades = resp.data;
             cat.catched = true;
           }
           return cat;
-        })
-        this.setState({categories: categories});
-      })
+        });
+        this.setState({ categories: categories });
+      });
     }
   }
   getCoursesForGrade(grade: IGrade) {
@@ -108,9 +120,9 @@ class SideDrawerNew extends Component<IProps, IStates> {
   }
 
   handleMenuLinkClick = (item: MenuItemType) => {
-    if(isCourse(item)) {
+    if (isCourse(item)) {
       this.loadPage(item);
-    }else if (isGrade(item)) {
+    } else if (isGrade(item)) {
       const grade = item as IGrade;
       let parent: ICategory | null = null;
       for (let cat of this.state.categories) {
@@ -137,6 +149,10 @@ class SideDrawerNew extends Component<IProps, IStates> {
     });
   };
 
+  handleAvatarBackBtnClick = () => {
+    this.setState({ showAuthLinks: false });
+  };
+
   handleDonateLinkClick = () => {
     this.props.backdropClickHandler();
     this.props.history.push("/donation");
@@ -146,19 +162,20 @@ class SideDrawerNew extends Component<IProps, IStates> {
     this.cookiesService.remove("accessToken");
     this.cookiesService.remove("tokenType");
     this.props.backdropClickHandler();
+    this.context && this.context.updateAuthContext();
     this.props.history.push("/");
   };
 
   getBackButtonLink = (data: MenuItemType) => {
     return (
       <li
-        key="back-l-2"
         className="back-menu-link"
+        key="back-l-2"
         onClick={() => this.handleBackBtnClick(data)}
       >
         <div>
           <FontAwesomeIcon icon="angle-left" />
-          <span> {data.name} </span>
+          <span className="ml-2"> {data.name} </span>
         </div>
       </li>
     );
@@ -182,6 +199,10 @@ class SideDrawerNew extends Component<IProps, IStates> {
     );
   };
 
+  handleAvatarMenuClick = () => {
+    this.setState({ showAuthLinks: true });
+  };
+
   loadPage(item: MenuItemType) {
     let url: string;
 
@@ -201,7 +222,10 @@ class SideDrawerNew extends Component<IProps, IStates> {
     const levelThreeMenuItems = grade.courses.map(course => {
       return (
         <li key={course.url}>
-          <div className="menu-link" onClick={() => this.handleMenuLinkClick(course)}>
+          <div
+            className="menu-link"
+            onClick={() => this.handleMenuLinkClick(course)}
+          >
             {course.name}
           </div>
         </li>
@@ -244,6 +268,117 @@ class SideDrawerNew extends Component<IProps, IStates> {
     );
   };
 
+  handleAuthenticatedUserLinkClick = (url: string) => {
+    this.props.backdropClickHandler();
+    this.props.history.push(url);
+  };
+
+  getAuthenticatedUserLinks = () => {
+    return (
+      <ul className="side-drawer-level-two">
+        <li className="back-menu-link" onClick={this.handleAvatarBackBtnClick}>
+          <div>
+            <FontAwesomeIcon icon="angle-left" />
+            <span className="ml-2"> Menu </span>
+          </div>
+        </li>
+        <li>
+          <div
+            className="menu-link"
+            onClick={() =>
+              this.handleAuthenticatedUserLinkClick("/user/profile-settings")
+            }
+          >
+            Edit Profile
+          </div>
+        </li>
+        <li>
+          <div
+            className="menu-link"
+            onClick={() =>
+              this.handleAuthenticatedUserLinkClick("/user/account-settings")
+            }
+          >
+            Edit Account
+          </div>
+        </li>
+        <li className="dropdown-divider"></li>
+        <li>
+          <div className="menu-link">Help</div>
+        </li>
+        <li>
+          <div className="menu-link" onClick={() => this.handleLogOut}>
+            Signout
+          </div>
+        </li>
+      </ul>
+    );
+  };
+
+  getAuthLinks = () => {
+    let authLink;
+    if (isLoggedIn()) {
+      let userAvatar;
+      let userName = getUserFullName(this.context);
+      let userEmail = getUserEmail(this.context);
+      let userInitials = getUserNameInitials(this.context);
+      let avatarStyle = { width: "48px", height: "48px" };
+      if (this.context && this.context.currentUser) {
+        if (this.context.currentUser.imageUrl) {
+          userAvatar = (
+            <img src={this.context.currentUser.imageUrl} alt={userName} />
+          );
+        } else {
+          userAvatar = (
+            <span className="user-avatar-initials">{userInitials}</span>
+          );
+        }
+      }
+
+      let openKlass = this.state.showAuthLinks ? "open-sub-menu" : "";
+      authLink = (
+        <React.Fragment>
+          <li className={`${openKlass}`} style={{backgroundColor: "#f8f8f1"}}>
+            <div className="menu-link" onClick={this.handleAvatarMenuClick}>
+              <Avatar styles={avatarStyle}>{userAvatar}</Avatar>
+              <span className="ml-2">
+                <span>{userName}</span> <br />
+                <small className="text-secondary">{userEmail}</small>
+              </span>
+              {this.getExpander()}
+            </div>
+            {this.getAuthenticatedUserLinks()}
+          </li>
+          <li>
+            <div className="mb-2">
+              <strong>Learn</strong>
+            </div>
+            <div
+              className="menu-link"
+              onClick={() =>
+                this.handleAuthenticatedUserLinkClick("/user-courses")
+              }
+            >
+              <span>My Courses</span>
+            </div>
+          </li>
+          <li className="dropdown-divider"></li>
+        </React.Fragment>
+      );
+    } else {
+      authLink = (
+        <li
+          key="auth-link"
+          className="auth-link border-bottom"
+          onClick={this.handleSignUpClick}
+        >
+          <div>Sign Up / Log In</div>
+        </li>
+      );
+    }
+    return authLink;
+  };
+
   getLevelOneMenuItems(categories: ICategory[]) {
     const levelOneMenuItems = categories.map(category => {
       let openKlass =
@@ -266,37 +401,14 @@ class SideDrawerNew extends Component<IProps, IStates> {
       );
     });
 
-    let authLink;
-
-    if (isLoggedIn()) {
-      authLink = (
-        <li
-          key="auth-link"
-          className="auth-link border-bottom"
-          onClick={this.handleLogOut}
-        >
-          <div>Log Out</div>
-        </li>
-      );
-    } else {
-      authLink = (
-        <li
-          key="auth-link"
-          className="auth-link border-bottom"
-          onClick={this.handleSignUpClick}
-        >
-          <div>Sign Up / Log In</div>
-        </li>
-      );
-    }
-
     return (
       <ul className="side-drawer-level-one">
-        {authLink}
+        {this.getAuthLinks()}
         {levelOneMenuItems}
+        <li className="dropdown-divider"></li>
         <li
           key="donate-link"
-          className="auth-link border-top"
+          className="auth-link pt-0"
           onClick={this.handleDonateLinkClick}
         >
           <div>
@@ -325,6 +437,12 @@ class SideDrawerNew extends Component<IProps, IStates> {
         {sideDrawerBackdrop}
         <div className={`side-drawer ${openKlass}`}>
           {this.getLevelOneMenuItems(this.state.categories)}
+          <div
+            className="side-drawer-close-btn"
+            onClick={this.props.backdropClickHandler}
+          >
+            <FontAwesomeIcon icon="times-circle" size="3x" color="#fff" />
+          </div>
         </div>
       </React.Fragment>
     );

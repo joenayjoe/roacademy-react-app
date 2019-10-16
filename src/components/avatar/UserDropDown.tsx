@@ -47,6 +47,7 @@ class UserDropDown extends Component<IProps, IStates> {
   }
 
   toogleShowAvatarDropDown = (e: Event) => {
+    if (this.avatarNode.current === null) return;
     if (this.avatarNode.current.contains(e.target)) {
       this.setState(prevState => {
         return {
@@ -67,6 +68,7 @@ class UserDropDown extends Component<IProps, IStates> {
   handleLogout = () => {
     this.cookiesService.remove("accessToken");
     this.cookiesService.remove("tokenType");
+    this.context && this.context.updateAuthContext();
     this.props.history.push("/");
   };
   render() {
@@ -105,7 +107,7 @@ class UserDropDown extends Component<IProps, IStates> {
         <ul
           className={`drop-down-list drop-down-list-arrow-right drop-down-right ${hideMenu}`}
         >
-          <li className="drop-down-list-item">
+          <li className="drop-down-list-item mt-2">
             <div
               className="menu-link"
               onClick={e => this.handleMenuLinkClick("/user/profile-settings")}
@@ -125,15 +127,25 @@ class UserDropDown extends Component<IProps, IStates> {
               My Courses
             </div>
           </li>
+          <li className="dropdown-divider"></li>
+          <li className="drop-down-list-item">
+            <div
+              className="menu-link"
+              onClick={e => this.handleMenuLinkClick("/user/profile-settings")}
+            >
+              Edit Profile
+            </div>
+          </li>
           <li className="drop-down-list-item">
             <div
               className="menu-link"
               onClick={e => this.handleMenuLinkClick("/user/account-settings")}
             >
-              My Account
+              Edit Account
             </div>
           </li>
-          <li className="drop-down-list-item  border-top">
+          <li className="dropdown-divider"></li>
+          <li className="drop-down-list-item ">
             <div className="menu-link">Help</div>
           </li>
           <li className="drop-down-list-item">

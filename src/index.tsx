@@ -23,7 +23,8 @@ import {
   faEnvelope,
   faLock,
   faUser,
-  faTimes
+  faTimes,
+  faTimesCircle
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -48,7 +49,8 @@ library.add(
   faEnvelope,
   faLock,
   faUser,
-  faTimes
+  faTimes,
+  faTimesCircle
 );
 
 ReactDOM.render(<App />, document.getElementById("root"));

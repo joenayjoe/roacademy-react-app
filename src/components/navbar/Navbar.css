@@ -35,15 +35,6 @@
      display: none;
  }
  
- .user-avatar {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     background-color: rgb(104, 111, 122);
-     border-radius: 50%;
-     color: #fff;
- }
- 
  @media only screen and (max-width: 414px) {
      #side-drawer-toggler {
          display: initial;

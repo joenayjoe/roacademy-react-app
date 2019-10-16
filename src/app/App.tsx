@@ -19,7 +19,7 @@ import PrivateRoute from "../pages/route/PrivateRoute";
 import PageNotFound from "../pages/route/PageNotFound";
 import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
-import { isMobileOnly } from "react-device-detect";
+import { isMobile } from "react-device-detect";
 import { UserService } from "../services/UserService";
 import { AuthContextProvider } from "../contexts/AuthContext";
 import Profile from "../pages/user/Profile";
@@ -63,7 +63,7 @@ class App extends Component<{}, IStates> {
 
   render() {
     let sideDrawer;
-    if (isMobileOnly) {
+    if (isMobile) {
       sideDrawer = (
         <SideDrawer
           isOpen={this.state.isSideDrawerOpen}

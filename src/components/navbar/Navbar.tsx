@@ -1,4 +1,4 @@
-import React, { Component, ContextType } from "react";
+import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Autocomplete from "../../components/autocomplete/Autocomplete";
 
@@ -20,7 +20,6 @@ import ToggleBar from "../../components/togglebar/ToggleBar";
 import { isLoggedIn } from "../../utils/authHelper";
 import { CourseService } from "../../services/CourseService";
 import { CookiesService } from "../../services/CookiesService";
-import { AuthContext } from "../../contexts/AuthContext";
 import UserDropDown from "../avatar/UserDropDown";
 
 interface IProbs extends RouteComponentProps {
@@ -39,9 +38,6 @@ interface IStates {
 class NavbarNew extends Component<IProbs, IStates> {
   private courseService: CourseService;
   private cookiesService: CookiesService;
-  static contextType = AuthContext;
-  context!: ContextType<typeof AuthContext>;
-
   constructor(props: IProbs) {
     super(props);
     this.state = {
