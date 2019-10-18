@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import { isLoggedIn } from "../../utils/authHelper";
+import AuthService from "../../services/AuthService";
 
 interface IProps extends RouteProps {
   component: any;
@@ -8,20 +8,27 @@ interface IProps extends RouteProps {
 }
 
 class PublicRoute extends Component<IProps, {}> {
+  private authService: AuthService;
+  constructor(props: IProps) {
+    super(props);
+    this.authService = new AuthService();
+  }
   render() {
     const { component: Component, restricted, ...rest } = this.props;
     return (
       <Route
         {...rest}
         render={props =>
-          isLoggedIn() && restricted ? (
-            <Redirect to={{
-              pathname: "/",
-              state: {
-                from: props.location,
-                message: "Access denied"
-              }
-            }} />
+          this.authService.isLoggedIn() && restricted ? (
+            <Redirect
+              to={{
+                pathname: "/",
+                state: {
+                  from: props.location,
+                  message: "Access denied"
+                }
+              }}
+            />
           ) : (
             <Component
               key={`${props.location.pathname} ${props.location.search}`}

@@ -13,16 +13,10 @@ import { AxiosError } from "axios";
 import { RouteComponentProps, withRouter } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
-import {
-  isLoggedIn,
-  getUserFullName,
-  getUserEmail,
-  getUserNameInitials
-} from "../../utils/authHelper";
-import { CookiesService } from "../../services/CookiesService";
 import { isGrade, isCourse } from "../../utils/typeChecker";
 import { AuthContext } from "../../contexts/AuthContext";
 import Avatar from "../avatar/Avatar";
+import AuthService from "../../services/AuthService";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -41,7 +35,7 @@ interface IStates {
 class SideDrawerNew extends Component<IProps, IStates> {
   private categoryService: CategoryService;
   private gradeService: GradeService;
-  private cookiesService: CookiesService;
+  private authService: AuthService;
   static contextType = AuthContext;
   context!: ContextType<typeof AuthContext>;
 
@@ -49,7 +43,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
     super(props);
     this.categoryService = new CategoryService();
     this.gradeService = new GradeService();
-    this.cookiesService = new CookiesService();
+    this.authService = new AuthService();
 
     this.state = {
       categories: [],
@@ -159,8 +153,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
   };
 
   handleLogOut = () => {
-    this.cookiesService.remove("accessToken");
-    this.cookiesService.remove("tokenType");
+    this.authService.logout();
     this.props.backdropClickHandler();
     this.context && this.context.updateAuthContext();
     this.props.history.push("/");
@@ -307,7 +300,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
           <div className="menu-link">Help</div>
         </li>
         <li>
-          <div className="menu-link" onClick={() => this.handleLogOut}>
+          <div className="menu-link" onClick={this.handleLogOut}>
             Signout
           </div>
         </li>
@@ -317,11 +310,11 @@ class SideDrawerNew extends Component<IProps, IStates> {
 
   getAuthLinks = () => {
     let authLink;
-    if (isLoggedIn()) {
+    if (this.authService.isLoggedIn()) {
       let userAvatar;
-      let userName = getUserFullName(this.context);
-      let userEmail = getUserEmail(this.context);
-      let userInitials = getUserNameInitials(this.context);
+      let userName = this.authService.getUserFullName(this.context);
+      let userEmail = this.authService.getUserEmail(this.context);
+      let userInitials = this.authService.getUserNameInitials(this.context);
       let avatarStyle = { width: "48px", height: "48px" };
       if (this.context && this.context.currentUser) {
         if (this.context.currentUser.imageUrl) {
@@ -338,7 +331,7 @@ class SideDrawerNew extends Component<IProps, IStates> {
       let openKlass = this.state.showAuthLinks ? "open-sub-menu" : "";
       authLink = (
         <React.Fragment>
-          <li className={`${openKlass}`} style={{backgroundColor: "#f8f8f1"}}>
+          <li className={`${openKlass}`} style={{ backgroundColor: "#f8f8f1" }}>
             <div className="menu-link" onClick={this.handleAvatarMenuClick}>
               <Avatar styles={avatarStyle}>{userAvatar}</Avatar>
               <span className="ml-2">

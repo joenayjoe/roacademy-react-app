@@ -17,10 +17,9 @@ import {
   ISearchRequest
 } from "../../settings/DataTypes";
 import ToggleBar from "../../components/togglebar/ToggleBar";
-import { isLoggedIn } from "../../utils/authHelper";
 import { CourseService } from "../../services/CourseService";
-import { CookiesService } from "../../services/CookiesService";
 import UserDropDown from "../avatar/UserDropDown";
+import AuthService from "../../services/AuthService";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -35,9 +34,9 @@ interface IStates {
   searchQuery: string;
 }
 
-class NavbarNew extends Component<IProbs, IStates> {
+class Navbar extends Component<IProbs, IStates> {
   private courseService: CourseService;
-  private cookiesService: CookiesService;
+  private authService: AuthService;
   constructor(props: IProbs) {
     super(props);
     this.state = {
@@ -47,7 +46,7 @@ class NavbarNew extends Component<IProbs, IStates> {
       searchQuery: ""
     };
     this.courseService = new CourseService();
-    this.cookiesService = new CookiesService();
+    this.authService = new AuthService();
   }
 
   handleAutoCompleteOnChange = (query: string) => {
@@ -89,8 +88,7 @@ class NavbarNew extends Component<IProbs, IStates> {
   };
 
   handleLogOut = () => {
-    this.cookiesService.remove("accessToken");
-    this.cookiesService.remove("tokenType");
+    this.authService.logout();
     this.props.history.push("/");
   };
 
@@ -129,7 +127,7 @@ class NavbarNew extends Component<IProbs, IStates> {
     }
 
     let authLinks;
-    if (isLoggedIn()) {
+    if (this.authService.isLoggedIn()) {
       authLinks = <UserDropDown />;
     } else {
       authLinks = (
@@ -222,4 +220,4 @@ class NavbarNew extends Component<IProbs, IStates> {
   }
 }
 
-export default withRouter(NavbarNew);
+export default withRouter(Navbar);

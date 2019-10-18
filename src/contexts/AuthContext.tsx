@@ -1,7 +1,6 @@
 import React, { createContext, Component } from "react";
 import { IUser } from "../settings/DataTypes";
-import { isLoggedIn } from "../utils/authHelper";
-import { UserService } from "../services/UserService";
+import AuthService from "../services/AuthService";
 
 interface IStates {
   isAuthenticated: boolean;
@@ -19,10 +18,10 @@ export const Provider = AuthContext.Provider;
 export const AuthContextConsumer = AuthContext.Consumer;
 
 export class AuthContextProvider extends Component<IProps, IStates> {
-  private userService: UserService;
+  private authService: AuthService;
   constructor(props: IProps) {
     super(props);
-    this.userService = new UserService();
+    this.authService = new AuthService();
 
     this.state = {
       isAuthenticated: false,
@@ -31,20 +30,26 @@ export class AuthContextProvider extends Component<IProps, IStates> {
   }
 
   componentDidMount() {
-      this.updateContext();
+    this.updateContext();
   }
 
   updateAuthContext = (): void => {
-      this.updateContext();
+    this.updateContext();
   };
 
   updateContext = () => {
-    if (isLoggedIn()) {
-      this.userService.getCurrentUser().then(resp => {
-        this.setState({ isAuthenticated: true, currentUser: resp.data });
-      });
+    if (this.authService.isLoggedIn()) {
+      let lastAuthUser = this.authService.getLastAuthUserFromCookies();
+      if (lastAuthUser !== undefined) {
+        this.setState({ isAuthenticated: true, currentUser: lastAuthUser });
+      } else {
+        this.authService.getCurrentUser().then(resp => {
+          this.authService.setAuthUserCookies(resp.data);
+          this.setState({ isAuthenticated: true, currentUser: resp.data });
+        });
+      }
     } else {
-        this.setState({isAuthenticated: false, currentUser: null})
+      this.setState({ isAuthenticated: false, currentUser: null });
     }
   };
 

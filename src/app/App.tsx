@@ -20,7 +20,6 @@ import PageNotFound from "../pages/route/PageNotFound";
 import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
 import { isMobile } from "react-device-detect";
-import { UserService } from "../services/UserService";
 import { AuthContextProvider } from "../contexts/AuthContext";
 import Profile from "../pages/user/Profile";
 import UserCourse from "../pages/course/UserCourse";
@@ -32,7 +31,6 @@ interface IStates {
 }
 
 class App extends Component<{}, IStates> {
-  private userService: UserService = new UserService();
   state: IStates = {
     isSideDrawerOpen: false,
     currentModal: null

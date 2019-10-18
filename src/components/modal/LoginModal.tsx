@@ -7,9 +7,7 @@ import Modal from "./Modal";
 import { withRouter, RouteComponentProps } from "react-router";
 import { parseError } from "../../utils/errorParser";
 import ErrorFlash from "../flash/ErrorFlash";
-import { UserService } from "../../services/UserService";
-import { getTokenExpirationDate } from "../../utils/authHelper";
-import { CookiesService } from "../../services/CookiesService";
+import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
 
 interface IProps extends RouteComponentProps {
@@ -22,15 +20,13 @@ interface IStates {
   errorMessages: string[];
 }
 class LoginModal extends Component<IProps, IStates> {
-  private userService: UserService;
-  private cookiesService: CookiesService;
+  private authService: AuthService;
   static contextType = AuthContext;
   context!: ContextType<typeof AuthContext>;
 
   constructor(props: IProps) {
     super(props);
-    this.userService = new UserService();
-    this.cookiesService = new CookiesService();
+    this.authService = new AuthService();
   }
 
   state: IStates = {
@@ -46,17 +42,13 @@ class LoginModal extends Component<IProps, IStates> {
       email: this.state.email,
       password: this.state.password
     };
-    this.userService
+    this.authService
       .login(formData)
       .then(response => {
-        this.cookiesService.set("accessToken", response.data.accessToken, {
-          path: "/",
-          expires: getTokenExpirationDate(response.data.accessToken)
-        });
-        this.cookiesService.set("tokenType", response.data.tokenType, {
-          path: "/",
-          expires: getTokenExpirationDate(response.data.accessToken)
-        });
+        this.authService.setAuthCookies(
+          response.data.accessToken,
+          response.data.tokenType
+        );
         this.props.closeHandler();
         this.context && this.context.updateAuthContext();
         this.props.history.push("/dashboard");

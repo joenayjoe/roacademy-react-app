@@ -1,13 +1,8 @@
 import React, { Component, ContextType, createRef } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { CookiesService } from "../../services/CookiesService";
 import { RouteComponentProps, withRouter } from "react-router";
-import {
-  getUserFullName,
-  getUserNameInitials,
-  getUserEmail
-} from "../../utils/authHelper";
 import Avatar from "./Avatar";
+import AuthService from "../../services/AuthService";
 
 interface IProps extends RouteComponentProps {}
 interface IStates {
@@ -18,13 +13,13 @@ interface IStates {
 class UserDropDown extends Component<IProps, IStates> {
   static contextType = AuthContext;
   context!: ContextType<typeof AuthContext>;
-  private cookiesService: CookiesService;
+  private authService: AuthService;
 
   avatarNode: any = createRef();
 
   constructor(props: IProps) {
     super(props);
-    this.cookiesService = new CookiesService();
+    this.authService = new AuthService();
     this.state = {
       showDropDown: false,
       isMenuLinkClicked: false
@@ -66,16 +61,15 @@ class UserDropDown extends Component<IProps, IStates> {
   };
 
   handleLogout = () => {
-    this.cookiesService.remove("accessToken");
-    this.cookiesService.remove("tokenType");
+    this.authService.logout();
     this.context && this.context.updateAuthContext();
     this.props.history.push("/");
   };
   render() {
     let userAvatar;
-    let userName = getUserFullName(this.context);
-    let userEmail = getUserEmail(this.context);
-    let userInitials = getUserNameInitials(this.context);
+    let userName = this.authService.getUserFullName(this.context);
+    let userEmail = this.authService.getUserEmail(this.context);
+    let userInitials = this.authService.getUserNameInitials(this.context);
     let avatarStyle = { width: "48px", height: "48px" };
     if (this.context && this.context.currentUser) {
       if (this.context.currentUser.imageUrl) {
