@@ -13,6 +13,7 @@ import { withRouter, RouteComponentProps } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
 import { isGrade, isCourse } from "../../utils/typeChecker";
+import Spinner from "../spinner/Spinner";
 
 interface IProps extends RouteComponentProps {
   displayName: string;
@@ -25,6 +26,8 @@ interface IStates {
   levelTwoParent: string | null;
   categories: ICategory[];
   showLgScreenDropDownMenu: boolean;
+  isLoadingGrade: boolean;
+  isLoadingCourse: boolean;
 }
 
 class DropDownMenu extends Component<IProps, IStates> {
@@ -40,7 +43,9 @@ class DropDownMenu extends Component<IProps, IStates> {
     selectedMenuItem: null,
     levelTwoParent: null,
     categories: [],
-    showLgScreenDropDownMenu: false
+    showLgScreenDropDownMenu: false,
+    isLoadingGrade: false,
+    isLoadingCourse: false
   };
 
   menuBtnNode: any = createRef();
@@ -110,6 +115,7 @@ class DropDownMenu extends Component<IProps, IStates> {
 
   fetchGradesForCategory(category: ICategory) {
     if (category.catched === undefined || !category.catched) {
+      this.setState({ isLoadingGrade: true });
       this.gradeService.getGradesForCategory(category.id).then(resp => {
         let categories = this.state.categories.map(cat => {
           if (cat.id === category.id) {
@@ -118,12 +124,13 @@ class DropDownMenu extends Component<IProps, IStates> {
           }
           return cat;
         });
-        this.setState({ categories: categories });
+        this.setState({ categories: categories, isLoadingGrade: false });
       });
     }
   }
   fetchCoursesForGrade(grade: IGrade) {
     if (grade.catched === undefined || !grade.catched) {
+      this.setState({ isLoadingCourse: true });
       this.gradeService
         .getCoursesForGrade(grade.categoryId, grade.id)
         .then(resp => {
@@ -140,7 +147,7 @@ class DropDownMenu extends Component<IProps, IStates> {
             return cat;
           });
 
-          this.setState({ categories: categories });
+          this.setState({ categories: categories, isLoadingCourse: false });
         });
     }
   }
@@ -207,7 +214,7 @@ class DropDownMenu extends Component<IProps, IStates> {
             <span>All {data.name}</span>
           </div>
         </li>
-        {dropDownMenuItem}
+        {this.state.isLoadingCourse ? <Spinner /> : dropDownMenuItem}
       </ul>
     );
   }
@@ -266,7 +273,7 @@ class DropDownMenu extends Component<IProps, IStates> {
             <span> All {data.name}</span>
           </div>
         </li>
-        {dropDownMenuItem}
+        {this.state.isLoadingGrade ? <Spinner /> : dropDownMenuItem}
       </ul>
     );
   }

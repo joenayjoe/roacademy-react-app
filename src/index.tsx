@@ -24,7 +24,8 @@ import {
   faLock,
   faUser,
   faTimes,
-  faTimesCircle
+  faTimesCircle,
+  faCircleNotch
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -50,7 +51,8 @@ library.add(
   faLock,
   faUser,
   faTimes,
-  faTimesCircle
+  faTimesCircle,
+  faCircleNotch
 );
 
 ReactDOM.render(<App />, document.getElementById("root"));
