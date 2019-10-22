@@ -8,13 +8,13 @@ export enum ModalIdentifier {
 }
 
 export type MenuItemType = ICategory | IGrade | ICourse;
-export enum ButtonVariant {
-  PRIMARY = "btn btn-primary",
-  SECONDARY = "btn btn-secondary",
-  SUCCESS = "btn btn-success",
-  INFO = "btn btn-info",
-  WARNING = "btn btn-warning",
-  DANGER = "btn btn-danger"
+export enum AlertVariant {
+  PRIMARY = "alert alert-primary",
+  SECONDARY = "alert alert-secondary",
+  SUCCESS = "alert alert-success",
+  INFO = "alert alert-info",
+  WARNING = "alert alert-warning",
+  DANGER = "alert alert-danger"
 }
 
 export interface ILinkItem {

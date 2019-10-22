@@ -4,7 +4,8 @@ import {
   IUser,
   ILoginRequest,
   ILoginResponse,
-  IToken
+  IToken,
+  ISignupRequest
 } from "../settings/DataTypes";
 import { CookiesService } from "./CookiesService";
 import JwtDecode from "jwt-decode";
@@ -38,6 +39,10 @@ class AuthService {
       "/auth/signin",
       loginData
     );
+  }
+
+  public async signup(signupData: ISignupRequest): Promise<AxiosResponse<any>> {
+    return await this.apiRequest.post<any, any>("/auth/signup", signupData);
   }
 
   public setAuthCookies(token: string, tokenType: string) {

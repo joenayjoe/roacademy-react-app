@@ -2,11 +2,15 @@ import React, { Component, FormEvent, ContextType } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "./LoginModal.css";
-import { ILoginRequest, ModalIdentifier } from "../../settings/DataTypes";
+import {
+  ILoginRequest,
+  ModalIdentifier,
+  AlertVariant
+} from "../../settings/DataTypes";
 import Modal from "./Modal";
 import { withRouter, RouteComponentProps } from "react-router";
 import { parseError } from "../../utils/errorParser";
-import ErrorFlash from "../flash/ErrorFlash";
+import Flash from "../flash/Flash";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
 
@@ -67,7 +71,12 @@ class LoginModal extends Component<IProps, IStates> {
     const heading = "Login to Your Account";
     let flashError: JSX.Element | undefined;
     if (this.state.errorMessages.length) {
-      flashError = <ErrorFlash errors={this.state.errorMessages} />;
+      flashError = (
+        <Flash
+          variant={AlertVariant.DANGER}
+          errors={this.state.errorMessages}
+        />
+      );
     }
     return (
       <Modal

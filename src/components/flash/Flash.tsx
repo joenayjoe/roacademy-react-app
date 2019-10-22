@@ -1,13 +1,15 @@
 import React, { Component } from "react";
+import { AlertVariant } from "../../settings/DataTypes";
 
 interface IProps {
+  variant: AlertVariant;
   boldText?: string;
   title?: string;
   errors?: string[];
   dismissible?: boolean;
-  closeHandler?():void;
+  closeHandler?(): void;
 }
-class ErrorFlash extends Component<IProps, {}> {
+class Flash extends Component<IProps, {}> {
   render() {
     let errorFlash;
     let errorList;
@@ -41,7 +43,7 @@ class ErrorFlash extends Component<IProps, {}> {
 
     errorFlash = (
       <div
-        className="alert alert-danger flash-error mt-2 d-flex justify-content-between"
+        className={`mt-2 d-flex justify-content-between ${this.props.variant}`}
         role="alert"
       >
         <div>
@@ -56,4 +58,4 @@ class ErrorFlash extends Component<IProps, {}> {
     return <React.Fragment>{errorFlash}</React.Fragment>;
   }
 }
-export default ErrorFlash;
+export default Flash;

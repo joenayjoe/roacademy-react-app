@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withRouter, RouteComponentProps } from "react-router";
-import ErrorFlash from "../../components/flash/ErrorFlash";
+import Flash from "../../components/flash/Flash";
+import { AlertVariant } from "../../settings/DataTypes";
 
 interface IProps extends RouteComponentProps {}
 
@@ -9,13 +10,29 @@ class Home extends Component<IProps> {
     this.props.history.push("/");
   };
 
+  getFlashHeading = (variant: AlertVariant) => {
+    switch (variant) {
+      case AlertVariant.DANGER:
+        return "IMPORTANT";
+      case AlertVariant.SUCCESS:
+        return "SUCCESS";
+      case AlertVariant.WARNING:
+        return "WARNING";
+      case AlertVariant.INFO:
+        return "INFO";
+      default:
+        return "NOTE";
+    }
+  };
   render() {
     let flashMessage;
     if (this.props.location.state && this.props.location.state.message) {
+      let variant = this.props.location.state.variant || AlertVariant.DANGER;
       let error = this.props.location.state.message;
       flashMessage = (
-        <ErrorFlash
-          boldText="Important"
+        <Flash
+          variant={variant}
+          boldText={this.getFlashHeading(variant)}
           title={error}
           dismissible
           closeHandler={this.handleFalshClose}

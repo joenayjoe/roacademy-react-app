@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
 import AuthService from "../../services/AuthService";
+import { AlertVariant } from "../../settings/DataTypes";
 
 interface IProps extends RouteProps {
   component: any;
@@ -29,6 +30,7 @@ class PrivateRoute extends Component<IProps, {}> {
                 pathname: "/",
                 state: {
                   from: props.location,
+                  variant: AlertVariant.DANGER,
                   message: "You're not log in. Please login to continue."
                 }
               }}

@@ -1,7 +1,11 @@
+import { AxiosError } from "axios";
 
-export const parseError = (error: any): string[] => {
+export const parseError = (error: AxiosError<any>): string[] => {
   let errorMessages: string[] = [];
-  let errorResponse = error.response.data;
+  let errorResponse = error.response && error.response.data;
+  if(errorResponse === undefined) {
+    return [error+""];
+  }
   if (errorResponse.errors) {
     for (let [, value] of Object.entries(errorResponse.errors)) {
       let val: any = value;
