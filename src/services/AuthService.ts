@@ -18,6 +18,7 @@ class AuthService {
   private TOKEN_COOKIES_NAME = "accessToken";
   private TOKEN_TYPE_COOKIES_NAME = "tokenType";
   private AUTH_USER_COOKIES_NAME = "lastAuthUserInfo";
+  private COOKIE_PATH = "/";
 
   constructor() {
     this.apiRequest = new ApiRequest();
@@ -45,29 +46,44 @@ class AuthService {
     return await this.apiRequest.post<any, any>("/auth/signup", signupData);
   }
 
+  public async uploadProfilePhoto(
+    photo: FormData,
+    userId: number
+  ): Promise<AxiosResponse<IUser>> {
+    let url = "/users/" + userId + "/update_photo";
+    return await this.apiRequest.post<any, IUser>(url, photo);
+  }
   public setAuthCookies(token: string, tokenType: string) {
     this.cookiesService.set(this.TOKEN_COOKIES_NAME, token, {
-      path: "/",
+      path: this.COOKIE_PATH,
       expires: this.getTokenExpirationDate(token)
     });
 
     this.cookiesService.set(this.TOKEN_TYPE_COOKIES_NAME, tokenType, {
-      path: "/",
+      path: this.COOKIE_PATH,
       expires: this.getTokenExpirationDate(token)
     });
   }
 
   public setAuthUserCookies(user: IUser): void {
     this.cookiesService.set(this.AUTH_USER_COOKIES_NAME, user, {
-      path: "/",
+      path: this.COOKIE_PATH,
       expires: this.getTokenExpirationDate(this.getToken())
     });
   }
 
   public logout(): void {
-    this.cookiesService.remove(this.TOKEN_COOKIES_NAME);
-    this.cookiesService.remove(this.TOKEN_TYPE_COOKIES_NAME);
-    this.cookiesService.remove(this.AUTH_USER_COOKIES_NAME);
+    console.log("auth service remove cookies started");
+    this.cookiesService.remove(this.TOKEN_COOKIES_NAME, {
+      path: this.COOKIE_PATH
+    });
+    this.cookiesService.remove(this.TOKEN_TYPE_COOKIES_NAME, {
+      path: this.COOKIE_PATH
+    });
+    this.cookiesService.remove(this.AUTH_USER_COOKIES_NAME, {
+      path: this.COOKIE_PATH
+    });
+    console.log("auth service remove cookies end");
   }
 
   public isLoggedIn(): boolean {

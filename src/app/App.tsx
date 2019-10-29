@@ -21,9 +21,10 @@ import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
 import { isMobile } from "react-device-detect";
 import { AuthContextProvider } from "../contexts/AuthContext";
-import Profile from "../pages/user/Profile";
+import ProfileSetting from "../pages/user/ProfileSetting";
 import UserCourse from "../pages/course/UserCourse";
-import Account from "../pages/user/Account";
+import AccountSetting from "../pages/user/AccountSetting";
+import UserPhotoSetting from "../pages/user/UserPhotoSetting";
 
 interface IStates {
   isSideDrawerOpen: boolean;
@@ -73,7 +74,7 @@ class App extends Component<{}, IStates> {
     }
 
     return (
-      <AuthContextProvider >
+      <AuthContextProvider>
         <BrowserRouter>
           <ModalSelector
             modalIdentifier={this.state.currentModal}
@@ -109,8 +110,21 @@ class App extends Component<{}, IStates> {
               <PublicRoute exact path="/search" component={SearchResult} />
               <PublicRoute exact path="/" component={Home} />
               <PrivateRoute exact path="/dashboard" component={UserDashboard} />
-              <PrivateRoute exact path="/user/account-settings" component={Account} />
-              <PrivateRoute exact path="/user/profile-settings" component={Profile} />
+              <PrivateRoute
+                exact
+                path="/user/account-settings"
+                component={AccountSetting}
+              />
+              <PrivateRoute
+                exact
+                path="/user/profile-settings"
+                component={ProfileSetting}
+              />
+              <PrivateRoute
+                exact
+                path="/user/photo-settings"
+                component={UserPhotoSetting}
+              />
               <PrivateRoute exact path="/user-courses" component={UserCourse} />
               <PublicRoute component={PageNotFound} />
             </Switch>

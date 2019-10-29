@@ -1,25 +1,23 @@
-import React, { Component } from "react";
+import React, { Component, ContextType } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import AuthService from "../../services/AuthService";
 import { AlertVariant } from "../../settings/DataTypes";
+import { AuthContext } from "../../contexts/AuthContext";
 
 interface IProps extends RouteProps {
   component: any;
 }
 
 class PrivateRoute extends Component<IProps, {}> {
-  private authService: AuthService;
-  constructor(props: IProps) {
-    super(props);
-    this.authService = new AuthService();
-  }
+  static contextType = AuthContext;
+  context!: ContextType<typeof AuthContext>;
+
   render() {
     const { component: Component, ...rest } = this.props;
     return (
       <Route
         {...rest}
         render={props =>
-          this.authService.isLoggedIn() ? (
+          this.context && this.context.isAuthenticated ? (
             <Component
               key={`${props.location.pathname} ${props.location.search}`}
               {...props}

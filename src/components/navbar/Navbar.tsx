@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, ContextType } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Autocomplete from "../../components/autocomplete/Autocomplete";
 
@@ -19,7 +19,7 @@ import {
 import ToggleBar from "../../components/togglebar/ToggleBar";
 import { CourseService } from "../../services/CourseService";
 import UserDropDown from "../avatar/UserDropDown";
-import AuthService from "../../services/AuthService";
+import { AuthContext } from "../../contexts/AuthContext";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -36,7 +36,9 @@ interface IStates {
 
 class Navbar extends Component<IProbs, IStates> {
   private courseService: CourseService;
-  private authService: AuthService;
+  static contextType = AuthContext;
+  context!: ContextType<typeof AuthContext>;
+
   constructor(props: IProbs) {
     super(props);
     this.state = {
@@ -46,7 +48,6 @@ class Navbar extends Component<IProbs, IStates> {
       searchQuery: ""
     };
     this.courseService = new CourseService();
-    this.authService = new AuthService();
   }
 
   handleAutoCompleteOnChange = (query: string) => {
@@ -87,11 +88,6 @@ class Navbar extends Component<IProbs, IStates> {
     });
   };
 
-  handleLogOut = () => {
-    this.authService.logout();
-    this.props.history.push("/");
-  };
-
   showLoginModal = () => {
     this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
   };
@@ -127,7 +123,7 @@ class Navbar extends Component<IProbs, IStates> {
     }
 
     let authLinks;
-    if (this.authService.isLoggedIn()) {
+    if (this.context && this.context.isAuthenticated) {
       authLinks = <UserDropDown />;
     } else {
       authLinks = (

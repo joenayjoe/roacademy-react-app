@@ -10,11 +10,17 @@ export class CookiesService {
     return this.cookies.get(name);
   }
 
-  public set(name: string, value: string | object, options?:CookieSetOptions): void {
+  public set(
+    name: string,
+    value: string | object,
+    options?: CookieSetOptions
+  ): void {
     this.cookies.set(name, value, options);
+    console.log("cookie service: set cookie ", name);
   }
 
-  public remove(name: string): void {
-    this.cookies.remove(name);
+  public remove(name: string, options?: CookieSetOptions): void {
+    this.cookies.remove(name, options);
+    console.log("cookie service: remove cookie ", name);
   }
 }

@@ -30,8 +30,8 @@ class Footer extends Component {
           <div className="footer-bottom width-75">
             <p>Copyright © {year} Rohingya Academy</p>
             <div className="d-flex">
-              <p>Term of Use</p>
-              <p>Privacy Policy</p>
+              <div className="mr-2">Term of Use</div>
+              <div>Privacy Policy</div>
             </div>
           </div>
         </div>

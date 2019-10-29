@@ -48,14 +48,16 @@ class LoginModal extends Component<IProps, IStates> {
     };
     this.authService
       .login(formData)
-      .then(response => {
-        this.authService.setAuthCookies(
-          response.data.accessToken,
-          response.data.tokenType
-        );
-        this.props.closeHandler();
-        this.context && this.context.updateAuthContext();
+      .then(resp => {
+        // this.authService.setAuthCookies(
+        //   response.data.accessToken,
+        //   response.data.tokenType
+        // );
+        //this.context && this.context.updateAuthContext();
+        
+        this.context && this.context.login(resp.data);
         this.props.history.push("/dashboard");
+        this.props.closeHandler();
       })
       .catch(error => {
         const errorMessages: string[] = parseError(error);

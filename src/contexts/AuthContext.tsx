@@ -1,5 +1,5 @@
 import React, { createContext, Component } from "react";
-import { IUser } from "../settings/DataTypes";
+import { IUser, ILoginResponse } from "../settings/DataTypes";
 import AuthService from "../services/AuthService";
 
 interface IStates {
@@ -10,7 +10,8 @@ interface IStates {
 interface IProps {}
 
 export interface IAuthContext extends IStates {
-  updateAuthContext: () => void;
+  login: (loginData: ILoginResponse) => void;
+  logout: () => void;
 }
 export const AuthContext = createContext<IAuthContext | null>(null);
 
@@ -24,40 +25,31 @@ export class AuthContextProvider extends Component<IProps, IStates> {
     this.authService = new AuthService();
 
     this.state = {
-      isAuthenticated: false,
-      currentUser: null
+      isAuthenticated: this.authService.isLoggedIn(),
+      currentUser: this.authService.getLastAuthUserFromCookies()
     };
   }
 
-  componentDidMount() {
-    this.updateContext();
-  }
-
-  updateAuthContext = (): void => {
-    this.updateContext();
+  handleLogin = (loginData: ILoginResponse) => {
+    this.authService.setAuthCookies(loginData.accessToken, loginData.tokenType);
+    this.setState({ isAuthenticated: true });
+    this.authService.getCurrentUser().then(resp => {
+      this.authService.setAuthUserCookies(resp.data);
+      this.setState({ currentUser: resp.data });
+    });
   };
 
-  updateContext = () => {
-    if (this.authService.isLoggedIn()) {
-      let lastAuthUser = this.authService.getLastAuthUserFromCookies();
-      if (lastAuthUser !== undefined) {
-        this.setState({ isAuthenticated: true, currentUser: lastAuthUser });
-      } else {
-        this.authService.getCurrentUser().then(resp => {
-          this.authService.setAuthUserCookies(resp.data);
-          this.setState({ isAuthenticated: true, currentUser: resp.data });
-        });
-      }
-    } else {
-      this.setState({ isAuthenticated: false, currentUser: null });
-    }
+  handleLogout = () => {
+    this.authService.logout();
+    this.setState({ isAuthenticated: false, currentUser: null });
   };
 
   render() {
     let initialState: IAuthContext = {
       isAuthenticated: this.state.isAuthenticated,
       currentUser: this.state.currentUser,
-      updateAuthContext: this.updateAuthContext
+      login: this.handleLogin,
+      logout: this.handleLogout
     };
     return <Provider value={initialState}>{this.props.children}</Provider>;
   }

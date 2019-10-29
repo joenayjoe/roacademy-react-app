@@ -61,27 +61,13 @@ class UserDropDown extends Component<IProps, IStates> {
   };
 
   handleLogout = () => {
-    this.authService.logout();
-    this.context && this.context.updateAuthContext();
+    this.context && this.context.logout();
     this.props.history.push("/");
   };
   render() {
-    let userAvatar;
     let userName = this.authService.getUserFullName(this.context);
     let userEmail = this.authService.getUserEmail(this.context);
-    let userInitials = this.authService.getUserNameInitials(this.context);
-    let avatarStyle = { width: "48px", height: "48px" };
-    if (this.context && this.context.currentUser) {
-      if (this.context.currentUser.imageUrl) {
-        userAvatar = (
-          <img src={this.context.currentUser.imageUrl} alt={userName} />
-        );
-      } else {
-        userAvatar = (
-          <span className="user-avatar-initials">{userInitials}</span>
-        );
-      }
-    }
+    let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
 
     let openKlass = this.state.showDropDown ? "open" : "";
     let hideMenu = this.state.isMenuLinkClicked ? "d-none" : "";
@@ -90,13 +76,7 @@ class UserDropDown extends Component<IProps, IStates> {
         className={`nav-item drop-down drop-down-on-hover ${openKlass}`}
         onMouseEnter={() => this.setState({ isMenuLinkClicked: false })}
       >
-        <Avatar
-          classNames="nav-link"
-          styles={avatarStyle}
-          avatarRef={this.avatarNode}
-        >
-          {userAvatar}
-        </Avatar>
+        <Avatar styles={avatarStyle} avatarRef={this.avatarNode} />
 
         <ul
           className={`drop-down-list drop-down-list-arrow-right drop-down-right ${hideMenu}`}
@@ -106,7 +86,7 @@ class UserDropDown extends Component<IProps, IStates> {
               className="menu-link"
               onClick={e => this.handleMenuLinkClick("/user/profile-settings")}
             >
-              <Avatar styles={avatarStyle}>{userAvatar}</Avatar>
+              <Avatar styles={avatarStyle} />
               <span className="ml-2">
                 <span>{userName}</span> <br />
                 <small className="text-secondary">{userEmail}</small>

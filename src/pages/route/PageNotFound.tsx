@@ -8,7 +8,7 @@ class PageNotFound extends Component {
     return (
       <div className="error-container">
         <h1 className="error-heading">OOPS!</h1>
-        <div error-body>
+        <div className="error-body">
           We cannot find the page you're looking for. Try searching our  <Link to="/">Courses</Link>
         </div>
       </div>

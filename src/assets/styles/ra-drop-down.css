@@ -49,23 +49,23 @@
     background-color: #F2F3F5;
 }
 
-.drop-down-list-item .menu-link:hover,
+.menu-link:hover,
 .drop-down-list-item.open-sub-menu>.menu-link {
     color: #007791;
 }
 
-.drop-down-list .back-menu-link {
+.back-menu-link {
     background-color: #f8f8f1;
     color: #686f7a;
     padding: 1rem;
     cursor: pointer;
 }
 
-.drop-down-list .back-menu-link span {
+.back-menu-link span {
     padding-left: 1rem;
 }
 
-.drop-down-list-item .menu-link {
+.menu-link {
     display: flex;
     justify-content: space-between;
     cursor: pointer;

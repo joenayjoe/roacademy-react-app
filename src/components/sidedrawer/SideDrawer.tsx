@@ -153,9 +153,8 @@ class SideDrawerNew extends Component<IProps, IStates> {
   };
 
   handleLogOut = () => {
-    this.authService.logout();
+    this.context && this.context.logout();
     this.props.backdropClickHandler();
-    this.context && this.context.updateAuthContext();
     this.props.history.push("/");
   };
 
@@ -310,30 +309,17 @@ class SideDrawerNew extends Component<IProps, IStates> {
 
   getAuthLinks = () => {
     let authLink;
-    if (this.authService.isLoggedIn()) {
-      let userAvatar;
+    if (this.context && this.context.isAuthenticated) {
       let userName = this.authService.getUserFullName(this.context);
       let userEmail = this.authService.getUserEmail(this.context);
-      let userInitials = this.authService.getUserNameInitials(this.context);
-      let avatarStyle = { width: "48px", height: "48px" };
-      if (this.context && this.context.currentUser) {
-        if (this.context.currentUser.imageUrl) {
-          userAvatar = (
-            <img src={this.context.currentUser.imageUrl} alt={userName} />
-          );
-        } else {
-          userAvatar = (
-            <span className="user-avatar-initials">{userInitials}</span>
-          );
-        }
-      }
+      let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
 
       let openKlass = this.state.showAuthLinks ? "open-sub-menu" : "";
       authLink = (
         <React.Fragment>
           <li className={`${openKlass}`} style={{ backgroundColor: "#f8f8f1" }}>
             <div className="menu-link" onClick={this.handleAvatarMenuClick}>
-              <Avatar styles={avatarStyle}>{userAvatar}</Avatar>
+              <Avatar styles={avatarStyle} />
               <span className="ml-2">
                 <span>{userName}</span> <br />
                 <small className="text-secondary">{userEmail}</small>
