@@ -94,6 +94,7 @@ class UserPhotoSetting extends Component<null, IStates> {
           <div className="custom-file">
             <input
               type="file"
+              title={fileLabel}
               className="custom-file-input"
               id="profile-photo-upload-input"
               accept=".jpeg,.jpg,.png, .gif"
