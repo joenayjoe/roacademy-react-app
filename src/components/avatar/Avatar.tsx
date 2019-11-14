@@ -43,9 +43,7 @@ class Avatar extends Component<IProps> {
         );
       }
     }
-    return (
-      <React.Fragment>{userAvatar}</React.Fragment>
-    );
+    return <div style={this.props.styles}>{userAvatar}</div>;
   }
 }
 export default Avatar;

@@ -1,6 +1,6 @@
 import Cookies, { CookieSetOptions } from "universal-cookie";
 
-export class CookiesService {
+export class CookieService {
   private cookies: Cookies;
   constructor() {
     this.cookies = new Cookies();
@@ -16,11 +16,9 @@ export class CookiesService {
     options?: CookieSetOptions
   ): void {
     this.cookies.set(name, value, options);
-    console.log("cookie service: set cookie ", name);
   }
 
   public remove(name: string, options?: CookieSetOptions): void {
     this.cookies.remove(name, options);
-    console.log("cookie service: remove cookie ", name);
   }
 }

@@ -130,7 +130,7 @@ class UserPhotoSetting extends Component<null, IStates> {
         this.context && this.context.currentUser && this.context.currentUser.id;
       if (userId !== null) {
         this.authService.uploadProfilePhoto(formData, userId).then(resp => {
-          this.authService.setAuthUserCookies(resp.data);
+          this.authService.setLoggedInUserCookie(resp.data);
           window.location.reload();
         });
       }

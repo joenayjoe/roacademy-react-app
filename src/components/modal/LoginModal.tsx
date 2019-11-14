@@ -13,6 +13,7 @@ import { parseError } from "../../utils/errorParser";
 import Flash from "../flash/Flash";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
+import { FACEBOOK_AUTH_URL } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {
   showSignupModalHandler: (modalIdentifier: ModalIdentifier) => void;
@@ -49,12 +50,6 @@ class LoginModal extends Component<IProps, IStates> {
     this.authService
       .login(formData)
       .then(resp => {
-        // this.authService.setAuthCookies(
-        //   response.data.accessToken,
-        //   response.data.tokenType
-        // );
-        //this.context && this.context.updateAuthContext();
-        
         this.context && this.context.login(resp.data);
         this.props.history.push("/dashboard");
         this.props.closeHandler();
@@ -89,30 +84,27 @@ class LoginModal extends Component<IProps, IStates> {
       >
         <div className="auth-modal login-modal">
           <div className="social-login">
-            <div className="social-btn facebook-login">
-              <a href="/">
-                <span>
-                  <FontAwesomeIcon
-                    icon={["fab", "facebook-f"]}
-                    className="ra-icon"
-                    size="2x"
-                  />
-                </span>
-                <span className="pl-2">Contnue with Facebook</span>
-              </a>
-            </div>
-            <div className="social-btn google-login">
-              <a href="/">
-                <span>
-                  <FontAwesomeIcon
-                    icon={["fab", "google"]}
-                    className="ra-icon"
-                    size="lg"
-                  />
-                </span>
-                <span className="pl-2">Contnue with Google</span>
-              </a>
-            </div>
+            <a className={"social-btn facebook-login"} href={FACEBOOK_AUTH_URL}>
+              <span>
+                <FontAwesomeIcon
+                  icon={["fab", "facebook-f"]}
+                  className="ra-icon"
+                  size="2x"
+                />
+              </span>
+              <span className="pl-2">Continue with Facebook</span>
+            </a>
+
+            <a className="social-btn google-login" href="/">
+              <span>
+                <FontAwesomeIcon
+                  icon={["fab", "google"]}
+                  className="ra-icon"
+                  size="lg"
+                />
+              </span>
+              <span className="pl-2">Continue with Google</span>
+            </a>
           </div>
           <div className="dropdown-divider"></div>
           <div>

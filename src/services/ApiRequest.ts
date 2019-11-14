@@ -1,13 +1,13 @@
 import axios, { AxiosInstance, AxiosPromise, AxiosRequestConfig } from "axios";
-import { CookiesService } from "./CookiesService";
+import { CookieService } from "./CookieService";
 
 class ApiRequest {
   private axiosInstance: AxiosInstance;
-  private cookiesService: CookiesService;
+  private cookiesService: CookieService;
   constructor() {
-    const config = { baseURL: "http://192.168.1.62:8080/api"};
+    const config = { baseURL: "http://192.168.1.62:8080/api" };
     this.axiosInstance = axios.create(config);
-    this.cookiesService = new CookiesService();
+    this.cookiesService = new CookieService();
   }
 
   get<TResponse>(url: string): AxiosPromise<TResponse> {
@@ -33,15 +33,13 @@ class ApiRequest {
   }
 
   private axiosConfig(): AxiosRequestConfig {
-
     let accessToken = this.cookiesService.get("accessToken");
-    let tokenType = this.cookiesService.get("tokenType");
     let headers = {};
 
-    if (accessToken !== undefined && accessToken !== undefined) {
-      headers = { Authorization: `${tokenType} ${accessToken}` };
+    if (accessToken !== undefined) {
+      headers = { Authorization: `Bearer ${accessToken}` };
     }
-    return {headers: headers};
+    return { headers: headers };
   }
 }
 

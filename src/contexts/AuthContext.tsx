@@ -31,10 +31,10 @@ export class AuthContextProvider extends Component<IProps, IStates> {
   }
 
   handleLogin = (loginData: ILoginResponse) => {
-    this.authService.setAuthCookies(loginData.accessToken, loginData.tokenType);
+    this.authService.setAccessTokenCookie(loginData.accessToken);
     this.setState({ isAuthenticated: true });
     this.authService.getCurrentUser().then(resp => {
-      this.authService.setAuthUserCookies(resp.data);
+      this.authService.setLoggedInUserCookie(resp.data);
       this.setState({ currentUser: resp.data });
     });
   };

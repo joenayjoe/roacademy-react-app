@@ -25,6 +25,7 @@ import ProfileSetting from "../pages/user/ProfileSetting";
 import UserCourse from "../pages/course/UserCourse";
 import AccountSetting from "../pages/user/AccountSetting";
 import UserPhotoSetting from "../pages/user/UserPhotoSetting";
+import OAuth2RedirectHandler from "../pages/oauth2redirect/OAuth2RedirectHandler";
 
 interface IStates {
   isSideDrawerOpen: boolean;
@@ -126,6 +127,10 @@ class App extends Component<{}, IStates> {
                 component={UserPhotoSetting}
               />
               <PrivateRoute exact path="/user-courses" component={UserCourse} />
+              <PublicRoute
+                path="/oauth2/redirect"
+                component={OAuth2RedirectHandler}
+              />
               <PublicRoute component={PageNotFound} />
             </Switch>
           </div>

@@ -5,24 +5,26 @@ import {
   ILoginRequest,
   ILoginResponse,
   IToken,
-  ISignupRequest
+  ISignupRequest,
+  ISocialLoginRequest
 } from "../settings/DataTypes";
-import { CookiesService } from "./CookiesService";
+import { CookieService } from "./CookieService";
 import JwtDecode from "jwt-decode";
 import { ContextType } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import {
+  LOGGED_IN_USER_COOKIES_NAME,
+  ACCESS_TOKEN_COOKIE_NAME,
+  COOKIE_PATH
+} from "../settings/Constants";
 
 class AuthService {
   private apiRequest: ApiRequest;
-  private cookiesService: CookiesService;
-  private TOKEN_COOKIES_NAME = "accessToken";
-  private TOKEN_TYPE_COOKIES_NAME = "tokenType";
-  private AUTH_USER_COOKIES_NAME = "lastAuthUserInfo";
-  private COOKIE_PATH = "/";
+  private cookiesService: CookieService;
 
   constructor() {
     this.apiRequest = new ApiRequest();
-    this.cookiesService = new CookiesService();
+    this.cookiesService = new CookieService();
   }
   public async getCurrentUser(): Promise<AxiosResponse<IUser>> {
     const url = "/users/currentUser";
@@ -30,7 +32,7 @@ class AuthService {
   }
 
   public getLastAuthUserFromCookies() {
-    return this.cookiesService.get(this.AUTH_USER_COOKIES_NAME);
+    return this.cookiesService.get(LOGGED_IN_USER_COOKIES_NAME);
   }
 
   public async login(
@@ -39,6 +41,15 @@ class AuthService {
     return await this.apiRequest.post<ILoginRequest, ILoginResponse>(
       "/auth/signin",
       loginData
+    );
+  }
+
+  public async facebookLogin(
+    data: ISocialLoginRequest
+  ): Promise<AxiosResponse<ILoginResponse>> {
+    return await this.apiRequest.post<ISocialLoginRequest, ILoginResponse>(
+      "/facebookLogin",
+      data
     );
   }
 
@@ -53,37 +64,27 @@ class AuthService {
     let url = "/users/" + userId + "/update_photo";
     return await this.apiRequest.post<any, IUser>(url, photo);
   }
-  public setAuthCookies(token: string, tokenType: string) {
-    this.cookiesService.set(this.TOKEN_COOKIES_NAME, token, {
-      path: this.COOKIE_PATH,
-      expires: this.getTokenExpirationDate(token)
-    });
-
-    this.cookiesService.set(this.TOKEN_TYPE_COOKIES_NAME, tokenType, {
-      path: this.COOKIE_PATH,
+  public setAccessTokenCookie(token: string) {
+    this.cookiesService.set(ACCESS_TOKEN_COOKIE_NAME, token, {
+      path: COOKIE_PATH,
       expires: this.getTokenExpirationDate(token)
     });
   }
 
-  public setAuthUserCookies(user: IUser): void {
-    this.cookiesService.set(this.AUTH_USER_COOKIES_NAME, user, {
-      path: this.COOKIE_PATH,
+  public setLoggedInUserCookie(user: IUser): void {
+    this.cookiesService.set(LOGGED_IN_USER_COOKIES_NAME, user, {
+      path: COOKIE_PATH,
       expires: this.getTokenExpirationDate(this.getToken())
     });
   }
 
   public logout(): void {
-    console.log("auth service remove cookies started");
-    this.cookiesService.remove(this.TOKEN_COOKIES_NAME, {
-      path: this.COOKIE_PATH
+    this.cookiesService.remove(ACCESS_TOKEN_COOKIE_NAME, {
+      path: COOKIE_PATH
     });
-    this.cookiesService.remove(this.TOKEN_TYPE_COOKIES_NAME, {
-      path: this.COOKIE_PATH
+    this.cookiesService.remove(LOGGED_IN_USER_COOKIES_NAME, {
+      path: COOKIE_PATH
     });
-    this.cookiesService.remove(this.AUTH_USER_COOKIES_NAME, {
-      path: this.COOKIE_PATH
-    });
-    console.log("auth service remove cookies end");
   }
 
   public isLoggedIn(): boolean {
@@ -124,8 +125,8 @@ class AuthService {
   }
 
   private getToken(): string {
-    let cookiesService = new CookiesService();
-    return cookiesService.get(this.TOKEN_COOKIES_NAME);
+    let cookiesService = new CookieService();
+    return cookiesService.get(ACCESS_TOKEN_COOKIE_NAME);
   }
 
   private isTokenExpired(token: string): boolean {

@@ -75,9 +75,14 @@ export interface ILoginRequest {
   email: string;
   password: string;
 }
+
+export interface ISocialLoginRequest {
+  id: string;
+  accessToken: string;
+}
+
 export interface ILoginResponse {
   accessToken: string;
-  tokenType: string;
 }
 
 export interface ISearchRequest {
