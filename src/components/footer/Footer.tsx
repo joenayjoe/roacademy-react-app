@@ -1,42 +1,13 @@
 import React, { Component } from "react";
 
 import "./Footer.css";
+import { isMobileOnly } from "react-device-detect";
+import MobileFooter from "./MobileFooter";
+import DesktopFooter from "./DesktopFooter";
 
 class Footer extends Component {
   render() {
-    let year = new Date().getFullYear();
-    return (
-      <footer>
-        <div className="footer-container">
-          <div className="border-top"></div>
-
-          <div className="footer-top width-75">
-            <ul>
-              <li>About Us</li>
-              <li>Contact Us</li>
-              <li>Our Team</li>
-              <li>Support Us</li>
-            </ul>
-            <ul>
-              <li>Categories</li>
-              <li>Courses</li>
-              <li>Advice us</li>
-            </ul>
-            <div>Change Language</div>
-          </div>
-
-          <div className="border-top"></div>
-
-          <div className="footer-bottom width-75">
-            <p>Copyright © {year} Rohingya Academy</p>
-            <div className="d-flex">
-              <div className="mr-2">Term of Use</div>
-              <div>Privacy Policy</div>
-            </div>
-          </div>
-        </div>
-      </footer>
-    );
+    return isMobileOnly ? <MobileFooter /> : <DesktopFooter />;
   }
 }
 export default Footer;

@@ -13,7 +13,7 @@ import { parseError } from "../../utils/errorParser";
 import Flash from "../flash/Flash";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
-import { FACEBOOK_AUTH_URL } from "../../settings/Constants";
+import { FACEBOOK_AUTH_URL, GOOGLE_AUTH_URL } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {
   showSignupModalHandler: (modalIdentifier: ModalIdentifier) => void;
@@ -95,7 +95,7 @@ class LoginModal extends Component<IProps, IStates> {
               <span className="pl-2">Continue with Facebook</span>
             </a>
 
-            <a className="social-btn google-login" href="/">
+            <a className="social-btn google-login" href={GOOGLE_AUTH_URL}>
               <span>
                 <FontAwesomeIcon
                   icon={["fab", "google"]}
