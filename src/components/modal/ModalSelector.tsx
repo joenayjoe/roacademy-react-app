@@ -1,44 +1,39 @@
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import { ModalIdentifier } from "../../settings/DataTypes";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
+import { ModalContext } from "../../contexts/ModalContext";
 
-interface IProps {
-  modalIdentifier: ModalIdentifier | null;
-  closeHandler: () => void;
-  modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
-}
-class ModalSelector extends Component<IProps> {
-  render() {
-    const identifier = this.props.modalIdentifier;
-    let modal: JSX.Element | null;
-    switch (identifier) {
-      case ModalIdentifier.LOGIN_MODAL:
-        modal = (
-          <LoginModal
-            showSignupModalHandler={modalIdentifier =>
-              this.props.modalSwitcher(modalIdentifier)
-            }
-            closeHandler={this.props.closeHandler}
-          />
-        );
-        break;
-      case ModalIdentifier.SIGNUP_MODAL:
-        modal = (
-          <SignupModal
-            showLoginModalHandler={modalIdentifier =>
-              this.props.modalSwitcher(modalIdentifier)
-            }
-            closeHandler={this.props.closeHandler}
-          />
-        );
-        break
-      default:
-        modal = null;
-        break;
-    }
+const ModalSelector = () => {
+  const modalContext = useContext(ModalContext);
+  let modal: JSX.Element | null = null;
 
-    return <React.Fragment>{modal}</React.Fragment>;
+  switch (modalContext.currentModal) {
+    case ModalIdentifier.LOGIN_MODAL:
+      modal = (
+        <LoginModal
+          showSignupModalHandler={modalIdentifier =>
+            modalContext && modalContext.switchModal(modalIdentifier)
+          }
+          closeHandler={modalContext.closeModal}
+        />
+      );
+      break;
+    case ModalIdentifier.SIGNUP_MODAL:
+      modal = (
+        <SignupModal
+          showLoginModalHandler={modalIdentifier =>
+            modalContext.switchModal(modalIdentifier)
+          }
+          closeHandler={modalContext.closeModal}
+        />
+      );
+      break;
+    default:
+      modal = null;
+      break;
   }
-}
+
+  return <React.Fragment>{modal}</React.Fragment>;
+};
 export default ModalSelector;

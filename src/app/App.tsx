@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Navbar from "../components/navbar/Navbar";
 
 import { BrowserRouter, Switch } from "react-router-dom";
@@ -7,7 +7,6 @@ import Home from "../pages/home/Home";
 
 import "./App.css";
 
-import { ModalIdentifier } from "../settings/DataTypes";
 import SideDrawer from "../components/sidedrawer/SideDrawer";
 import ModalSelector from "../components/modal/ModalSelector";
 import Category from "../pages/category/Category";
@@ -26,75 +25,46 @@ import UserCourse from "../pages/course/UserCourse";
 import AccountSetting from "../pages/user/AccountSetting";
 import UserPhotoSetting from "../pages/user/UserPhotoSetting";
 import OAuth2RedirectHandler from "../pages/oauth2redirect/OAuth2RedirectHandler";
+import CategoryList from "../pages/category/CategoryList";
+import ModalContextProvider from "../contexts/ModalContext";
 
-interface IStates {
-  isSideDrawerOpen: boolean;
-  currentModal: ModalIdentifier | null;
-}
+const App = () => {
+  const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
 
-class App extends Component<{}, IStates> {
-  state: IStates = {
-    isSideDrawerOpen: false,
-    currentModal: null
+  const handleDrawerToggle = () => {
+    setIsSideDrawerOpen(!isSideDrawerOpen);
   };
 
-  handleDrawerToggle = () => {
-    this.setState(prevState => {
-      return {
-        isSideDrawerOpen: !prevState.isSideDrawerOpen
-      };
-    });
+  const backdropClickHandler = () => {
+    setIsSideDrawerOpen(false);
   };
 
-  closeModal = () => {
-    this.setState({
-      currentModal: null
-    });
-  };
-
-  backdropClickHandler = () => {
-    this.setState({
-      isSideDrawerOpen: false
-    });
-  };
-  switchModal(modalIdentifier: ModalIdentifier) {
-    this.setState({ currentModal: modalIdentifier });
+  let sideDrawer;
+  if (isMobile) {
+    sideDrawer = (
+      <SideDrawer
+        isOpen={isSideDrawerOpen}
+        backdropClickHandler={backdropClickHandler}
+      />
+    );
   }
 
-  render() {
-    let sideDrawer;
-    if (isMobile) {
-      sideDrawer = (
-        <SideDrawer
-          isOpen={this.state.isSideDrawerOpen}
-          modalSwitcher={identifier => this.switchModal(identifier)}
-          modalCloseHandler={this.closeModal}
-          backdropClickHandler={this.backdropClickHandler}
-        />
-      );
-    }
-
-    return (
-      <AuthContextProvider>
+  return (
+    <AuthContextProvider>
+      <ModalContextProvider>
         <BrowserRouter>
-          <ModalSelector
-            modalIdentifier={this.state.currentModal}
-            closeHandler={this.closeModal}
-            modalSwitcher={identifier => this.switchModal(identifier)}
-          />
+          <ModalSelector />
 
-          <Navbar
-            drawerToggleHandler={this.handleDrawerToggle}
-            modalCloseHandler={this.closeModal}
-            modalSwitcher={identifier => this.switchModal(identifier)}
-          />
+          <Navbar drawerToggleHandler={handleDrawerToggle} />
 
           {sideDrawer}
 
           <div className="content-wrapper width-75">
             <Switch>
               <PublicRoute exact path="/donation" component={Donation} />
+              <PublicRoute exact path="/categories" component={CategoryList} />
               <PublicRoute
+                exact
                 path="/categories/:category_id/grades/:grade_id"
                 component={Grade}
               />
@@ -136,9 +106,9 @@ class App extends Component<{}, IStates> {
           </div>
           <Footer />
         </BrowserRouter>
-      </AuthContextProvider>
-    );
-  }
-}
+      </ModalContextProvider>
+    </AuthContextProvider>
+  );
+};
 
 export default App;

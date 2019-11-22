@@ -5,6 +5,14 @@ import ApiRequest from "./ApiRequest";
 
 export class CourseService {
   private apiRequest = new ApiRequest();
+
+  public async getCoursesByCategoryId(
+    categoryId: number
+  ): Promise<AxiosResponse<ICourse[]>> {
+    const url = "/categories/" + categoryId + "/courses";
+    return await this.apiRequest.get(url);
+  }
+
   public async getCourse(courseId: string): Promise<AxiosResponse<ICourse>> {
     const url = "/courses/" + courseId;
     return await this.apiRequest.get(url);

@@ -20,6 +20,13 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 
+/* horizontal scroll gutter */
+
+:root {
+    --gutter: 20px;
+}
+
+
 /* END */
 
 .ra-icon {
@@ -69,6 +76,50 @@ input[type="search"]::-webkit-search-results-decoration {
     color: #fff;
 }
 
+.slick-arrow {
+    width: 47px;
+    height: 47px;
+    border-radius: 50%;
+    position: absolute;
+    top: 45%;
+    z-index: 2;
+    background-color: #fff;
+    color: #007791;
+    font-size: 24px;
+    line-height: 1;
+    padding: 11px 0;
+}
+
+.slick-prev::before,
+.slick-next::before {
+    content: none;
+}
+
+.slick-disabled {
+    visibility: hidden;
+}
+
+.slick-next {
+    right: -11.5px;
+}
+
+.slick-prev {
+    left: -11.5px;
+}
+
+.slick-item {
+    width: 90% !important;
+    margin: 0 5%;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 8px;
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 @keyframes animatetop {
     from {
         top: -300px;
@@ -103,5 +154,30 @@ input[type="search"]::-webkit-search-results-decoration {
     .width-75 {
         width: 100%;
         padding: 0.5rem 1rem 0 1rem;
+    }
+}
+
+.horizontal-scroll-body {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-gap: calc(var(--gutter) / 2);
+    grid-template-columns: 10px;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    overflow-x: scroll;
+    scroll-snap-type: x proximity;
+    padding-bottom: calc(.75 * var(--gutter));
+    margin-bottom: calc(-.25 * var(--gutter));
+}
+
+.horizontal-scroll-body:before,
+.horizontal-scroll-body:after {
+    content: '';
+    width: 10px;
+}
+
+@media only screen and (max-width: 414px) {
+    .slick-item {
+        width: 100% !important;
     }
 }

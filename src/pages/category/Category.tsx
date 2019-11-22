@@ -28,8 +28,9 @@ class Category extends Component<IProps, IStates> {
   }
   componentDidMount() {
     this.categoryService
-      .getCategory(this.categoryId)
+      .getCategoryWithGrade(this.categoryId)
       .then(response => {
+        console.log(response.data);
         this.setState({ category: response.data });
       })
       .catch(error => {

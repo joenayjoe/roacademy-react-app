@@ -1,4 +1,4 @@
-import React, { Component, ContextType } from "react";
+import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Autocomplete from "../../components/autocomplete/Autocomplete";
 
@@ -20,11 +20,10 @@ import ToggleBar from "../../components/togglebar/ToggleBar";
 import { CourseService } from "../../services/CourseService";
 import UserDropDown from "../avatar/UserDropDown";
 import { AuthContext } from "../../contexts/AuthContext";
+import { ModalContext } from "../../contexts/ModalContext";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
-  modalCloseHandler: () => void;
-  modalSwitcher: (modalIdentifier: ModalIdentifier) => void;
 }
 
 interface IStates {
@@ -34,186 +33,171 @@ interface IStates {
   searchQuery: string;
 }
 
-class Navbar extends Component<IProbs, IStates> {
-  private courseService: CourseService;
-  static contextType = AuthContext;
-  context!: ContextType<typeof AuthContext>;
+const Navbar: React.FunctionComponent<IProbs> = props => {
+  const courseService = new CourseService();
 
-  constructor(props: IProbs) {
-    super(props);
-    this.state = {
-      suggestions: [],
-      showBrandName: true,
-      showMobileSearch: false,
-      searchQuery: ""
-    };
-    this.courseService = new CourseService();
-  }
+  const [suggestions, setSuggestions] = useState<ILinkItem[]>([]);
+  const [showBrandName, setShowBrandName] = useState<boolean>(true);
+  const [showMobileSearch, setShowMobileSearch] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  handleAutoCompleteOnChange = (query: string) => {
+  const authContext = useContext(AuthContext);
+  const modalContext = useContext(ModalContext);
+
+  const handleAutoCompleteOnChange = (query: string) => {
     if (query.length < 2) {
-      this.setState({ suggestions: [], searchQuery: query });
+      setSuggestions([]);
+      setSearchQuery(query);
       return;
     }
     let payload: ISearchRequest = { query };
-    this.courseService
+    courseService
       .getAutoSuggestForCourse(payload)
       .then(response => {
-        this.setState({ suggestions: response.data });
+        setSuggestions(response.data);
       })
       .catch(error => {
         console.log(error.response.data);
       });
   };
 
-  handleAutocompleteOnClose = () => {
-    this.setState({
-      showMobileSearch: false,
-      suggestions: []
-    });
+  const handleAutocompleteOnClose = () => {
+    setShowMobileSearch(false);
+    setSuggestions([]);
   };
 
-  showMobileAutocomplete = () => {
-    this.setState({ showMobileSearch: true, suggestions: [] });
+  const showMobileAutocomplete = () => {
+    setShowMobileSearch(true);
+    setSuggestions([]);
   };
 
-  handleAutoCompleteOnSubmit = (query: string) => {
-    this.setState({ searchQuery: query });
-    this.props.history.push("/search?query=" + query);
+  const handleAutoCompleteOnSubmit = (query: string) => {
+    setSearchQuery(query);
+    props.history.push("/search?query=" + query);
   };
 
-  handleShowBrandNameToggle = () => {
-    this.setState(prevState => {
-      return { showBrandName: !prevState.showBrandName };
-    });
+  const handleShowBrandNameToggle = () => {
+    setShowBrandName(!showBrandName);
   };
 
-  showLoginModal = () => {
-    this.props.modalSwitcher(ModalIdentifier.LOGIN_MODAL);
+  const showLoginModal = () => {
+    modalContext.switchModal(ModalIdentifier.LOGIN_MODAL);
   };
 
-  showSignupModal = () => {
-    this.props.modalSwitcher(ModalIdentifier.SIGNUP_MODAL);
+  const showSignupModal = () => {
+    modalContext.switchModal(ModalIdentifier.SIGNUP_MODAL);
   };
 
-  render() {
-    let brandNameDisplayKlass = this.state.showBrandName
-      ? "d-lg-inline-block"
-      : "d-md-none d-sm-none d-none d-lg-inline-block";
+  let brandNameDisplayKlass = showBrandName
+    ? "d-lg-inline-block"
+    : "d-md-none d-sm-none d-none d-lg-inline-block";
 
-    let hideForMobileSearch = this.state.showMobileSearch ? "d-none" : "";
+  let hideForMobileSearch = showMobileSearch ? "d-none" : "";
 
-    let mobileAutoComplete;
-    if (this.state.showMobileSearch) {
-      mobileAutoComplete = (
-        <div className={`autocomplete-mobile`}>
-          <Autocomplete
-            query={this.state.searchQuery}
-            autoFoucs
-            backdrop
-            icon="search"
-            suggestions={this.state.suggestions}
-            placeholder="Search courses ..."
-            onChangeHandler={(q: string) => this.handleAutoCompleteOnChange(q)}
-            onSubmitHandler={(q: string) => this.handleAutoCompleteOnSubmit(q)}
-            onCloseHandler={this.handleAutocompleteOnClose}
-          />
-        </div>
-      );
-    }
-
-    let authLinks;
-    if (this.context && this.context.isAuthenticated) {
-      authLinks = <UserDropDown />;
-    } else {
-      authLinks = (
-        <React.Fragment>
-          <div className="login nav-link" onClick={this.showLoginModal}>
-            <button className="btn btn-outline-primary nav-btn">Log In</button>
-          </div>
-          <div className="signup nav-link" onClick={this.showSignupModal}>
-            <button className="btn btn-outline-primary nav-btn">
-              Sign Up{" "}
-            </button>
-          </div>
-        </React.Fragment>
-      );
-    }
-    return (
-      <header className="bg-white rounded top-header">
-        <nav className="navbar navbar-expand-md navbar-light nav-container">
-          <ToggleBar
-            classNames={hideForMobileSearch}
-            id="side-drawer-toggler"
-            onClikHandler={this.props.drawerToggleHandler}
-          />
-
-          <div
-            className={`mobile-search-icon pl-3 ${hideForMobileSearch}`}
-            onClick={this.showMobileAutocomplete}
-          >
-            <FontAwesomeIcon icon="search" />
-          </div>
-          {mobileAutoComplete}
-          <div className="mobile-spacer" />
-
-          <div className={`${hideForMobileSearch}`}>
-            <Link to="/" className={`navbar-brand d-flex`}>
-              <img
-                src={logo}
-                width="30"
-                height="30"
-                className="d-inline-block align-top"
-                alt=""
-              />
-              <div className={`brand-title ${brandNameDisplayKlass}`}>
-                Rohingya Academy
-              </div>
-            </Link>
-          </div>
-
-          <div className="navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav mr-auto nav-left">
-              <li className="nav-item">
-                <DropDownMenu displayName="Categories" icon="th-list" />
-              </li>
-              <li className="nav-item nav-search">
-                <Autocomplete
-                  query={this.state.searchQuery}
-                  suggestions={this.state.suggestions}
-                  placeholder="Search courses ..."
-                  icon="search"
-                  onChangeHandler={(q: string) =>
-                    this.handleAutoCompleteOnChange(q)
-                  }
-                  onSubmitHandler={(q: string) =>
-                    this.handleAutoCompleteOnSubmit(q)
-                  }
-                  onFocusHandler={this.handleShowBrandNameToggle}
-                />
-              </li>
-            </ul>
-
-            <div className="nav-right">
-              <div className="donate nav-link">
-                <NavLink to="/donation">
-                  <button className="btn btn-outline-success">
-                    <FontAwesomeIcon
-                      icon="donate"
-                      className="ra-icon"
-                      size="lg"
-                    />
-                    Donate
-                  </button>
-                </NavLink>
-              </div>
-              {authLinks}
-            </div>
-          </div>
-        </nav>
-      </header>
+  let mobileAutoComplete;
+  if (showMobileSearch) {
+    mobileAutoComplete = (
+      <div className={`autocomplete-mobile`}>
+        <Autocomplete
+          query={searchQuery}
+          autoFoucs
+          backdrop
+          icon="search"
+          suggestions={suggestions}
+          placeholder="Search courses ..."
+          onChangeHandler={(q: string) => handleAutoCompleteOnChange(q)}
+          onSubmitHandler={(q: string) => handleAutoCompleteOnSubmit(q)}
+          onCloseHandler={handleAutocompleteOnClose}
+        />
+      </div>
     );
   }
-}
+
+  let authLinks;
+  if (authContext && authContext.isAuthenticated) {
+    authLinks = <UserDropDown />;
+  } else {
+    authLinks = (
+      <React.Fragment>
+        <div className="login nav-link" onClick={showLoginModal}>
+          <button className="btn btn-outline-primary nav-btn">Log In</button>
+        </div>
+        <div className="signup nav-link" onClick={showSignupModal}>
+          <button className="btn btn-outline-primary nav-btn">Sign Up </button>
+        </div>
+      </React.Fragment>
+    );
+  }
+  return (
+    <header className="bg-white rounded top-header">
+      <nav className="navbar navbar-expand-md navbar-light nav-container">
+        <ToggleBar
+          classNames={hideForMobileSearch}
+          id="side-drawer-toggler"
+          onClikHandler={props.drawerToggleHandler}
+        />
+
+        <div
+          className={`mobile-search-icon pl-3 ${hideForMobileSearch}`}
+          onClick={showMobileAutocomplete}
+        >
+          <FontAwesomeIcon icon="search" />
+        </div>
+        {mobileAutoComplete}
+        <div className="mobile-spacer" />
+
+        <div className={`${hideForMobileSearch}`}>
+          <Link to="/" className={`navbar-brand d-flex`}>
+            <img
+              src={logo}
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+              alt=""
+            />
+            <div className={`brand-title ${brandNameDisplayKlass}`}>
+              Rohingya Academy
+            </div>
+          </Link>
+        </div>
+
+        <div className="navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav mr-auto nav-left">
+            <li className="nav-item">
+              <DropDownMenu displayName="Categories" icon="th-list" />
+            </li>
+            <li className="nav-item nav-search">
+              <Autocomplete
+                query={searchQuery}
+                suggestions={suggestions}
+                placeholder="Search courses ..."
+                icon="search"
+                onChangeHandler={(q: string) => handleAutoCompleteOnChange(q)}
+                onSubmitHandler={(q: string) => handleAutoCompleteOnSubmit(q)}
+                onFocusHandler={handleShowBrandNameToggle}
+              />
+            </li>
+          </ul>
+
+          <div className="nav-right">
+            <div className="donate nav-link">
+              <NavLink to="/donation">
+                <button className="btn btn-outline-success">
+                  <FontAwesomeIcon
+                    icon="donate"
+                    className="ra-icon"
+                    size="lg"
+                  />
+                  Donate
+                </button>
+              </NavLink>
+            </div>
+            {authLinks}
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+};
 
 export default withRouter(Navbar);

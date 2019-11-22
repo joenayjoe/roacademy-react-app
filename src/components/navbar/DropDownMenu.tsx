@@ -22,8 +22,8 @@ interface IProps extends RouteComponentProps {
 
 interface IStates {
   showDropDownMenu: boolean;
-  selectedMenuItem: string | null;
-  levelTwoParent: string | null;
+  selectedMenuItem: MenuItemType | null;
+  levelTwoParent: MenuItemType | null;
   categories: ICategory[];
   showLgScreenDropDownMenu: boolean;
   isLoadingGrade: boolean;
@@ -91,14 +91,14 @@ class DropDownMenu extends Component<IProps, IStates> {
           }
         }
         this.fetchCoursesForGrade(grade);
-        this.setState({ levelTwoParent: parent ? parent.url : null });
+        this.setState({ levelTwoParent: parent ? parent : null });
       } else if (isCourse(item)) {
         this.loadPage(item);
       } else {
         this.fetchGradesForCategory(item as ICategory);
       }
       this.setState({
-        selectedMenuItem: item.url
+        selectedMenuItem: item
       });
     } else {
       this.loadPage(item);
@@ -224,8 +224,8 @@ class DropDownMenu extends Component<IProps, IStates> {
       let expander: any;
       let submenu: any;
       let openKlass =
-        this.state.levelTwoParent === data.url &&
-        this.state.selectedMenuItem === item.url
+        this.state.levelTwoParent === data &&
+        this.state.selectedMenuItem === item
           ? "open-sub-menu"
           : "";
       expander = (
@@ -283,8 +283,8 @@ class DropDownMenu extends Component<IProps, IStates> {
       let expander: any;
       let submenu: any;
       let openKlass =
-        this.state.selectedMenuItem === item.url ||
-        this.state.levelTwoParent === item.url
+        this.state.selectedMenuItem === item ||
+        this.state.levelTwoParent === item
           ? "open-sub-menu"
           : "";
       expander = (

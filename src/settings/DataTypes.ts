@@ -7,6 +7,12 @@ export enum ModalIdentifier {
   SIGNUP_MODAL = "SignupModal"
 }
 
+export enum RoleType {
+  ADMIN = "ROLE_ADMIN",
+  TEACHER = "ROLE_TEACHER",
+  STUDENT = "ROLE_STUDENT"
+}
+
 export type MenuItemType = ICategory | IGrade | ICourse;
 export enum AlertVariant {
   PRIMARY = "alert alert-primary",
@@ -20,7 +26,6 @@ export enum AlertVariant {
 export interface ILinkItem {
   id: number;
   name: string;
-  url: string;
 }
 
 export interface ICategory extends ILinkItem {
@@ -43,10 +48,7 @@ export interface IChapter extends ILinkItem {
   courseId: number;
 }
 
-export interface ITag {
-  id: number;
-  name: string;
-}
+export interface ITag extends ILinkItem {}
 
 export interface IUser {
   id: number;
@@ -55,13 +57,9 @@ export interface IUser {
   imageUrl: string;
   email: string;
   roles: IRole[];
-  url: string;
 }
 
-export interface IRole {
-  id: number;
-  name: string;
-}
+export interface IRole extends ILinkItem {}
 
 export interface ISignupRequest {
   firstName: string;
@@ -87,10 +85,6 @@ export interface ILoginResponse {
 
 export interface ISearchRequest {
   query: string;
-}
-export interface IAutoSuggest {
-  name: string;
-  url: string;
 }
 
 export interface IToken {
