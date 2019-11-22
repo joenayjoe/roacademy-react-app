@@ -1,36 +1,36 @@
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import { ModalType, ModalSize } from "../../settings/DataTypes";
 
 import "./Modal.css";
 import Backdrop from "../backdrop/Backdrop";
+import { ModalContext } from "../../contexts/ModalContext";
 
 interface IProps {
   heading: string;
   size: ModalSize;
   modalType: ModalType;
-  closeHandler: () => void;
 }
-class Modal extends Component<IProps, {}> {
-  render() {
-    return (
-      <Backdrop closeHandler={this.props.closeHandler}>
-        <div className={`ra-modal animate-top ${this.props.size}`}>
-          <div className="modal-header">
-            <h5 className="modal-title">{this.props.heading}</h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="ra-modal"
-              aria-label="Close"
-              onClick={this.props.closeHandler}
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">{this.props.children}</div>
+const Modal: React.FunctionComponent<IProps> = props => {
+  const modalContext = useContext(ModalContext);
+
+  return (
+    <Backdrop closeHandler={modalContext.closeModal}>
+      <div className={`ra-modal animate-top ${props.size}`}>
+        <div className="modal-header">
+          <h5 className="modal-title">{props.heading}</h5>
+          <button
+            type="button"
+            className="close"
+            data-dismiss="ra-modal"
+            aria-label="Close"
+            onClick={modalContext.closeModal}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      </Backdrop>
-    );
-  }
-}
+        <div className="modal-body">{props.children}</div>
+      </div>
+    </Backdrop>
+  );
+};
 export default Modal;

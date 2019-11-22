@@ -19,7 +19,7 @@ import PageNotFound from "../pages/route/PageNotFound";
 import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
 import { isMobile } from "react-device-detect";
-import { AuthContextProvider } from "../contexts/AuthContext";
+import AuthContextProvider from "../contexts/AuthContext";
 import ProfileSetting from "../pages/user/ProfileSetting";
 import UserCourse from "../pages/course/UserCourse";
 import AccountSetting from "../pages/user/AccountSetting";

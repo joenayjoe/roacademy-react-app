@@ -80,6 +80,32 @@
     text-align: left;
 }
 
+.social-btn {
+    color: #ffffff;
+    min-height: 40px;
+    padding-left: 1.5rem;
+    height: 48px;
+    margin-bottom: 10px;
+    align-items: center;
+    display: flex;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 0.25rem;
+}
+
+.social-btn:hover {
+    color: #ffffff;
+}
+
+.facebook-login {
+    background-color: #1a538a;
+}
+
+.google-login {
+    background-color: #dd4b39;
+}
+
 @media only screen and (max-width: 414px) {
     .user-profile {
         flex-direction: column;

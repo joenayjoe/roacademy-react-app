@@ -50,7 +50,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
       .catch(error => {
         console.log("Error:", (error as AxiosError).message);
       });
-      // eslint-disable-next-line
+    // eslint-disable-next-line
   }, []);
 
   const handleSignUpClick = () => {
@@ -128,7 +128,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
 
   const handleLogOut = () => {
-    authContext && authContext.logout();
+    authContext.logout();
     props.backdropClickHandler();
     props.history.push("/");
   };
@@ -280,7 +280,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
   const getAuthLinks = () => {
     let authLink;
-    if (authContext && authContext.isAuthenticated) {
+    if (authContext.isAuthenticated) {
       let userName = authService.getUserFullName(authContext);
       let userEmail = authService.getUserEmail(authContext);
       let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };

@@ -1,22 +1,20 @@
-import React, { Component } from "react";
+import React from "react";
 import "./Backdrop.css";
 interface IProps {
   closeHandler(): void;
 }
-class Backdrop extends Component<IProps, {}> {
-  backGroundClickHandler = (e: React.MouseEvent) => {
+const Backdrop: React.FunctionComponent<IProps> = props => {
+  const backGroundClickHandler = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      this.props.closeHandler();
+      props.closeHandler();
     }
   };
 
-  render() {
-    return (
-      <div className="backdrop" onClick={e => this.backGroundClickHandler(e)}>
-        {this.props.children}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="backdrop" onClick={e => backGroundClickHandler(e)}>
+      {props.children}
+    </div>
+  );
+};
 
 export default Backdrop;

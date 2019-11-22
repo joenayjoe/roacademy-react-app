@@ -26,13 +26,6 @@ interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
 }
 
-interface IStates {
-  suggestions: ILinkItem[];
-  showBrandName: boolean;
-  showMobileSearch: boolean;
-  searchQuery: string;
-}
-
 const Navbar: React.FunctionComponent<IProbs> = props => {
   const courseService = new CourseService();
 
@@ -114,7 +107,7 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
   }
 
   let authLinks;
-  if (authContext && authContext.isAuthenticated) {
+  if (authContext.isAuthenticated) {
     authLinks = <UserDropDown />;
   } else {
     authLinks = (

@@ -1,56 +1,58 @@
-import React, { createContext, Component } from "react";
+import React, { createContext, useState } from "react";
 import { IUser, ILoginResponse } from "../settings/DataTypes";
 import AuthService from "../services/AuthService";
 
-interface IStates {
-  isAuthenticated: boolean;
-  currentUser: IUser | null;
-}
-
 interface IProps {}
 
-export interface IAuthContext extends IStates {
+export interface IAuthContext {
+  isAuthenticated: boolean;
+  currentUser: IUser | null;
   login: (loginData: ILoginResponse) => void;
   logout: () => void;
 }
-export const AuthContext = createContext<IAuthContext | null>(null);
+
+let contextDefaultValue: IAuthContext = {
+  isAuthenticated: false,
+  currentUser: null,
+  login: () => {},
+  logout: () => {}
+};
+export const AuthContext = createContext<IAuthContext>(contextDefaultValue);
 
 export const Provider = AuthContext.Provider;
 export const AuthContextConsumer = AuthContext.Consumer;
 
-export class AuthContextProvider extends Component<IProps, IStates> {
-  private authService: AuthService;
-  constructor(props: IProps) {
-    super(props);
-    this.authService = new AuthService();
+const AuthContextProvider: React.FunctionComponent<IProps> = props => {
+  const authService = new AuthService();
 
-    this.state = {
-      isAuthenticated: this.authService.isLoggedIn(),
-      currentUser: this.authService.getLastAuthUserFromCookies()
-    };
-  }
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    authService.isLoggedIn()
+  );
+  const [currentUser, setCurrentUser] = useState<IUser | null>(
+    authService.getLastAuthUserFromCookies()
+  );
 
-  handleLogin = (loginData: ILoginResponse) => {
-    this.authService.setAccessTokenCookie(loginData.accessToken);
-    this.setState({ isAuthenticated: true });
-    this.authService.getCurrentUser().then(resp => {
-      this.authService.setLoggedInUserCookie(resp.data);
-      this.setState({ currentUser: resp.data });
+  const handleLogin = (loginData: ILoginResponse) => {
+    authService.setAccessTokenCookie(loginData.accessToken);
+    setIsAuthenticated(true);
+    authService.getCurrentUser().then(resp => {
+      authService.setLoggedInUserCookie(resp.data);
+      setCurrentUser(resp.data);
     });
   };
 
-  handleLogout = () => {
-    this.authService.logout();
-    this.setState({ isAuthenticated: false, currentUser: null });
+  const handleLogout = () => {
+    authService.logout();
+    setIsAuthenticated(false);
+    setCurrentUser(null);
   };
 
-  render() {
-    let initialState: IAuthContext = {
-      isAuthenticated: this.state.isAuthenticated,
-      currentUser: this.state.currentUser,
-      login: this.handleLogin,
-      logout: this.handleLogout
-    };
-    return <Provider value={initialState}>{this.props.children}</Provider>;
-  }
-}
+  let initialState: IAuthContext = {
+    isAuthenticated: isAuthenticated,
+    currentUser: currentUser,
+    login: handleLogin,
+    logout: handleLogout
+  };
+  return <Provider value={initialState}>{props.children}</Provider>;
+};
+export default AuthContextProvider;
