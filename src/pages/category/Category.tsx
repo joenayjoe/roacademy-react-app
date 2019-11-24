@@ -1,9 +1,12 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./Category.css";
 import { RouteComponentProps, withRouter } from "react-router";
-import { ICategory} from "../../settings/DataTypes";
+import { ICategory, ICourse } from "../../settings/DataTypes";
 import { CategoryService } from "../../services/CategoryService";
+import Spinner from "../../components/spinner/Spinner";
+import GradeSlide from "../grade/GradeSlide";
+import CourseSlide from "../course/CourseSlide";
 
 interface MatchParams {
   category_id: string;
@@ -14,49 +17,59 @@ interface IStates {
   category: ICategory | null;
 }
 
-class Category extends Component<IProps, IStates> {
-  private categoryId: string;
-  private categoryService: CategoryService;
+const Category: React.FunctionComponent<IProps> = props => {
+  const categoryId: string = props.match.params.category_id;
+  const categoryService = new CategoryService();
 
-  constructor(props: IProps) {
-    super(props);
-    this.categoryId = this.props.match.params.category_id;
-    this.categoryService = new CategoryService();
-    this.state = {
-      category: null
-    };
-  }
-  componentDidMount() {
-    this.categoryService
-      .getCategoryWithGrade(this.categoryId)
+  const [category, setCategory] = useState<ICategory | null>(null);
+  const [courses, setCourses] = useState<ICourse[]>([]);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    categoryService
+      .getCategoryWithGrades(categoryId)
       .then(response => {
-        console.log(response.data);
-        this.setState({ category: response.data });
+        setCategory(response.data);
       })
       .catch(error => {
-          console.log("error =>",error.response.data)
+        console.log("Error =>", error);
       });
-  }
-  render() {
-    let categoryContainer: JSX.Element = <div className="spinner">Loading ...</div>;
-    if (this.state.category) {
-      categoryContainer = (
-        <React.Fragment>
-          <div className="subject-list">
-            <h5>{`Popular Topics in ${this.state.category.name}`}</h5>
-            <p>List of Subject title goes here</p>
-          </div>
+    categoryService.getCoursesForCategory(categoryId).then(resp => {
+      setCourses(resp.data);
+      setIsLoaded(true);
+    });
+    // eslint-disable-next-line
+  }, []);
 
-          <div className="course-list">
-            <h5>{`All ${this.state.category.name} Courses`}</h5>
-            <p>List of courses go here</p>
-          </div>
-        </React.Fragment>
-      );
-    }
+  let categoryContainer: JSX.Element = <Spinner size="3x" />;
+  if (isLoaded && category) {
+    categoryContainer = (
+      <React.Fragment>
+        <div className="popular-courses">
+          <CourseSlide
+            title={`Popular Courses in ${category.name}`}
+            courses={courses}
+          />
+        </div>
 
-    return <div className="category-container">{categoryContainer}</div>;
+        <div className="subject-list">
+          <GradeSlide
+            grades={category.grades}
+            title={`Topics in ${category.name}`}
+          />
+        </div>
+
+        <div className="course-list">
+          <CourseSlide
+            title={`All Courses in ${category.name}`}
+            courses={courses}
+          />
+        </div>
+      </React.Fragment>
+    );
   }
-}
+
+  return <div className="category-container">{categoryContainer}</div>;
+};
 
 export default withRouter(Category);

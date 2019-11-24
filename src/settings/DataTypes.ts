@@ -34,6 +34,10 @@ export interface ICategory extends ILinkItem {
   catched?: boolean;
 }
 
+export interface INewCategory {
+  name: string;
+}
+
 export interface IGrade extends ILinkItem {
   categoryId: number;
   courses: ICourse[];

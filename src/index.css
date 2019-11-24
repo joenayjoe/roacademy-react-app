@@ -11,11 +11,17 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-body a,
+body a {
+    color: #007791;
+    text-decoration: none;
+    outline: 0;
+}
+
 body a:hover,
 body a:focus {
     text-decoration: none;
     outline: 0;
+    color: #003845;
 }
 
 body button:focus,

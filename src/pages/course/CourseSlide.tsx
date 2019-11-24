@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { ICourse } from "../../settings/DataTypes";
 import { CourseService } from "../../services/CourseService";
 import { Settings } from "react-slick";
@@ -8,39 +8,61 @@ import SlickSlider from "../../components/slider/SlickSlider";
 import SliderNextArrow from "../../components/slider/SliderNextArrow";
 import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
 
+import { isMobileOnly } from "react-device-detect";
+
 interface IProps {
-  categoryId: number;
   title: string;
+  categoryId?: number;
+  courses?: ICourse[];
+  href?: string;
 }
 
-interface IStates {
-  courses: ICourse[];
-}
-class CourseSlide extends Component<IProps, IStates> {
-  private courseService: CourseService;
-  state = { courses: [] };
+const CourseSlide: React.FunctionComponent<IProps> = props => {
+  const courseService = new CourseService();
+  const [courses, setCourses] = useState<ICourse[]>(
+    props.courses ? props.courses : []
+  );
 
-  constructor(props: IProps) {
-    super(props);
-    this.courseService = new CourseService();
-  }
+  const settings: Settings = {
+    arrows: true,
+    infinite: false,
+    speed: 300,
+    slidesToShow: 5,
+    slidesToScroll: 5,
+    nextArrow: <SliderNextArrow />,
+    prevArrow: <SliderPrevArrow />,
+    responsive: [
+      {
+        breakpoint: 769,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          initialSlide: 3,
+          swipeToSlide: true
+        }
+      }
+    ]
+  };
 
-  componentDidMount() {
-    this.courseService
-      .getCoursesByCategoryId(this.props.categoryId)
-      .then(resp => {
-        this.setState({ courses: resp.data });
+  useEffect(() => {
+    if (!courses.length && props.categoryId) {
+      courseService.getCoursesByCategoryId(props.categoryId).then(resp => {
+        setCourses(resp.data);
       });
-  }
+    }
+    // eslint-disable-next-line
+  }, []);
 
-  getCourses = () => {
-    console.log(this.state.courses);
-    return this.state.courses.map((course: ICourse) => {
+  const getCourses = () => {
+    return courses.map((course: ICourse) => {
       return (
-        <div className="card item-card" key={course.id}>
-          <img src="..." className="card-img-top" alt="..." />
+        <div
+          className="card slick-card"
+          key={course.id}
+          onClick={() => handleCourseOnClick(course)}
+        >
+          <h5 className="slick-card-title">{course.name}</h5>
           <div className="card-body">
-            <h5 className="card-title">{course.name}</h5>
             <p className="card-text text-secondary">Author name here</p>
           </div>
         </div>
@@ -48,56 +70,28 @@ class CourseSlide extends Component<IProps, IStates> {
     });
   };
 
-  render() {
-    const settings: Settings = {
-      arrows: true,
-      infinite: false,
-      speed: 300,
-      slidesToShow: 5,
-      slidesToScroll: 5,
-      nextArrow: <SliderNextArrow />,
-      prevArrow: <SliderPrevArrow />,
-      responsive: [
-        {
-          breakpoint: 1024,
-          settings: {
-            slidesToShow: 3,
-            slidesToScroll: 3,
-            infinite: true,
-            swipeToSlide: true
-          }
-        },
-        {
-          breakpoint: 600,
-          settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2,
-            initialSlide: 2,
-            dots: true,
-            prevArrow: undefined,
-            nextArrow: undefined,
-            swipeToSlide: true
-          }
-        },
-        {
-          breakpoint: 480,
-          settings: {
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            dots: true,
-            prevArrow: undefined,
-            nextArrow: undefined,
-            swipeToSlide: true
-          }
-        }
-      ]
-    };
+  const handleCourseOnClick = (course: ICourse) => {};
 
-    return (
-      <SlickSlider settings={settings} title={this.props.title}>
-        {this.getCourses()}
-      </SlickSlider>
-    );
-  }
-}
+  const getCourseSlide = () => {
+    if (isMobileOnly) {
+      const courseItems: JSX.Element = (
+        <div className="horizontal-scroll-body">{getCourses()}</div>
+      );
+      return (
+        <div className="horizontal-scroll">
+          {props.title}
+          {courses.length > 0 ? courseItems : null}
+        </div>
+      );
+    } else {
+      return (
+        <SlickSlider settings={settings} title={props.title} href={props.href}>
+          {getCourses()}
+        </SlickSlider>
+      );
+    }
+  };
+
+  return <React.Fragment>{getCourseSlide()}</React.Fragment>;
+};
 export default CourseSlide;
