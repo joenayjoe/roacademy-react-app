@@ -24,7 +24,7 @@ const Course: React.FunctionComponent<IProps> = props => {
     // eslint-disable-next-line
   }, []);
 
-  let courseContainerItems: JSX.Element = <Spinner size="3x" />;
+  let courseContainerItems: JSX.Element = <Spinner size="3x"/>;
   if (course) {
     courseContainerItems = (
       <div className="chapter-list">
