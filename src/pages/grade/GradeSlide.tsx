@@ -29,7 +29,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
     speed: 300,
     slidesToShow: 5,
     slidesToScroll: 5,
-    rows: props.grades && props.grades.length >= 10 ? 2: 1,
+    rows: props.grades && props.grades.length >= 10 ? 2 : 1,
     nextArrow: <SliderNextArrow />,
     prevArrow: <SliderPrevArrow />,
     responsive: [
@@ -40,7 +40,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
           slidesToScroll: 3,
           initialSlide: 3,
           swipeToSlide: true,
-          rows: props.grades && props.grades.length >= 6 ? 2: 1,
+          rows: props.grades && props.grades.length >= 6 ? 2 : 1
         }
       }
     ]
@@ -74,9 +74,12 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
     });
   };
 
+  let gradeScrollClass = grades.length > 6 ? "grade-scroll" : "";
   let gradeSlide: JSX.Element;
   const gradeItems: JSX.Element = (
-    <div className="horizontal-scroll-body">{getGradeItemForSlide()}</div>
+    <div className={`horizontal-scroll-body ${gradeScrollClass}`}>
+      {getGradeItemForSlide()}
+    </div>
   );
   if (isMobileOnly) {
     let title = <h6 className="horizonta-scroll-header">{props.title}</h6>;

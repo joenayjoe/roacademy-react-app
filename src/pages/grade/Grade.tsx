@@ -1,9 +1,11 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./Grade.css";
 import { RouteComponentProps } from "react-router";
 import { IGrade } from "../../settings/DataTypes";
 import { GradeService } from "../../services/GradeService";
+import Spinner from "../../components/spinner/Spinner";
+import CourseSlide from "../course/CourseSlide";
 
 interface matchedParams {
   category_id: string;
@@ -12,41 +14,40 @@ interface matchedParams {
 
 interface IProps extends RouteComponentProps<matchedParams> {}
 
-interface IStates {
-  grade: IGrade | null;
-}
+const Grade: React.FunctionComponent<IProps> = props => {
+  const categoryId: string = props.match.params.category_id;
+  const gradeId = props.match.params.grade_id;
+  const gradeService = new GradeService();
 
-class Grade extends Component<IProps, IStates> {
-  private categoryId: string;
-  private gradeId: string;
-  private gradeService: GradeService;
+  const [grade, setGrade] = useState<IGrade | null>(null);
 
-  constructor(props: IProps) {
-    super(props);
-    this.categoryId = this.props.match.params.category_id;
-    this.gradeId = this.props.match.params.grade_id;
-    this.gradeService = new GradeService();
-    this.state = { grade: null };
-  }
-
-  componentDidMount() {
-    this.gradeService.getGrade(this.categoryId, this.gradeId).then(response => {
-      this.setState({ grade: response.data });
+  useEffect(() => {
+    gradeService.getGradeWithCourses(categoryId, gradeId).then(response => {
+      setGrade(response.data);
     });
-  }
+    // eslint-disable-next-line
+  }, []);
 
-  render() {
-    let gradeContainerItems: JSX.Element = (
-      <div className="spinner">Loading...</div>
-    );
-    if (this.state.grade) {
-      gradeContainerItems = (
+  let gradeContainerItems: JSX.Element = <Spinner size="3x" />;
+  if (grade) {
+    gradeContainerItems = (
+      <React.Fragment>
         <div className="course-list">
-          <p>{this.state.grade.name}</p>
+          <CourseSlide
+            title={`Popular Courses in ${grade.name}`}
+            courses={grade.courses}
+          />
         </div>
-      );
-    }
-    return <div className="grade-container">{gradeContainerItems}</div>;
+
+        <div className="course-list">
+          <CourseSlide
+            title={`All Courses in ${grade.name}`}
+            courses={grade.courses}
+          />
+        </div>
+      </React.Fragment>
+    );
   }
-}
+  return <div className="grade-container">{gradeContainerItems}</div>;
+};
 export default Grade;

@@ -1,53 +1,39 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./Course.css";
 import { RouteComponentProps } from "react-router";
 import { ICourse } from "../../settings/DataTypes";
 import { CourseService } from "../../services/CourseService";
+import Spinner from "../../components/spinner/Spinner";
 
 interface matchedParams {
   course_id: string;
 }
 interface IProps extends RouteComponentProps<matchedParams> {}
-interface IStates {
-  course: ICourse | null;
-}
 
-class Course extends Component<IProps, IStates> {
-  private courseId: string;
-  private courseService: CourseService;
+const Course: React.FunctionComponent<IProps> = props => {
+  const courseId: string = props.match.params.course_id;
+  const courseService = new CourseService();
 
-  constructor(props: IProps) {
-    super(props);
-    this.courseId = this.props.match.params.course_id;
-    this.courseService = new CourseService();
-    this.state = {
-      course: null
-    };
-  }
-  componentDidMount() {
-    this.courseService
-      .getCourse(this.courseId)
-      .then(response => {
-        this.setState({ course: response.data });
-      })
-      .catch(error => {
-        console.log("error =>", error.response.data);
-      });
-  }
-  render() {
-    let courseContainerItems: JSX.Element = (
-      <div className="spinner">Loading ...</div>
+  const [course, setCourse] = useState<ICourse | null>(null);
+
+  useEffect(() => {
+    courseService.getCourse(courseId).then(response => {
+      setCourse(response.data);
+    });
+    // eslint-disable-next-line
+  }, []);
+
+  let courseContainerItems: JSX.Element = <Spinner size="3x" />;
+  if (course) {
+    courseContainerItems = (
+      <div className="chapter-list">
+        <h4>{course.name}</h4>
+        <p>All chapters goes here</p>
+      </div>
     );
-    if (this.state.course) {
-      courseContainerItems = (
-        <div className="chapter-list">
-          <h4>{this.state.course.name}</h4>
-          <p>All chapters goes here</p>
-        </div>
-      );
-    }
-    return <div className="course-container">{courseContainerItems}</div>;
   }
-}
+  return <div className="course-container">{courseContainerItems}</div>;
+};
+
 export default Course;

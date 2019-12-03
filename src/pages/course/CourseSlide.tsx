@@ -9,8 +9,9 @@ import SliderNextArrow from "../../components/slider/SliderNextArrow";
 import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
 
 import { isMobileOnly } from "react-device-detect";
+import { withRouter, RouteComponentProps } from "react-router";
 
-interface IProps {
+interface IProps extends RouteComponentProps {
   title: string;
   categoryId?: number;
   courses?: ICourse[];
@@ -70,7 +71,9 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
     });
   };
 
-  const handleCourseOnClick = (course: ICourse) => {};
+  const handleCourseOnClick = (course: ICourse) => {
+    props.history.push("/courses/" + course.id);  
+  };
 
   const getCourseSlide = () => {
     if (isMobileOnly) {
@@ -94,4 +97,4 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
 
   return <React.Fragment>{getCourseSlide()}</React.Fragment>;
 };
-export default CourseSlide;
+export default withRouter(CourseSlide);

@@ -26,6 +26,7 @@ interface IStates {
   levelTwoParent: MenuItemType | null;
   categories: ICategory[];
   showLgScreenDropDownMenu: boolean;
+  isLoadingCategory: boolean;
   isLoadingGrade: boolean;
   isLoadingCourse: boolean;
 }
@@ -44,6 +45,7 @@ class DropDownMenu extends Component<IProps, IStates> {
     levelTwoParent: null,
     categories: [],
     showLgScreenDropDownMenu: false,
+    isLoadingCategory: false,
     isLoadingGrade: false,
     isLoadingCourse: false
   };
@@ -167,8 +169,9 @@ class DropDownMenu extends Component<IProps, IStates> {
   };
 
   componentDidMount() {
+    this.setState({ isLoadingCategory: true });
     this.categoryService.getCategories().then(response => {
-      this.setState({ categories: response.data });
+      this.setState({ categories: response.data, isLoadingCategory: false });
     });
     document.addEventListener("mousedown", e => this.handleOnClick(e), false);
   }
@@ -319,7 +322,7 @@ class DropDownMenu extends Component<IProps, IStates> {
         className={`drop-down-list drop-down-list-level-one drop-down-list-arrow-left ${disPlayKlass}`}
         ref={node => (this.menuNode = node)}
       >
-        {dropDownMenuItem}
+        {this.state.isLoadingCategory ? <Spinner classNames="pt-4"/> : dropDownMenuItem}
       </ul>
     );
   }

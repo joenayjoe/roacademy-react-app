@@ -157,6 +157,10 @@ input[type="search"]::-webkit-search-results-decoration {
     margin-bottom: calc(-.25 * var(--gutter));
 }
 
+.horizontal-scroll .grade-scroll {
+    grid-template-rows: repeat(2, 1fr);
+}
+
 @media (max-width: 768px) {
     .width-75 {
         width: 100%;

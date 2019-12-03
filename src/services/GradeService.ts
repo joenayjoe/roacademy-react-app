@@ -13,7 +13,15 @@ export class GradeService {
     return await this.apiRequest.get<IGrade>(url);
   }
 
-  public async getGradesForCategory(categoryId:number) {
+  public async getGradeWithCourses(
+    categoryId: string,
+    gradeId: string
+  ): Promise<AxiosResponse<IGrade>> {
+    const url = `/categories/${categoryId}/grades/${gradeId}?withCourse=true`;
+    return await this.apiRequest.get<IGrade>(url);
+  }
+
+  public async getGradesForCategory(categoryId: number) {
     const url = `/categories/${categoryId}/grades`;
     return await this.apiRequest.get<IGrade[]>(url);
   }
