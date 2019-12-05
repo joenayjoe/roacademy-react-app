@@ -45,8 +45,6 @@ import {
   CATEGORIES_URL,
   OAUTH2_REDIRECT_URL
 } from "../settings/Constants";
-import AdminNavbar from "../components/navbar/AdminNavbar";
-// import { OAUTH2_REDIRECT_URL } from "../settings/Constants";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
