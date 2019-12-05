@@ -4,7 +4,8 @@ import {
   IGrade,
   MenuItemType,
   ModalIdentifier,
-  ICourse
+  ICourse,
+  RoleType
 } from "../../settings/DataTypes";
 
 import "./SideDrawer.css";
@@ -18,6 +19,18 @@ import { AuthContext } from "../../contexts/AuthContext";
 import Avatar from "../avatar/Avatar";
 import AuthService from "../../services/AuthService";
 import { ModalContext } from "../../contexts/ModalContext";
+import Backdrop from "../backdrop/Backdrop";
+import {
+  DONATION_URL,
+  HOME_URL,
+  BUILD_GRADE_URL,
+  BUILD_COURSE_URL,
+  BUILD_CATEGORY_URL,
+  USER_PROFILE_SETTING_URL,
+  USER_ACCOUNT_SETTING_URL,
+  ADMIN_PANEL_URL,
+  USER_COURSES_URL
+} from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -124,13 +137,13 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
   const handleDonateLinkClick = () => {
     props.backdropClickHandler();
-    props.history.push("/donation");
+    props.history.push(DONATION_URL);
   };
 
   const handleLogOut = () => {
     authContext.logout();
     props.backdropClickHandler();
-    props.history.push("/");
+    props.history.push(HOME_URL);
   };
 
   const getBackButtonLink = (data: MenuItemType) => {
@@ -175,11 +188,11 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
     if ((item as IGrade).categoryId) {
       item = item as IGrade;
-      url = "/categories/" + item.categoryId + "/grades/" + item.id;
+      url = BUILD_GRADE_URL(item.categoryId, item.id);
     } else if ((item as ICourse).gradeId) {
-      url = "/courses/" + item.id;
+      url = BUILD_COURSE_URL(item.id);
     } else {
-      url = "/categories/" + item.id;
+      url = BUILD_CATEGORY_URL(item.id);
     }
     props.backdropClickHandler();
     props.history.push(url);
@@ -231,7 +244,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     );
   };
 
-  const handleAuthenticatedUserLinkClick = (url: string) => {
+  const redirectTo = (url: string) => {
     props.backdropClickHandler();
     props.history.push(url);
   };
@@ -248,9 +261,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
         <li>
           <div
             className="menu-link"
-            onClick={() =>
-              handleAuthenticatedUserLinkClick("/user/profile-settings")
-            }
+            onClick={() => redirectTo(USER_PROFILE_SETTING_URL)}
           >
             Edit Profile
           </div>
@@ -258,9 +269,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
         <li>
           <div
             className="menu-link"
-            onClick={() =>
-              handleAuthenticatedUserLinkClick("/user/account-settings")
-            }
+            onClick={() => redirectTo(USER_ACCOUNT_SETTING_URL)}
           >
             Edit Account
           </div>
@@ -286,6 +295,22 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
       let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
 
       let openKlass = showAuthLinks ? "open-sub-menu" : "";
+      let adminLink;
+      if (authContext.hasRole(RoleType.ADMIN)) {
+        adminLink = (
+          <li>
+            <div className="mb-2">
+              <strong>Manage</strong>
+            </div>
+            <div
+              className="menu-link"
+              onClick={() => redirectTo(ADMIN_PANEL_URL)}
+            >
+              <span>Admin Panel</span>
+            </div>
+          </li>
+        );
+      }
       authLink = (
         <React.Fragment>
           <li className={`${openKlass}`} style={{ backgroundColor: "#f8f8f1" }}>
@@ -299,13 +324,14 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
             </div>
             {getAuthenticatedUserLinks()}
           </li>
+          {adminLink}
           <li>
             <div className="mb-2">
               <strong>Learn</strong>
             </div>
             <div
               className="menu-link"
-              onClick={() => handleAuthenticatedUserLinkClick("/user-courses")}
+              onClick={() => redirectTo(USER_COURSES_URL)}
             >
               <span>My Courses</span>
             </div>
@@ -368,20 +394,16 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
 
   let openKlass = "";
-  let sideDrawerBackdrop;
   if (props.isOpen) {
     openKlass = "open";
-    sideDrawerBackdrop = (
-      <div
-        className="side-drawer-backdrop"
-        onClick={props.backdropClickHandler}
-      ></div>
-    );
   }
+
   return (
-    <React.Fragment>
-      {sideDrawerBackdrop}
-      <div className={`side-drawer ${openKlass}`}>
+    <Backdrop
+      className={`side-drawer ${openKlass}`}
+      closeHandler={props.backdropClickHandler}
+    >
+      <div className="side-drawer-content">
         {getLevelOneMenuItems(categories)}
         <div
           className="side-drawer-close-btn"
@@ -390,7 +412,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
           <FontAwesomeIcon icon="times-circle" size="3x" color="#fff" />
         </div>
       </div>
-    </React.Fragment>
+    </Backdrop>
   );
 };
 

@@ -5,16 +5,19 @@ import NewCategory from "../../pages/category/NewCategory";
 import Login from "../../pages/user/Login";
 import Signup from "../../pages/user/Signup";
 
-const ModalSelector = () => {
+interface IProps {
+  sideDrawerCloseHandler?: () => void;
+}
+const ModalSelector:React.FunctionComponent<IProps> = props => {
   const modalContext = useContext(ModalContext);
   let modal: JSX.Element | null = null;
 
   switch (modalContext.currentModal) {
     case ModalIdentifier.LOGIN_MODAL:
-      modal = <Login />;
+      modal = <Login sideDrawerCloseHandler = {props.sideDrawerCloseHandler}/>;
       break;
     case ModalIdentifier.SIGNUP_MODAL:
-      modal = <Signup />;
+      modal = <Signup sideDrawerCloseHandler={props.sideDrawerCloseHandler} />;
       break;
     case ModalIdentifier.NEW_CATEGORY_MODAL:
       modal = <NewCategory />;

@@ -16,7 +16,9 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { FACEBOOK_AUTH_URL, GOOGLE_AUTH_URL } from "../../settings/Constants";
 import { ModalContext } from "../../contexts/ModalContext";
 
-interface IProps extends RouteComponentProps {}
+interface IProps extends RouteComponentProps {
+  sideDrawerCloseHandler?: () => void;
+}
 
 const Login: React.FunctionComponent<IProps> = props => {
   const authService = new AuthService();
@@ -41,6 +43,7 @@ const Login: React.FunctionComponent<IProps> = props => {
         authContext && authContext.login(resp.data);
         props.history.push("/dashboard");
         modalContext.closeModal();
+        props.sideDrawerCloseHandler && props.sideDrawerCloseHandler();
       })
       .catch(error => {
         const errorMessages: string[] = parseError(error);
@@ -98,7 +101,6 @@ const Login: React.FunctionComponent<IProps> = props => {
                   placeholder="Email"
                   aria-label="Email"
                   aria-describedby="basic-addon1"
-                  autoFocus
                   required
                   onChange={e => setEmail(e.target.value)}
                 />

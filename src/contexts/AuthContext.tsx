@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import { IUser, ILoginResponse } from "../settings/DataTypes";
+import { IUser, ILoginResponse, RoleType } from "../settings/DataTypes";
 import AuthService from "../services/AuthService";
 
 interface IProps {}
@@ -9,13 +9,17 @@ export interface IAuthContext {
   currentUser: IUser | null;
   login: (loginData: ILoginResponse) => void;
   logout: () => void;
+  isAdmin: () => boolean;
+  hasRole: (role: RoleType | undefined) => boolean;
 }
 
 let contextDefaultValue: IAuthContext = {
   isAuthenticated: false,
   currentUser: null,
   login: () => {},
-  logout: () => {}
+  logout: () => {},
+  isAdmin: () => false,
+  hasRole: () => false
 };
 export const AuthContext = createContext<IAuthContext>(contextDefaultValue);
 
@@ -32,6 +36,20 @@ const AuthContextProvider: React.FunctionComponent<IProps> = props => {
     authService.getLastAuthUserFromCookies()
   );
 
+  const isAdmin = (): boolean => {
+    if (currentUser && currentUser.roles.some(r => r.name === RoleType.ADMIN)) {
+      return true;
+    }
+    return false;
+  };
+  const hasRole = (role: RoleType | undefined) => {
+    if (role === undefined) return true;
+
+    if (currentUser && currentUser.roles.some(r => r.name === role)) {
+      return true;
+    }
+    return false;
+  };
   const handleLogin = (loginData: ILoginResponse) => {
     authService.setAccessTokenCookie(loginData.accessToken);
     setIsAuthenticated(true);
@@ -51,7 +69,9 @@ const AuthContextProvider: React.FunctionComponent<IProps> = props => {
     isAuthenticated: isAuthenticated,
     currentUser: currentUser,
     login: handleLogin,
-    logout: handleLogout
+    logout: handleLogout,
+    isAdmin: isAdmin,
+    hasRole: hasRole
   };
   return <Provider value={initialState}>{props.children}</Provider>;
 };

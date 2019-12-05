@@ -2,6 +2,7 @@ import React from "react";
 import "./Backdrop.css";
 interface IProps {
   closeHandler(): void;
+  className?: string;
 }
 const Backdrop: React.FunctionComponent<IProps> = props => {
   const backGroundClickHandler = (e: React.MouseEvent) => {
@@ -10,8 +11,13 @@ const Backdrop: React.FunctionComponent<IProps> = props => {
     }
   };
 
+  let klass = props.className ? props.className : "";
+
   return (
-    <div className="backdrop" onClick={e => backGroundClickHandler(e)}>
+    <div
+      className={`backdrop ${klass}`}
+      onClick={e => backGroundClickHandler(e)}
+    >
       {props.children}
     </div>
   );

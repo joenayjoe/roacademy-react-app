@@ -10,12 +10,50 @@ export const ACCESS_TOKEN_COOKIE_NAME = "accessToken";
 export const LOGGED_IN_USER_COOKIES_NAME = "lastAuthUserInfo";
 export const COOKIE_PATH = "/";
 
-export const OAUTH2_REDIRECT_URL = FRONT_END_BASE_URL + "/oauth2/redirect";
+export const OAUTH2_REDIRECT_URL = "/oauth2/redirect";
+export const OAUTH2_REDIRECT_FULL_URL = FRONT_END_BASE_URL + "/oauth2/redirect";
 
 export const FACEBOOK_AUTH_URL =
   API_BASE_URL +
   "/oauth2/authorize/facebook?redirect_uri=" +
-  OAUTH2_REDIRECT_URL;
+  OAUTH2_REDIRECT_FULL_URL;
 
 export const GOOGLE_AUTH_URL =
-  API_BASE_URL + "/oauth2/authorize/google?redirect_uri=" + OAUTH2_REDIRECT_URL;
+  API_BASE_URL +
+  "/oauth2/authorize/google?redirect_uri=" +
+  OAUTH2_REDIRECT_FULL_URL;
+
+export const HOME_URL = "/";
+
+export const ADMIN_PANEL_URL = "/admin";
+
+//export const OAUTH2_REDIRECT_URL = "/oauth2/redirect";
+
+export const USER_DASHBOARD_URL = "/dashboard";
+export const USER_ACCOUNT_SETTING_URL = "/user/account-settings";
+export const USER_PROFILE_SETTING_URL = "/user/profile-settings";
+export const USER_PHOTO_SETTING_URL = "/user/photo-settings";
+export const USER_COURSES_URL = "/user-courses";
+
+export const CATEGORIES_URL = "/categories";
+export const CATEGORY_URL = "/categories/:category_id";
+export const BUILD_CATEGORY_URL = (categoryId: number) =>
+  CATEGORY_URL.replace(":category_id", categoryId.toString());
+
+export const GRADE_URL = "/categories/:category_id/grades/:grade_id";
+
+export const BUILD_GRADE_URL = (category_id: number, grade_id: number) =>
+  GRADE_URL.replace(":category_id", category_id.toString()).replace(
+    ":grade_id",
+    grade_id.toString()
+  );
+
+export const COURSE_URL = "/courses/:course_id";
+export const BUILD_COURSE_URL = (course_id: number) =>
+  COURSE_URL.replace(":course_id", course_id.toString());
+
+export const SEARCH_URL = "/search";
+export const BUILD_SEARCH_WITH_QUERY_URL = (query: string) =>
+  SEARCH_URL + "?query=" + query;
+
+export const DONATION_URL = "/donation";

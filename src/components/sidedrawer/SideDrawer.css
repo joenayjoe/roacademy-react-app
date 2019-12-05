@@ -1,28 +1,24 @@
-.side-drawer-backdrop {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    background: rgba(41, 48, 59, .8);
-    opacity: 1;
-    z-index: 200;
-    cursor: pointer;
-}
-
 .side-drawer {
+    z-index: 200;
     height: 100%;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 75%;
-    max-width: 400px;
-    z-index: 201;
+    width: 100%;
     transform: translateX(-122%);
     transition: transform 0.5s ease-in-out;
 }
 
 .side-drawer.open {
     transform: translateX(0);
+}
+
+.side-drawer-content {
+    height: 100%;
+    width: 75%;
+    max-width: 400px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 201;
 }
 
 .side-drawer ul {
@@ -83,7 +79,8 @@
 
 .side-drawer-close-btn {
     top: 12%;
-    right: -20%;
+    right: 8%;
+    border-radius: 50%;
     position: fixed;
     z-index: 201;
     cursor: pointer;

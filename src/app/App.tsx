@@ -27,6 +27,26 @@ import UserPhotoSetting from "../pages/user/UserPhotoSetting";
 import OAuth2RedirectHandler from "../pages/oauth2redirect/OAuth2RedirectHandler";
 import CategoryList from "../pages/category/CategoryList";
 import ModalContextProvider from "../contexts/ModalContext";
+import AdminDashboard from "../pages/adminpanel/AdminDashboard";
+import { RoleType } from "../settings/DataTypes";
+import {
+  ADMIN_PANEL_URL,
+  GRADE_URL,
+  COURSE_URL,
+  CATEGORY_URL,
+  SEARCH_URL,
+  HOME_URL,
+  USER_DASHBOARD_URL,
+  USER_ACCOUNT_SETTING_URL,
+  USER_PROFILE_SETTING_URL,
+  USER_PHOTO_SETTING_URL,
+  USER_COURSES_URL,
+  DONATION_URL,
+  CATEGORIES_URL,
+  OAUTH2_REDIRECT_URL
+} from "../settings/Constants";
+import AdminNavbar from "../components/navbar/AdminNavbar";
+// import { OAUTH2_REDIRECT_URL } from "../settings/Constants";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -53,7 +73,7 @@ const App = () => {
     <AuthContextProvider>
       <ModalContextProvider>
         <BrowserRouter>
-          <ModalSelector />
+          <ModalSelector sideDrawerCloseHandler={backdropClickHandler} />
 
           <Navbar drawerToggleHandler={handleDrawerToggle} />
 
@@ -61,45 +81,51 @@ const App = () => {
 
           <div className="content-wrapper width-75">
             <Switch>
-              <PublicRoute exact path="/donation" component={Donation} />
-              <PublicRoute exact path="/categories" component={CategoryList} />
+              <PublicRoute exact path={DONATION_URL} component={Donation} />
               <PublicRoute
                 exact
-                path="/categories/:category_id/grades/:grade_id"
-                component={Grade}
+                path={CATEGORIES_URL}
+                component={CategoryList}
               />
-              <PublicRoute
-                exact
-                path="/courses/:course_id"
-                component={Course}
-              />
-              <PublicRoute
-                exact
-                path="/categories/:category_id"
-                component={Category}
-              />
-              <PublicRoute exact path="/search" component={SearchResult} />
-              <PublicRoute exact path="/" component={Home} />
-              <PrivateRoute exact path="/dashboard" component={UserDashboard} />
+              <PublicRoute exact path={GRADE_URL} component={Grade} />
+              <PublicRoute exact path={COURSE_URL} component={Course} />
+              <PublicRoute exact path={CATEGORY_URL} component={Category} />
+              <PublicRoute exact path={SEARCH_URL} component={SearchResult} />
+              <PublicRoute exact path={HOME_URL} component={Home} />
               <PrivateRoute
                 exact
-                path="/user/account-settings"
+                path={USER_DASHBOARD_URL}
+                component={UserDashboard}
+              />
+              <PrivateRoute
+                exact
+                path={USER_ACCOUNT_SETTING_URL}
                 component={AccountSetting}
               />
               <PrivateRoute
                 exact
-                path="/user/profile-settings"
+                path={USER_PROFILE_SETTING_URL}
                 component={ProfileSetting}
               />
               <PrivateRoute
                 exact
-                path="/user/photo-settings"
+                path={USER_PHOTO_SETTING_URL}
                 component={UserPhotoSetting}
               />
-              <PrivateRoute exact path="/user-courses" component={UserCourse} />
+              <PrivateRoute
+                exact
+                path={USER_COURSES_URL}
+                component={UserCourse}
+              />
               <PublicRoute
-                path="/oauth2/redirect"
+                path={OAUTH2_REDIRECT_URL}
                 component={OAuth2RedirectHandler}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_PANEL_URL}
+                component={AdminDashboard}
               />
               <PublicRoute component={PageNotFound} />
             </Switch>

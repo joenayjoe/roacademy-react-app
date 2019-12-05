@@ -64,6 +64,9 @@ class AuthService {
     let url = "/users/" + userId + "/update_photo";
     return await this.apiRequest.post<any, IUser>(url, photo);
   }
+
+  // helper methds
+
   public setAccessTokenCookie(token: string) {
     this.cookiesService.set(ACCESS_TOKEN_COOKIE_NAME, token, {
       path: COOKIE_PATH,

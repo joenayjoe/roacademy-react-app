@@ -1,4 +1,4 @@
-import React, {FormEvent, useState, useContext } from "react";
+import React, { FormEvent, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   ModalIdentifier,
@@ -12,7 +12,9 @@ import { parseError } from "../../utils/errorParser";
 import Flash from "../../components/flash/Flash";
 import { ModalContext } from "../../contexts/ModalContext";
 
-interface IProps extends RouteComponentProps {}
+interface IProps extends RouteComponentProps {
+  sideDrawerCloseHandler?: () => void;
+}
 
 const Signup: React.FunctionComponent<IProps> = props => {
   const authService = new AuthService();
@@ -38,12 +40,13 @@ const Signup: React.FunctionComponent<IProps> = props => {
     authService
       .signup(formData)
       .then(resp => {
-        modalContext.closeModal();
         props.history.push("/", {
           from: props.location,
           variant: AlertVariant.SUCCESS,
           message: "User Registration successfull. Please login to continue"
         });
+        modalContext.closeModal();
+        props.sideDrawerCloseHandler && props.sideDrawerCloseHandler();
       })
       .catch(error => {
         const errorMessages: string[] = parseError(error);
@@ -78,7 +81,6 @@ const Signup: React.FunctionComponent<IProps> = props => {
                   aria-label="Full Name"
                   aria-describedby="basic-addon1"
                   required
-                  autoFocus
                   onChange={e => setFullName(e.target.value)}
                 />
               </div>

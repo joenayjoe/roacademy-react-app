@@ -5,4 +5,5 @@
     background: rgba(41, 48, 59, .8);
     opacity: 1;
     z-index: 300;
+    cursor: pointer;
 }
