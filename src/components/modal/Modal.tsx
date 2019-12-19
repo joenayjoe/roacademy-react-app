@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ModalType, ModalSize } from "../../settings/DataTypes";
+import { ModalSize } from "../../settings/DataTypes";
 
 import "./Modal.css";
 import Backdrop from "../backdrop/Backdrop";
@@ -8,7 +8,6 @@ import { ModalContext } from "../../contexts/ModalContext";
 interface IProps {
   heading: string;
   size: ModalSize;
-  modalType: ModalType;
 }
 const Modal: React.FunctionComponent<IProps> = props => {
   const modalContext = useContext(ModalContext);

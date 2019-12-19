@@ -58,6 +58,24 @@ input[type="search"]::-webkit-search-results-decoration {
     background-color: transparent;
 }
 
+.link {
+    cursor: pointer;
+}
+
+.action-btn-group {
+    display: flex;
+    justify-content: center;
+}
+
+.action-btn-group .action-btn:not(:last-child) {
+    margin-right: 10px;
+}
+
+.link:focus,
+.link:hover {
+    color: #007791 !important;
+}
+
 .small-text {
     font-size: 68%;
 }

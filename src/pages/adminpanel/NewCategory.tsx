@@ -37,7 +37,7 @@ const NewCategory: React.FunctionComponent = () => {
     flashError = <Flash variant={AlertVariant.DANGER} errors={errorMessages} />;
   }
   return (
-    <Modal heading="New Category" size="modal-md" modalType="regular">
+    <Modal heading="New Category" size="modal-md">
       <div>
         <form onSubmit={handleFormSubmit}>
           {flashError}

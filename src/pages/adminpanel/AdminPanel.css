@@ -1,0 +1,45 @@
+.admin-panel {
+    display: flex;
+    height: 100%;
+}
+
+.admin-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-panel ul li {
+    padding: 0.25rem 0 0.25rem 1rem;
+}
+
+.admin-side-menu {
+    width: 15%;
+    min-width: 15%;
+    border-right: 1px solid #dedfe0;
+}
+
+.admin-side-menu ul li:hover,
+.admin-side-menu ul li.active {
+    background-color: #F2F3F5;
+    color: #007791;
+}
+
+.admin-content-wrapper {
+    padding-left: 1rem;
+    flex: 1;
+}
+
+@media only screen and (max-width: 414px) {
+    .admin-panel {
+        flex-direction: column;
+        border: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+    .admin-side-menu {
+        border: none;
+        width: 100%;
+    }
+}

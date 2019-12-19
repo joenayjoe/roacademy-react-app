@@ -57,7 +57,7 @@ const Login: React.FunctionComponent<IProps> = props => {
     flashError = <Flash variant={AlertVariant.DANGER} errors={errorMessages} />;
   }
   return (
-    <Modal heading={heading} size="modal-md" modalType="regular">
+    <Modal heading={heading} size="modal-md">
       <div className="auth-modal login-modal">
         <div className="social-login">
           <a className={"social-btn facebook-login"} href={FACEBOOK_AUTH_URL}>

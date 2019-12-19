@@ -18,7 +18,6 @@ import PrivateRoute from "../pages/route/PrivateRoute";
 import PageNotFound from "../pages/route/PageNotFound";
 import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/dashboard/UserDashboard";
-import { isMobile } from "react-device-detect";
 import AuthContextProvider from "../contexts/AuthContext";
 import ProfileSetting from "../pages/user/ProfileSetting";
 import UserCourse from "../pages/course/UserCourse";
@@ -43,8 +42,16 @@ import {
   USER_COURSES_URL,
   DONATION_URL,
   CATEGORIES_URL,
-  OAUTH2_REDIRECT_URL
+  OAUTH2_REDIRECT_URL,
+  ADMIN_CATEGORIES_URL,
+  ADMIN_GRADES_URL,
+  ADMIN_COURSES_URL,
+  ADMIN_CATEGORY_URL
 } from "../settings/Constants";
+import AdminCourse from "../pages/adminpanel/AdminCourse";
+import AdminGrade from "../pages/adminpanel/AdminGrade";
+import AdminCategoryList from "../pages/adminpanel/AdminCategoryList";
+import AdminCategory from "../pages/adminpanel/AdminCategory";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -57,16 +64,6 @@ const App = () => {
     setIsSideDrawerOpen(false);
   };
 
-  let sideDrawer;
-  if (isMobile) {
-    sideDrawer = (
-      <SideDrawer
-        isOpen={isSideDrawerOpen}
-        backdropClickHandler={backdropClickHandler}
-      />
-    );
-  }
-
   return (
     <AuthContextProvider>
       <ModalContextProvider>
@@ -75,7 +72,10 @@ const App = () => {
 
           <Navbar drawerToggleHandler={handleDrawerToggle} />
 
-          {sideDrawer}
+          <SideDrawer
+            isOpen={isSideDrawerOpen}
+            backdropClickHandler={backdropClickHandler}
+          />
 
           <div className="content-wrapper width-75">
             <Switch>
@@ -124,6 +124,30 @@ const App = () => {
                 exact
                 path={ADMIN_PANEL_URL}
                 component={AdminDashboard}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_CATEGORIES_URL}
+                component={AdminCategoryList}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_CATEGORY_URL}
+                component={AdminCategory}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_GRADES_URL}
+                component={AdminGrade}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_COURSES_URL}
+                component={AdminCourse}
               />
               <PublicRoute component={PageNotFound} />
             </Switch>

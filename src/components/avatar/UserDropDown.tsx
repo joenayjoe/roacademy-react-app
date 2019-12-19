@@ -3,6 +3,13 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { RouteComponentProps, withRouter } from "react-router";
 import Avatar from "./Avatar";
 import AuthService from "../../services/AuthService";
+import { RoleType } from "../../settings/DataTypes";
+import {
+  ADMIN_PANEL_URL,
+  USER_PROFILE_SETTING_URL,
+  USER_COURSES_URL,
+  USER_ACCOUNT_SETTING_URL
+} from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {}
 interface IStates {
@@ -71,6 +78,21 @@ class UserDropDown extends Component<IProps, IStates> {
 
     let openKlass = this.state.showDropDown ? "open" : "";
     let hideMenu = this.state.isMenuLinkClicked ? "d-none" : "";
+
+    let adminPanelLi;
+    if (this.context.hasRole(RoleType.ADMIN)) {
+      adminPanelLi = (
+        <li className="drop-down-list-item">
+          <div
+            className="menu-link"
+            onClick={e => this.handleMenuLinkClick(ADMIN_PANEL_URL)}
+          >
+            Admin Panel
+          </div>
+        </li>
+      );
+    }
+
     return (
       <div
         className={`nav-item drop-down drop-down-on-hover ${openKlass}`}
@@ -84,7 +106,7 @@ class UserDropDown extends Component<IProps, IStates> {
           <li className="drop-down-list-item mt-2">
             <div
               className="menu-link"
-              onClick={e => this.handleMenuLinkClick("/user/profile-settings")}
+              onClick={e => this.handleMenuLinkClick(USER_PROFILE_SETTING_URL)}
             >
               <Avatar styles={avatarStyle} />
               <span className="ml-2">
@@ -96,16 +118,17 @@ class UserDropDown extends Component<IProps, IStates> {
           <li className="drop-down-list-item">
             <div
               className="menu-link"
-              onClick={e => this.handleMenuLinkClick("/user-courses")}
+              onClick={e => this.handleMenuLinkClick(USER_COURSES_URL)}
             >
               My Courses
             </div>
           </li>
+          {adminPanelLi}
           <li className="dropdown-divider"></li>
           <li className="drop-down-list-item">
             <div
               className="menu-link"
-              onClick={e => this.handleMenuLinkClick("/user/profile-settings")}
+              onClick={e => this.handleMenuLinkClick(USER_PROFILE_SETTING_URL)}
             >
               Edit Profile
             </div>
@@ -113,7 +136,7 @@ class UserDropDown extends Component<IProps, IStates> {
           <li className="drop-down-list-item">
             <div
               className="menu-link"
-              onClick={e => this.handleMenuLinkClick("/user/account-settings")}
+              onClick={e => this.handleMenuLinkClick(USER_ACCOUNT_SETTING_URL)}
             >
               Edit Account
             </div>

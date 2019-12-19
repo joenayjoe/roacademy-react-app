@@ -24,7 +24,11 @@ export enum AlertVariant {
   DANGER = "alert alert-danger"
 }
 
-export interface ILinkItem {
+interface Auditable {
+  createdAt: Date;
+  updatedAt: Date;
+}
+export interface ILinkItem extends Auditable {
   id: number;
   name: string;
 }

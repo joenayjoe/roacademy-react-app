@@ -14,18 +14,14 @@ import {
 import {
   ModalIdentifier,
   ILinkItem,
-  ISearchRequest,
-  RoleType
+  ISearchRequest
 } from "../../settings/DataTypes";
 import ToggleBar from "../../components/togglebar/ToggleBar";
 import { CourseService } from "../../services/CourseService";
 import UserDropDown from "../avatar/UserDropDown";
 import { AuthContext } from "../../contexts/AuthContext";
 import { ModalContext } from "../../contexts/ModalContext";
-import {
-  ADMIN_PANEL_URL,
-  BUILD_SEARCH_WITH_QUERY_URL
-} from "../../settings/Constants";
+import { BUILD_SEARCH_WITH_QUERY_URL } from "../../settings/Constants";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -49,11 +45,9 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
       return;
     }
     let payload: ISearchRequest = { query };
-    courseService
-      .getAutoSuggestForCourse(payload)
-      .then(response => {
-        setSuggestions(response.data);
-      });
+    courseService.getAutoSuggestForCourse(payload).then(response => {
+      setSuggestions(response.data);
+    });
   };
 
   const handleAutocompleteOnClose = () => {
@@ -110,23 +104,7 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
 
   let authLinks;
   if (authContext.isAuthenticated) {
-    let adminPanelLink;
-    if (
-      authContext.hasRole(RoleType.ADMIN) &&
-      props.location.pathname !== ADMIN_PANEL_URL
-    ) {
-      adminPanelLink = (
-        <NavLink className="nav-link" to={ADMIN_PANEL_URL}>
-          <button className="btn btn-primary nav-btn">Admin Panel</button>
-        </NavLink>
-      );
-    }
-    authLinks = (
-      <React.Fragment>
-        {adminPanelLink}
-        <UserDropDown />
-      </React.Fragment>
-    );
+    authLinks = <UserDropDown />;
   } else {
     authLinks = (
       <React.Fragment>

@@ -60,7 +60,7 @@ const Signup: React.FunctionComponent<IProps> = props => {
     flashError = <Flash variant={AlertVariant.DANGER} errors={errorMessages} />;
   }
   return (
-    <Modal heading={heading} modalType="regular" size="modal-md">
+    <Modal heading={heading} size="modal-md">
       <div className="auth-modal signup-modal">
         <div>
           <form onSubmit={handleSignUpSubmit}>

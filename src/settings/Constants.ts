@@ -25,9 +25,17 @@ export const GOOGLE_AUTH_URL =
 
 export const HOME_URL = "/";
 
+// Admin Manage URLs
 export const ADMIN_PANEL_URL = "/admin";
+export const ADMIN_DASHBOARD_URL = "/admin/dashboard";
+export const ADMIN_CATEGORIES_URL = "/admin/categories";
+export const ADMIN_CATEGORY_URL = "/admin/categories/:category_id";
+export const BUILD_ADMIN_CATEGORY_URL = (id: number) =>
+  ADMIN_CATEGORY_URL.replace(":category_id", id.toString());
+export const ADMIN_GRADES_URL = "/admin/grades";
+export const ADMIN_COURSES_URL = "/admin/courses";
 
-//export const OAUTH2_REDIRECT_URL = "/oauth2/redirect";
+// User URLs
 
 export const USER_DASHBOARD_URL = "/dashboard";
 export const USER_ACCOUNT_SETTING_URL = "/user/account-settings";
@@ -35,6 +43,7 @@ export const USER_PROFILE_SETTING_URL = "/user/profile-settings";
 export const USER_PHOTO_SETTING_URL = "/user/photo-settings";
 export const USER_COURSES_URL = "/user-courses";
 
+// Global URLs
 export const CATEGORIES_URL = "/categories";
 export const CATEGORY_URL = "/categories/:category_id";
 export const BUILD_CATEGORY_URL = (categoryId: number) =>
