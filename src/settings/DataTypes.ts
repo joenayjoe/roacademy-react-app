@@ -5,7 +5,8 @@ export type ModalSize = "modal-lg" | "modal-md" | "modal-sm";
 export enum ModalIdentifier {
   LOGIN_MODAL = "LoginModal",
   SIGNUP_MODAL = "SignupModal",
-  NEW_CATEGORY_MODAL = "NewCategoryModal"
+  NEW_CATEGORY_MODAL = "NewCategoryModal",
+  CONFIRM_MODAL = "ConfirmModal"
 }
 
 export enum RoleType {

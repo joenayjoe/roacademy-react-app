@@ -9,7 +9,7 @@ import {
   ADMIN_CATEGORIES_URL,
   ADMIN_PANEL_URL
 } from "../../settings/Constants";
-import ConfirmModal from "../../components/modal/ConfirmModal";
+import Dialog from "../../components/modal/ModalNew";
 
 interface MatchParams {
   category_id: string;
@@ -32,23 +32,45 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
   }, []);
 
   const handeEditCategoryClick = () => {};
-  const handleDeleteClick = () => {
-    setShowConfirmModal(true);
+
+  const handleDialogClose = () => {
+    setShowConfirmModal(false);
   };
 
-  const confirModalCallback = (status: boolean) => {
-    console.log("Click ", status);
+  const handleModalOKClick = () => {
+    console.log("Delete and then close modal");
+    setShowConfirmModal(false);
   };
 
   let categoryContainer: JSX.Element = <Spinner size="3x" />;
-  let confirmModal = showConfirmModal ? (
-    <ConfirmModal callback={(status: boolean) => confirModalCallback(status)} />
-  ) : null;
 
   if (isLoaded && category) {
+    const modalBody = <div>Do you really want to delete this?</div>;
+    const modalFooter = (
+      <React.Fragment>
+        <button
+          className="btn btn-danger"
+          onClick={() => setShowConfirmModal(false)}
+        >
+          Calcel
+        </button>
+        <button className="btn btn-primary" onClick={handleModalOKClick}>
+          Ok
+        </button>
+      </React.Fragment>
+    );
+    const confirmDialog = (
+      <Dialog
+        isOpen={showConfirmModal}
+        onCloseHandler={handleDialogClose}
+        modalTitle="Are you sure?"
+        modalBody={modalBody}
+        modalFooter={modalFooter}
+      />
+    );
     categoryContainer = (
       <div className="admin-category-view">
-        {confirmModal}
+        {confirmDialog}
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
@@ -88,7 +110,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
         <div className="action-btn-group">
           <button
             className="btn btn-danger action-btn"
-            onClick={handleDeleteClick}
+            onClick={() => setShowConfirmModal(true)}
           >
             <FontAwesomeIcon icon="trash" className="pr-1" />
             DELETE
