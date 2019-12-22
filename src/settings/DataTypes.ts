@@ -9,6 +9,15 @@ export enum ModalIdentifier {
   CONFIRM_MODAL = "ConfirmModal"
 }
 
+export enum HTTPStatus {
+  OK = 200,
+  CREATED = 201,
+  BAD_REQUEST = 400,
+  UNAUTHORIZE = 401,
+  FORBIDDEN = 401,
+  NOT_FOUND = 404
+}
+
 export enum RoleType {
   ADMIN = "ROLE_ADMIN",
   TEACHER = "ROLE_TEACHER",
@@ -40,6 +49,10 @@ export interface ICategory extends ILinkItem {
 }
 
 export interface INewCategory {
+  name: string;
+}
+export interface IEditCategory {
+  id: number;
   name: string;
 }
 

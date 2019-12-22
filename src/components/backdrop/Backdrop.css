@@ -1,9 +1,0 @@
-.backdrop {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    background: rgba(41, 48, 59, .8);
-    opacity: 1;
-    z-index: 300;
-    cursor: pointer;
-}

@@ -20,8 +20,10 @@ import ToggleBar from "../../components/togglebar/ToggleBar";
 import { CourseService } from "../../services/CourseService";
 import UserDropDown from "../avatar/UserDropDown";
 import { AuthContext } from "../../contexts/AuthContext";
-import { ModalContext } from "../../contexts/ModalContext";
 import { BUILD_SEARCH_WITH_QUERY_URL } from "../../settings/Constants";
+import Login from "../../pages/user/Login";
+import Signup from "../../pages/user/Signup";
+import Modal from "../modal/Modal";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -34,9 +36,11 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
   const [showBrandName, setShowBrandName] = useState<boolean>(true);
   const [showMobileSearch, setShowMobileSearch] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalTitle, setModalTitle] = useState<string>("");
+  const [modalBody, setModalBody] = useState<JSX.Element>(<div></div>);
 
   const authContext = useContext(AuthContext);
-  const modalContext = useContext(ModalContext);
 
   const handleAutoCompleteOnChange = (query: string) => {
     if (query.length < 2) {
@@ -69,12 +73,36 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
     setShowBrandName(!showBrandName);
   };
 
+  const switchModal = (modal: ModalIdentifier) => {
+    switch (modal) {
+      case ModalIdentifier.LOGIN_MODAL:
+        showLoginModal();
+        break;
+      case ModalIdentifier.SIGNUP_MODAL:
+        showSignupModal();
+        break;
+    }
+  };
   const showLoginModal = () => {
-    modalContext.switchModal(ModalIdentifier.LOGIN_MODAL);
+    setShowModal(true);
+    setModalTitle("Login to Your Account");
+    setModalBody(
+      <Login
+        closeHandler={() => setShowModal(false)}
+        modalSwitchHandler={(modal: ModalIdentifier) => switchModal(modal)}
+      />
+    );
   };
 
   const showSignupModal = () => {
-    modalContext.switchModal(ModalIdentifier.SIGNUP_MODAL);
+    setShowModal(true);
+    setModalTitle("Signup and Start Learning!");
+    setModalBody(
+      <Signup
+        closeHandler={() => setShowModal(false)}
+        modalSwitchHandler={(modal: ModalIdentifier) => switchModal(modal)}
+      />
+    );
   };
 
   let brandNameDisplayKlass = showBrandName
@@ -117,8 +145,18 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
       </React.Fragment>
     );
   }
+
+  const modalDialog = (
+    <Modal
+      isOpen={showModal}
+      modalTitle={modalTitle}
+      modalBody={modalBody}
+      onCloseHandler={() => setShowModal(false)}
+    />
+  );
   return (
     <header className="bg-white rounded top-header">
+      {modalDialog}
       <nav className="navbar navbar-expand-md navbar-light nav-container">
         <ToggleBar
           classNames={hideForMobileSearch}

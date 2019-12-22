@@ -18,8 +18,6 @@ import { isGrade, isCourse } from "../../utils/typeChecker";
 import { AuthContext } from "../../contexts/AuthContext";
 import Avatar from "../avatar/Avatar";
 import AuthService from "../../services/AuthService";
-import { ModalContext } from "../../contexts/ModalContext";
-import Backdrop from "../backdrop/Backdrop";
 import {
   DONATION_URL,
   HOME_URL,
@@ -31,6 +29,9 @@ import {
   ADMIN_PANEL_URL,
   USER_COURSES_URL
 } from "../../settings/Constants";
+import Signup from "../../pages/user/Signup";
+import Login from "../../pages/user/Login";
+import Modal from "../modal/Modal";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -43,7 +44,6 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   const authService = new AuthService();
 
   const authContext = useContext(AuthContext);
-  const modalContext = useContext(ModalContext);
 
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [levelTwoParent, setLevelTwoParent] = useState<MenuItemType | null>(
@@ -53,6 +53,9 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     null
   );
   const [showAuthLinks, setShowAuthLinks] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalTitle, setModalTitle] = useState<string>("");
+  const [modalBody, setModalBody] = useState<JSX.Element>(<div></div>);
 
   useEffect(() => {
     categoryService
@@ -66,8 +69,45 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     // eslint-disable-next-line
   }, []);
 
+  const handleModalClose = () => {
+    setShowModal(false);
+    props.backdropClickHandler();
+  };
+  const switchModal = (modal: ModalIdentifier) => {
+    switch (modal) {
+      case ModalIdentifier.LOGIN_MODAL:
+        showLoginModal();
+        break;
+      case ModalIdentifier.SIGNUP_MODAL:
+        showSignupModal();
+        break;
+    }
+  };
+
+  const showLoginModal = () => {
+    setShowModal(true);
+    setModalTitle("Login to Your Account");
+    setModalBody(
+      <Login
+        closeHandler={handleModalClose}
+        modalSwitchHandler={(modal: ModalIdentifier) => switchModal(modal)}
+      />
+    );
+  };
+
+  const showSignupModal = () => {
+    setShowModal(true);
+    setModalTitle("Signup and Start Learning!");
+    setModalBody(
+      <Signup
+        closeHandler={handleModalClose}
+        modalSwitchHandler={(modal: ModalIdentifier) => switchModal(modal)}
+      />
+    );
+  };
+
   const handleSignUpClick = () => {
-    modalContext && modalContext.switchModal(ModalIdentifier.SIGNUP_MODAL);
+    showSignupModal();
   };
 
   const getGradesForCategory = (category: ICategory) => {
@@ -398,11 +438,27 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     openKlass = "open";
   }
 
+  const modalDialog = (
+    <Modal
+      isOpen={showModal}
+      modalTitle={modalTitle}
+      modalBody={modalBody}
+      onCloseHandler={() => setShowModal(false)}
+    />
+  );
+
+  const backGroundClickHandler = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      props.backdropClickHandler();
+    }
+  };
+
   return (
-    <Backdrop
-      className={`side-drawer ${openKlass}`}
-      closeHandler={props.backdropClickHandler}
+    <div
+      className={`backdrop side-drawer ${openKlass}`}
+      onClick={backGroundClickHandler}
     >
+      {modalDialog}
       <div className="side-drawer-content">
         {getLevelOneMenuItems(categories)}
         <div
@@ -412,7 +468,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
           <FontAwesomeIcon icon="times-circle" size="3x" color="#fff" />
         </div>
       </div>
-    </Backdrop>
+    </div>
   );
 };
 

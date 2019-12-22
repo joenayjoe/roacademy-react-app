@@ -27,7 +27,9 @@ const PrivateRoute: React.FunctionComponent<IProps> = props => {
               state: {
                 from: props.location,
                 variant: AlertVariant.DANGER,
-                message: role ? "Access denied!" : "You're not log in. Please login to continue."
+                message: role
+                  ? "Access denied!"
+                  : "You're not log in. Please login to continue."
               }
             }}
           />

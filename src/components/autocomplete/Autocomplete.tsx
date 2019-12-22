@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { ILinkItem } from "../../settings/DataTypes";
-import Backdrop from "../backdrop/Backdrop";
 
 interface AutocompleteProps {
-  query:string;
+  query: string;
   suggestions: ILinkItem[];
   placeholder: string;
   icon?: IconProp;
@@ -59,12 +58,13 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     }
   };
 
-  handleOnClose = () => {
-    if (this.props.onCloseHandler) {
+  handleOnClose = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget && this.props.onCloseHandler) {
       this.setState({ query: "" });
       this.props.onCloseHandler();
     }
   };
+
   render() {
     let focusKlass = "blur";
     if (this.state.isFocus) {
@@ -91,11 +91,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     if (this.props.icon != null) {
       searchIcon = (
         <div className={`input-group-append border-0 ${focusKlass}`}>
-          <button
-            id="button-addon"
-            type="submit"
-            className="btn btn-link"
-          >
+          <button id="button-addon" type="submit" className="btn btn-link">
             <FontAwesomeIcon icon={this.props.icon} />
           </button>
         </div>
@@ -133,8 +129,8 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
       this.props.suggestions.length > 0 && this.state.isFocus ? "open" : "";
 
     let autoCompleteInput;
-    
-    if(this.props.onCloseHandler) {
+
+    if (this.props.onCloseHandler) {
       autoCompleteInput = (
         <div className="input-group">
           {searchIcon} {searchInput} {closeIcon}
@@ -164,7 +160,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     );
     if (this.props.backdrop) {
       autocomplete = (
-        <Backdrop closeHandler={this.handleOnClose}>
+        <div className="backdrop" onClick={this.handleOnClose}>
           <div className={`autocomplete border drop-down ${openKlass}`}>
             <form
               action="/courses/search"
@@ -177,7 +173,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
               {autoCompleteSuggestionList}
             </ul>
           </div>
-        </Backdrop>
+        </div>
       );
     }
 
