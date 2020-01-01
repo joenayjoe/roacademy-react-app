@@ -14,6 +14,7 @@ import NewCategory from "./NewCategory";
 import FlashGenerator from "../../components/flash/FlashGenerator";
 import Spinner from "../../components/spinner/Spinner";
 import { parseError } from "../../utils/errorParser";
+import { camelize } from "../../utils/StringUtils";
 
 interface IProps extends RouteComponentProps {}
 
@@ -23,6 +24,9 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [newCategoryErrors, setNewCategoryErrors] = useState<string[]>([]);
+
+  const [sortCol, setSortCol] = useState<string>("id");
+  const [sortOrder, setSortOrder] = useState<string>("asc");
 
   const theads: string[] = ["ID", "Name", "Created At"];
 
@@ -34,7 +38,21 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
     // eslint-disable-next-line
   }, []);
 
-  const handleTableHeadClick = (th: string) => {};
+  const getSorting = (field: string) => {
+    field = camelize(field);
+    const order = sortOrder === "asc" ? "desc" : "asc";
+    setSortCol(field);
+    setSortOrder(order);
+    return field + "_" + order;
+  };
+
+  const handleTableHeadClick = (th: string) => {
+    setIsLoading(true);
+    categoryService.getCategories(getSorting(th)).then(resp => {
+      setCategories(resp.data);
+      setIsLoading(false);
+    });
+  };
 
   const handleTableRowClick = (cat: ICategory) => {
     props.history.push(BUILD_ADMIN_CATEGORY_URL(cat.id));
@@ -48,7 +66,7 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
     categoryService
       .createCategory(data)
       .then(resp => {
-        setCategories([...categories, resp.data]);
+        setCategories([resp.data, ...categories]);
         setShowModal(false);
         props.history.push(props.location.pathname, {
           from: props.location,
@@ -62,11 +80,20 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
       });
   };
 
+  const sortDirIcon = (th: string) => {
+    th = camelize(th);
+    if (sortCol === th) {
+      const arrow = sortOrder === "asc" ? "arrow-down" : "arrow-up";
+      return <FontAwesomeIcon icon={arrow} color="#007791" size="sm" />;
+    }
+    return null;
+  };
   const getThead = () => {
     const ths = theads.map(th => {
       return (
         <th className="link" key={th} onClick={() => handleTableHeadClick(th)}>
-          {th}
+          <span className="mr-1">{th}</span>
+          {sortDirIcon(th)}
         </th>
       );
     });
@@ -139,7 +166,7 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
       {modalDialog}
       <div>
         <button
-          className="btn btn-primary float-md-right mt-1 mb-1"
+          className="btn btn-primary mt-1 mb-1"
           onClick={handleNewCategoryClick}
         >
           <FontAwesomeIcon icon="plus" className="pr-1" />
@@ -147,7 +174,7 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
         </button>
         <div className="table-responsive">
           <table className="table table-hover">
-            <thead>
+            <thead className="thead-light">
               <tr>{getThead()}</tr>
             </thead>
             <tbody>{getTbody()}</tbody>

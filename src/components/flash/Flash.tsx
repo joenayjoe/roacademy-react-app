@@ -7,13 +7,15 @@ interface IProps {
   title?: string;
   errors?: string[];
   dismissible?: boolean;
+  duration?: number;
   closeHandler?(): void;
 }
 const Flash: React.FunctionComponent<IProps> = props => {
   useEffect(() => {
+    let t = props.duration ? props.duration : 2000;
     const timer = setTimeout(() => {
       props.dismissible && props.closeHandler && props.closeHandler();
-    }, 2000);
+    }, t);
     return () => clearTimeout(timer);
     // eslint-disable-next-line
   }, []);
@@ -34,7 +36,7 @@ const Flash: React.FunctionComponent<IProps> = props => {
     errorList = <ul className="m-0 pl-1">{errorMap}</ul>;
   }
 
-  if (props.dismissible) {
+  if (props.closeHandler) {
     dismissBtn = (
       <button
         type="button"

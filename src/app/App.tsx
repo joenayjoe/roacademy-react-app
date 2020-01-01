@@ -44,12 +44,14 @@ import {
   ADMIN_CATEGORIES_URL,
   ADMIN_GRADES_URL,
   ADMIN_COURSES_URL,
-  ADMIN_CATEGORY_URL
+  ADMIN_CATEGORY_URL,
+  ADMIN_GRADE_URL
 } from "../settings/Constants";
 import AdminCourse from "../pages/adminpanel/AdminCourse";
-import AdminGrade from "../pages/adminpanel/AdminGrade";
+import AdminGradeList from "../pages/adminpanel/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/AdminCategoryList";
 import AdminCategory from "../pages/adminpanel/AdminCategory";
+import AdminGrade from "../pages/adminpanel/AdminGrade";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -132,6 +134,12 @@ const App = () => {
               role={RoleType.ADMIN}
               exact
               path={ADMIN_GRADES_URL}
+              component={AdminGradeList}
+            />
+            <PrivateRoute
+              role={RoleType.ADMIN}
+              exact
+              path={ADMIN_GRADE_URL}
               component={AdminGrade}
             />
             <PrivateRoute

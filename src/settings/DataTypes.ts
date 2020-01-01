@@ -55,6 +55,15 @@ export interface IEditCategory {
   id: number;
   name: string;
 }
+export interface INewGrade {
+  name: string;
+  categoryId: number;
+}
+export interface IEditGrade {
+  id: number;
+  name: string;
+  categoryId: number;
+}
 
 export interface IGrade extends ILinkItem {
   categoryId: number;

@@ -1,4 +1,4 @@
-export const DOMAIN = "http://localhost"; //"http://192.168.1.62";
+export const DOMAIN = "http://localhost"; //"http://192.168.1.131";
 
 export const API_PORT = ":8080";
 export const FRONT_END_PORT = ":3000";
@@ -33,6 +33,13 @@ export const ADMIN_CATEGORY_URL = "/admin/categories/:category_id";
 export const BUILD_ADMIN_CATEGORY_URL = (id: number) =>
   ADMIN_CATEGORY_URL.replace(":category_id", id.toString());
 export const ADMIN_GRADES_URL = "/admin/grades";
+export const ADMIN_GRADE_URL =
+  "/admin/categories/:category_id/grades/:grade_id";
+export const BUILD_ADMIN_GRADE_URL = (category_id: number, grade_id: number) =>
+  ADMIN_GRADE_URL.replace(":category_id", category_id.toString()).replace(
+    ":grade_id",
+    grade_id.toString()
+  );
 export const ADMIN_COURSES_URL = "/admin/courses";
 
 // User URLs

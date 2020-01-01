@@ -9,15 +9,17 @@ import {
 } from "../../settings/DataTypes";
 import Spinner from "../../components/spinner/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
 import {
   ADMIN_CATEGORIES_URL,
   ADMIN_PANEL_URL
 } from "../../settings/Constants";
-import Dialog from "../../components/modal/Modal";
+import Modal from "../../components/modal/Modal";
 import EditCategory from "./EditCategory";
-import FlashGenerator from "../../components/flash/FlashGenerator";
 import { parseError } from "../../utils/errorParser";
+import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
+import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
+import ConfirmDialog from "../../components/modal/ConfirmDialog";
+import Flash from "../../components/flash/Flash";
 
 interface MatchParams {
   category_id: string;
@@ -34,6 +36,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
   const [categoryErrorMessages, setCategoryErrorMessages] = useState<string[]>(
     []
   );
+  const [errorMessage, setErrorMessage] = useState<string[]>([]);
 
   useEffect(() => {
     categoryService.getCategory(categoryId).then(response => {
@@ -54,15 +57,20 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
   };
 
   const handleDeleteCategory = () => {
-    categoryService.deleteCategory(categoryId).then(resp => {
-      if (resp.status === HTTPStatus.OK) {
-        props.history.push(ADMIN_CATEGORIES_URL, {
-          from: props.location,
-          variant: AlertVariant.SUCCESS,
-          message: "Category successfully deleted."
-        });
-      }
-    });
+    categoryService
+      .deleteCategory(categoryId)
+      .then(resp => {
+        if (resp.status === HTTPStatus.OK) {
+          props.history.push(ADMIN_CATEGORIES_URL, {
+            from: props.location,
+            variant: AlertVariant.SUCCESS,
+            message: "Category successfully deleted."
+          });
+        }
+      })
+      .catch(err => {
+        setErrorMessage(parseError(err));
+      });
     setShowConfirmModal(false);
   };
 
@@ -71,7 +79,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
       .editCategory(data.id.toString(), data)
       .then(resp => {
         setCategory(resp.data);
-        setShowEditModal(false);
+        handleModalClose();
       })
       .catch(err => {
         let errs = parseError(err);
@@ -84,28 +92,11 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
   let categoryContainer: JSX.Element = <Spinner size="3x" />;
 
   if (category) {
-    const confirmModalBody = <div>Do you really want to delete this?</div>;
-
-    const confirmModalFooter = (
-      <React.Fragment>
-        <button
-          className="btn btn-danger"
-          onClick={() => setShowConfirmModal(false)}
-        >
-          Calcel
-        </button>
-        <button className="btn btn-primary" onClick={handleDeleteCategory}>
-          Ok
-        </button>
-      </React.Fragment>
-    );
     confirmDialog = (
-      <Dialog
+      <ConfirmDialog
         isOpen={showConfirmModal}
-        onCloseHandler={handleModalClose}
-        modalTitle="Are you sure?"
-        modalBody={confirmModalBody}
-        modalFooter={confirmModalFooter}
+        onConfirmHandler={handleDeleteCategory}
+        onDismissHandler={() => setShowConfirmModal(false)}
       />
     );
 
@@ -133,7 +124,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
       </React.Fragment>
     );
     editDialog = (
-      <Dialog
+      <Modal
         isOpen={showEditModal}
         onCloseHandler={handleModalClose}
         modalTitle="Edit Category"
@@ -143,27 +134,28 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
     );
 
     if (isLoaded) {
+      const falshError = errorMessage.length ? (
+        <Flash
+          dismissible
+          duration={5000}
+          variant={AlertVariant.DANGER}
+          errors={errorMessage}
+          closeHandler={() => setErrorMessage([])}
+        />
+      ) : null;
       categoryContainer = (
         <div className="admin-category-view">
+          {falshError}
           {editDialog}
           {confirmDialog}
-          <FlashGenerator
-            state={props.location.state}
-            closeHandler={() => props.history.push(props.location.pathname)}
-          />
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">
-                <Link to={ADMIN_PANEL_URL}>Admin</Link>
-              </li>
-              <li className="breadcrumb-item">
-                <Link to={ADMIN_CATEGORIES_URL}>Categories</Link>
-              </li>
-              <li className="breadcrumb-item active" aria-current="page">
-                Details
-              </li>
-            </ol>
-          </nav>
+
+          <Breadcrumb>
+            <BreadcrumbItem href={ADMIN_PANEL_URL}>Admin</BreadcrumbItem>
+            <BreadcrumbItem href={ADMIN_CATEGORIES_URL}>
+              Category
+            </BreadcrumbItem>
+            <BreadcrumbItem active>Details</BreadcrumbItem>
+          </Breadcrumb>
           <h4>Category Details</h4>
           <div className="table-responsive">
             <table className="table table-borderless">

@@ -21,8 +21,11 @@ export class CategoryService {
     );
   }
 
-  public async getCategories(): Promise<AxiosResponse<ICategory[]>> {
-    return await this.apiRequest.get<ICategory[]>(this.baseUrl);
+  public async getCategories(
+    order?: string
+  ): Promise<AxiosResponse<ICategory[]>> {
+    const url = order ? this.baseUrl + "?order=" + order : this.baseUrl;
+    return await this.apiRequest.get<ICategory[]>(url);
   }
 
   public async getCategoriesWithGrades(): Promise<AxiosResponse<ICategory[]>> {

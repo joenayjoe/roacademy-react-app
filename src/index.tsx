@@ -19,6 +19,7 @@ import {
   faAngleRight,
   faAngleDown,
   faAngleLeft,
+  faAngleUp,
   faCaretUp,
   faEnvelope,
   faLock,
@@ -29,7 +30,9 @@ import {
   faEdit,
   faTrash,
   faSave,
-  faPlus
+  faPlus,
+  faArrowUp,
+  faArrowDown
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -47,7 +50,10 @@ library.add(
   faAngleRight,
   faAngleLeft,
   faAngleDown,
+  faAngleUp,
   faCaretUp,
+  faArrowUp,
+  faArrowDown,
   faFacebookF,
   faFacebook,
   faGoogle,
