@@ -72,8 +72,29 @@ export interface IGrade extends ILinkItem {
 }
 
 export interface ICourse extends ILinkItem {
+  headline: string;
+  description: string;
+  objectives: string[];
+  requirements: string[];
+  categoryId: number;
   gradeId: number;
+  status: string;
+  level: string;
+  hits: number;
   tags: ITag[];
+}
+
+export interface INewCourse {
+  name: string;
+  headline: string;
+  description: string;
+  level: string;
+  objectives: string[];
+  requirements: string[];
+  categoryId: number;
+  gradeId: number;
+  preRequisiteCourseIds: number[];
+  status: string;
 }
 
 export interface IChapter extends ILinkItem {

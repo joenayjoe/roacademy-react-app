@@ -3,8 +3,8 @@ import {
   ICategory,
   IEditCategory,
   AlertVariant
-} from "../../settings/DataTypes";
-import Flash from "../../components/flash/Flash";
+} from "../../../settings/DataTypes";
+import Flash from "../../../components/flash/Flash";
 
 interface IProps {
   id: string;

@@ -1,35 +1,33 @@
 import React, { useEffect, useState } from "react";
-import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
-import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
+import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
+import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
 import {
   ADMIN_PANEL_URL,
   ADMIN_GRADES_URL,
   BUILD_ADMIN_CATEGORY_URL
-} from "../../settings/Constants";
+} from "../../../settings/Constants";
 import { RouteComponentProps, withRouter } from "react-router";
-import { GradeService } from "../../services/GradeService";
+import { GradeService } from "../../../services/GradeService";
 import {
   IGrade,
   IEditGrade,
   HTTPStatus,
   AlertVariant
-} from "../../settings/DataTypes";
+} from "../../../settings/DataTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Spinner from "../../components/spinner/Spinner";
-import ConfirmDialog from "../../components/modal/ConfirmDialog";
-import Modal from "../../components/modal/Modal";
+import Spinner from "../../../components/spinner/Spinner";
+import ConfirmDialog from "../../../components/modal/ConfirmDialog";
+import Modal from "../../../components/modal/Modal";
 import EditGrade from "./EditGrade";
-import { parseError } from "../../utils/errorParser";
+import { parseError } from "../../../utils/errorParser";
 import { Link } from "react-router-dom";
-import Flash from "../../components/flash/Flash";
+import Flash from "../../../components/flash/Flash";
 
 interface MatchParams {
   grade_id: string;
-  category_id: string;
 }
 interface IProp extends RouteComponentProps<MatchParams> {}
 const AdminGrade: React.FunctionComponent<IProp> = props => {
-  const categoryId: string = props.match.params.category_id;
   const gradeId: string = props.match.params.grade_id;
   const gradeService = new GradeService();
   const [grade, setGrade] = useState<IGrade | null>(null);
@@ -39,7 +37,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
   const [gradeErrorMessages, setGradeErrorMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    gradeService.getGrade(categoryId, gradeId).then(resp => {
+    gradeService.getGrade(gradeId).then(resp => {
       setGrade(resp.data);
       setIsLoaded(true);
     });
@@ -54,7 +52,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
 
   const handleEditModalSubmit = (data: IEditGrade) => {
     gradeService
-      .editGrade(categoryId, gradeId, data)
+      .editGrade(gradeId, data)
       .then(resp => {
         setGrade(resp.data);
         handleModalClose();
@@ -71,7 +69,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
   const handleDeleteGrade = () => {
     setShowConfirmModal(false);
     gradeService
-      .deleteGrade(categoryId, gradeId)
+      .deleteGrade(gradeId)
       .then(resp => {
         if (resp.status === HTTPStatus.OK) {
           props.history.push(ADMIN_GRADES_URL);

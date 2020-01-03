@@ -45,13 +45,19 @@ import {
   ADMIN_GRADES_URL,
   ADMIN_COURSES_URL,
   ADMIN_CATEGORY_URL,
-  ADMIN_GRADE_URL
+  ADMIN_GRADE_URL,
+  ADMIN_USERS_URL,
+  ADMIN_NEW_COURSE_URL,
+  ADMIN_COURSE_URL
 } from "../settings/Constants";
-import AdminCourse from "../pages/adminpanel/AdminCourse";
-import AdminGradeList from "../pages/adminpanel/AdminGradeList";
-import AdminCategoryList from "../pages/adminpanel/AdminCategoryList";
-import AdminCategory from "../pages/adminpanel/AdminCategory";
-import AdminGrade from "../pages/adminpanel/AdminGrade";
+import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
+import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
+import AdminCategory from "../pages/adminpanel/category/AdminCategory";
+import AdminGrade from "../pages/adminpanel/grade/AdminGrade";
+import AdminCourseList from "../pages/adminpanel/course/AdminCourseList";
+import AdminUserList from "../pages/adminpanel/user/AdminUserList";
+import NewCourse from "../pages/adminpanel/course/NewCourse";
+import AdminCourse from "../pages/adminpanel/course/AdminCourse";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -146,7 +152,25 @@ const App = () => {
               role={RoleType.ADMIN}
               exact
               path={ADMIN_COURSES_URL}
+              component={AdminCourseList}
+            />
+            <PrivateRoute
+              role={RoleType.ADMIN}
+              exact
+              path={ADMIN_NEW_COURSE_URL}
+              component={NewCourse}
+            />
+            <PrivateRoute
+              role={RoleType.ADMIN}
+              exact
+              path={ADMIN_COURSE_URL}
               component={AdminCourse}
+            />
+            <PrivateRoute
+              role={RoleType.ADMIN}
+              exact
+              path={ADMIN_USERS_URL}
+              component={AdminUserList}
             />
             <PublicRoute component={PageNotFound} />
           </Switch>

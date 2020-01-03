@@ -33,16 +33,18 @@ export const ADMIN_CATEGORY_URL = "/admin/categories/:category_id";
 export const BUILD_ADMIN_CATEGORY_URL = (id: number) =>
   ADMIN_CATEGORY_URL.replace(":category_id", id.toString());
 export const ADMIN_GRADES_URL = "/admin/grades";
-export const ADMIN_GRADE_URL =
-  "/admin/categories/:category_id/grades/:grade_id";
-export const BUILD_ADMIN_GRADE_URL = (category_id: number, grade_id: number) =>
-  ADMIN_GRADE_URL.replace(":category_id", category_id.toString()).replace(
-    ":grade_id",
-    grade_id.toString()
-  );
+export const ADMIN_GRADE_URL = "/admin/grades/:grade_id";
+export const BUILD_ADMIN_GRADE_URL = (grade_id: number) =>
+  ADMIN_GRADE_URL.replace(":grade_id", grade_id.toString());
 export const ADMIN_COURSES_URL = "/admin/courses";
+export const ADMIN_NEW_COURSE_URL = "/admin/courses/new";
+export const ADMIN_COURSE_URL = ADMIN_COURSES_URL + "/:course_id";
+export const BUILD_ADMIN_COURSE_URL = (courseId: number) =>
+  ADMIN_COURSE_URL.replace(":course_id", courseId.toString());
 
-// User URLs
+export const ADMIN_USERS_URL = "/admin/users";
+
+// Login User URLs
 
 export const USER_DASHBOARD_URL = "/dashboard";
 export const USER_ACCOUNT_SETTING_URL = "/user/account-settings";
@@ -56,13 +58,10 @@ export const CATEGORY_URL = "/categories/:category_id";
 export const BUILD_CATEGORY_URL = (categoryId: number) =>
   CATEGORY_URL.replace(":category_id", categoryId.toString());
 
-export const GRADE_URL = "/categories/:category_id/grades/:grade_id";
+export const GRADE_URL = "/grades/:grade_id";
 
-export const BUILD_GRADE_URL = (category_id: number, grade_id: number) =>
-  GRADE_URL.replace(":category_id", category_id.toString()).replace(
-    ":grade_id",
-    grade_id.toString()
-  );
+export const BUILD_GRADE_URL = (grade_id: number) =>
+  GRADE_URL.replace(":grade_id", grade_id.toString());
 
 export const COURSE_URL = "/courses/:course_id";
 export const BUILD_COURSE_URL = (course_id: number) =>

@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from "react";
-import { IGrade, IEditGrade, AlertVariant } from "../../settings/DataTypes";
-import Flash from "../../components/flash/Flash";
+import { IGrade, IEditGrade, AlertVariant } from "../../../settings/DataTypes";
+import Flash from "../../../components/flash/Flash";
 
 interface IProp {
   id: string;

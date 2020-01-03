@@ -112,7 +112,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
   const getGradesForCategory = (category: ICategory) => {
     if (category.catched === undefined || !category.catched) {
-      gradeService.getGradesForCategory(category.id).then(resp => {
+      categoryService.getGradesForCategory(category.id).then(resp => {
         let categoryList = categories.map(cat => {
           if (cat.id === category.id) {
             cat.grades = resp.data;
@@ -126,7 +126,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
   const getCoursesForGrade = (grade: IGrade) => {
     if (grade.catched === undefined || !grade.catched) {
-      gradeService.getCoursesForGrade(grade.categoryId, grade.id).then(resp => {
+      gradeService.getCoursesForGrade(grade.id).then(resp => {
         let categoryList = categories.map(cat => {
           if (cat.id === grade.categoryId) {
             cat.grades.map(grd => {
@@ -228,7 +228,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
     if ((item as IGrade).categoryId) {
       item = item as IGrade;
-      url = BUILD_GRADE_URL(item.categoryId, item.id);
+      url = BUILD_GRADE_URL(item.id);
     } else if ((item as ICourse).gradeId) {
       url = BUILD_COURSE_URL(item.id);
     } else {

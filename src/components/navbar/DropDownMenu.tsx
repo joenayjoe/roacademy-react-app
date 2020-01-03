@@ -14,6 +14,11 @@ import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
 import { isGrade, isCourse } from "../../utils/typeChecker";
 import Spinner from "../spinner/Spinner";
+import {
+  BUILD_GRADE_URL,
+  BUILD_COURSE_URL,
+  BUILD_CATEGORY_URL
+} from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {
   displayName: string;
@@ -58,11 +63,11 @@ class DropDownMenu extends Component<IProps, IStates> {
 
     if ((item as IGrade).categoryId) {
       item = item as IGrade;
-      url = "/categories/" + item.categoryId + "/grades/" + item.id;
+      url = BUILD_GRADE_URL(item.id);
     } else if ((item as ICourse).gradeId) {
-      url = "/courses/" + item.id;
+      url = BUILD_COURSE_URL(item.id);
     } else {
-      url = "/categories/" + item.id;
+      url = BUILD_CATEGORY_URL(item.id);
     }
     this.setState({
       showLgScreenDropDownMenu: false,
@@ -118,7 +123,7 @@ class DropDownMenu extends Component<IProps, IStates> {
   fetchGradesForCategory(category: ICategory) {
     if (category.catched === undefined || !category.catched) {
       this.setState({ isLoadingGrade: true });
-      this.gradeService.getGradesForCategory(category.id).then(resp => {
+      this.categoryService.getGradesForCategory(category.id).then(resp => {
         let categories = this.state.categories.map(cat => {
           if (cat.id === category.id) {
             cat.grades = resp.data;
@@ -133,24 +138,22 @@ class DropDownMenu extends Component<IProps, IStates> {
   fetchCoursesForGrade(grade: IGrade) {
     if (grade.catched === undefined || !grade.catched) {
       this.setState({ isLoadingCourse: true });
-      this.gradeService
-        .getCoursesForGrade(grade.categoryId, grade.id)
-        .then(resp => {
-          let categories = this.state.categories.map(cat => {
-            if (cat.id === grade.categoryId) {
-              cat.grades.map(grd => {
-                if (grd.id === grade.id) {
-                  grd.courses = resp.data;
-                  grd.catched = true;
-                }
-                return grd;
-              });
-            }
-            return cat;
-          });
-
-          this.setState({ categories: categories, isLoadingCourse: false });
+      this.gradeService.getCoursesForGrade(grade.id).then(resp => {
+        let categories = this.state.categories.map(cat => {
+          if (cat.id === grade.categoryId) {
+            cat.grades.map(grd => {
+              if (grd.id === grade.id) {
+                grd.courses = resp.data;
+                grd.catched = true;
+              }
+              return grd;
+            });
+          }
+          return cat;
         });
+
+        this.setState({ categories: categories, isLoadingCourse: false });
+      });
     }
   }
 
@@ -322,7 +325,11 @@ class DropDownMenu extends Component<IProps, IStates> {
         className={`drop-down-list drop-down-list-level-one drop-down-list-arrow-left ${disPlayKlass}`}
         ref={node => (this.menuNode = node)}
       >
-        {this.state.isLoadingCategory ? <Spinner classNames="pt-4"/> : dropDownMenuItem}
+        {this.state.isLoadingCategory ? (
+          <Spinner classNames="pt-4" />
+        ) : (
+          dropDownMenuItem
+        )}
       </ul>
     );
   }

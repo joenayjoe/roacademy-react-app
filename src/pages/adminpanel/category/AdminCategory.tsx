@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
-import { CategoryService } from "../../services/CategoryService";
+import { CategoryService } from "../../../services/CategoryService";
 import {
   ICategory,
   HTTPStatus,
   AlertVariant,
   IEditCategory
-} from "../../settings/DataTypes";
-import Spinner from "../../components/spinner/Spinner";
+} from "../../../settings/DataTypes";
+import Spinner from "../../../components/spinner/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   ADMIN_CATEGORIES_URL,
   ADMIN_PANEL_URL
-} from "../../settings/Constants";
-import Modal from "../../components/modal/Modal";
+} from "../../../settings/Constants";
+import Modal from "../../../components/modal/Modal";
 import EditCategory from "./EditCategory";
-import { parseError } from "../../utils/errorParser";
-import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
-import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
-import ConfirmDialog from "../../components/modal/ConfirmDialog";
-import Flash from "../../components/flash/Flash";
+import { parseError } from "../../../utils/errorParser";
+import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
+import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
+import ConfirmDialog from "../../../components/modal/ConfirmDialog";
+import Flash from "../../../components/flash/Flash";
 
 interface MatchParams {
   category_id: string;

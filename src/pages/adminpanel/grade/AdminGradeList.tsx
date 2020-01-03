@@ -1,15 +1,15 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
-import AdminControl from "./AdminControl";
-import { ICategory, IGrade, INewGrade } from "../../settings/DataTypes";
-import { CategoryService } from "../../services/CategoryService";
-import { GradeService } from "../../services/GradeService";
+import AdminControl from "../AdminControl";
+import { ICategory, IGrade, INewGrade } from "../../../settings/DataTypes";
+import { CategoryService } from "../../../services/CategoryService";
+import { GradeService } from "../../../services/GradeService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RouteComponentProps, withRouter } from "react-router";
-import { BUILD_ADMIN_GRADE_URL } from "../../settings/Constants";
-import Modal from "../../components/modal/Modal";
+import { BUILD_ADMIN_GRADE_URL } from "../../../settings/Constants";
+import Modal from "../../../components/modal/Modal";
 import NewGrade from "./NewGrade";
-import { camelize } from "../../utils/StringUtils";
-import { parseError } from "../../utils/errorParser";
+import { camelize } from "../../../utils/StringUtils";
+import { parseError } from "../../../utils/errorParser";
 
 interface IProps extends RouteComponentProps {}
 
@@ -46,7 +46,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   const hanldeCategorySelect = (e: ChangeEvent<HTMLSelectElement>) => {
     const categoryId = parseInt(e.target.value, 10);
     setSelectedCategoryId(categoryId);
-    gradeService.getGradesForCategory(categoryId).then(resp => {
+    categoryService.getGradesForCategory(categoryId).then(resp => {
       setGrades(resp.data);
     });
   };
@@ -69,7 +69,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
 
   const handleNewGradeSubmit = (data: INewGrade) => {
     gradeService
-      .createGrade(selectedCategoryId.toString(), data)
+      .createGrade(data)
       .then(resp => {
         setGrades([resp.data, ...grades]);
         setShowModal(false);
@@ -81,7 +81,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   };
 
   const handleTableHeadClick = (th: string) => {
-    gradeService
+    categoryService
       .getGradesForCategory(selectedCategoryId, getSorting(th))
       .then(resp => {
         setGrades(resp.data);
@@ -89,7 +89,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   };
 
   const handleTableRowClick = (grade: IGrade) => {
-    props.history.push(BUILD_ADMIN_GRADE_URL(selectedCategoryId, grade.id));
+    props.history.push(BUILD_ADMIN_GRADE_URL(grade.id));
   };
 
   const sortDirIcon = (th: string) => {
@@ -121,11 +121,9 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
           key={grade.id}
           onClick={() => handleTableRowClick(grade)}
         >
-          <td key={grade.id}> {grade.id}</td>
-          <td key={grade.name}> {grade.name}</td>
-          <td key={grade.createdAt && grade.createdAt.toString()}>
-            {grade.createdAt}
-          </td>
+          <td> {grade.id}</td>
+          <td> {grade.name}</td>
+          <td>{grade.createdAt}</td>
         </tr>
       );
     });

@@ -1,23 +1,23 @@
-import React, { useState, FormEvent } from "react";
-import Flash from "../../components/flash/Flash";
-import { AlertVariant, INewCategory } from "../../settings/DataTypes";
+import React, { FormEvent, useState } from "react";
+import { INewGrade, AlertVariant } from "../../../settings/DataTypes";
+import Flash from "../../../components/flash/Flash";
 
-interface IProp {
-  id: string;
+interface IProps {
+  formId: string;
+  categoryId: number;
   errorMessages: string[];
-  onSubmitHandler: (data: INewCategory) => void;
+  onSubmitHandler: (data: INewGrade) => void;
 }
-const NewCategory: React.FunctionComponent<IProp> = props => {
+const NewGrade: React.FunctionComponent<IProps> = props => {
   const [name, setName] = useState<string>("");
-
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const formData: INewCategory = {
-      name: name
+    const formData: INewGrade = {
+      name: name,
+      categoryId: props.categoryId
     };
     props.onSubmitHandler(formData);
   };
-
   let flashError: JSX.Element | undefined;
   if (props.errorMessages.length) {
     flashError = (
@@ -26,17 +26,17 @@ const NewCategory: React.FunctionComponent<IProp> = props => {
   }
   return (
     <div>
-      <form id={props.id} onSubmit={handleFormSubmit}>
+      <form id={props.formId} onSubmit={handleFormSubmit}>
         {flashError}
         <div className="form-group">
           <label>Name</label>
           <input
             type="text"
-            name="Category name"
+            name="Grade name"
             value={name}
             className="form-control"
-            placeholder="Category Name"
-            aria-label="Category Name"
+            placeholder="Grade Name"
+            aria-label="Grade Name"
             autoFocus
             required
             onChange={e => setName(e.target.value)}
@@ -46,4 +46,4 @@ const NewCategory: React.FunctionComponent<IProp> = props => {
     </div>
   );
 };
-export default NewCategory;
+export default NewGrade;

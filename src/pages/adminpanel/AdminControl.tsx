@@ -4,7 +4,8 @@ import {
   ADMIN_CATEGORIES_URL,
   ADMIN_GRADES_URL,
   ADMIN_COURSES_URL,
-  ADMIN_PANEL_URL
+  ADMIN_PANEL_URL,
+  ADMIN_USERS_URL
 } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {}
@@ -44,6 +45,12 @@ const AdminControl: React.FunctionComponent<IProps> = props => {
             onClick={() => handleLinkClick(ADMIN_COURSES_URL)}
           >
             Course
+          </li>
+          <li
+            className={`menu-link ${getActiveClassName(ADMIN_USERS_URL)}`}
+            onClick={() => handleLinkClick(ADMIN_USERS_URL)}
+          >
+            Users
           </li>
         </ul>
       </div>

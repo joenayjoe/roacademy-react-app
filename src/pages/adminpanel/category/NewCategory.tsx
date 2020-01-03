@@ -1,23 +1,23 @@
-import React, { FormEvent, useState } from "react";
-import { INewGrade, AlertVariant } from "../../settings/DataTypes";
-import Flash from "../../components/flash/Flash";
+import React, { useState, FormEvent } from "react";
+import Flash from "../../../components/flash/Flash";
+import { AlertVariant, INewCategory } from "../../../settings/DataTypes";
 
-interface IProps {
-  formId: string;
-  categoryId: number;
+interface IProp {
+  id: string;
   errorMessages: string[];
-  onSubmitHandler: (data: INewGrade) => void;
+  onSubmitHandler: (data: INewCategory) => void;
 }
-const NewGrade: React.FunctionComponent<IProps> = props => {
+const NewCategory: React.FunctionComponent<IProp> = props => {
   const [name, setName] = useState<string>("");
+
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const formData: INewGrade = {
-      name: name,
-      categoryId: props.categoryId
+    const formData: INewCategory = {
+      name: name
     };
     props.onSubmitHandler(formData);
   };
+
   let flashError: JSX.Element | undefined;
   if (props.errorMessages.length) {
     flashError = (
@@ -26,17 +26,17 @@ const NewGrade: React.FunctionComponent<IProps> = props => {
   }
   return (
     <div>
-      <form id={props.formId} onSubmit={handleFormSubmit}>
+      <form id={props.id} onSubmit={handleFormSubmit}>
         {flashError}
         <div className="form-group">
           <label>Name</label>
           <input
             type="text"
-            name="Grade name"
+            name="Category name"
             value={name}
             className="form-control"
-            placeholder="Grade Name"
-            aria-label="Grade Name"
+            placeholder="Category Name"
+            aria-label="Category Name"
             autoFocus
             required
             onChange={e => setName(e.target.value)}
@@ -46,4 +46,4 @@ const NewGrade: React.FunctionComponent<IProps> = props => {
     </div>
   );
 };
-export default NewGrade;
+export default NewCategory;

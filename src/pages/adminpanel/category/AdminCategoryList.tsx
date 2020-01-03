@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import AdminControl from "./AdminControl";
+import AdminControl from "../AdminControl";
 import {
   ICategory,
   INewCategory,
   AlertVariant
-} from "../../settings/DataTypes";
-import { CategoryService } from "../../services/CategoryService";
+} from "../../../settings/DataTypes";
+import { CategoryService } from "../../../services/CategoryService";
 import { RouteComponentProps, withRouter } from "react-router";
-import { BUILD_ADMIN_CATEGORY_URL } from "../../settings/Constants";
+import { BUILD_ADMIN_CATEGORY_URL } from "../../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Modal from "../../components/modal/Modal";
+import Modal from "../../../components/modal/Modal";
 import NewCategory from "./NewCategory";
-import FlashGenerator from "../../components/flash/FlashGenerator";
-import Spinner from "../../components/spinner/Spinner";
-import { parseError } from "../../utils/errorParser";
-import { camelize } from "../../utils/StringUtils";
+import FlashGenerator from "../../../components/flash/FlashGenerator";
+import Spinner from "../../../components/spinner/Spinner";
+import { parseError } from "../../../utils/errorParser";
+import { camelize } from "../../../utils/StringUtils";
 
 interface IProps extends RouteComponentProps {}
 
@@ -108,11 +108,9 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
           key={cat.id}
           onClick={() => handleTableRowClick(cat)}
         >
-          <td key={cat.id}> {cat.id}</td>
-          <td key={cat.name}> {cat.name}</td>
-          <td key={cat.createdAt && cat.createdAt.toString()}>
-            {cat.createdAt}
-          </td>
+          <td> {cat.id}</td>
+          <td> {cat.name}</td>
+          <td>{cat.createdAt}</td>
         </tr>
       );
     });

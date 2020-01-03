@@ -4,7 +4,8 @@ import {
   INewCategory,
   ICourse,
   HTTPStatus,
-  IEditCategory
+  IEditCategory,
+  IGrade
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 
@@ -47,6 +48,13 @@ export class CategoryService {
     return await this.apiRequest.get<ICategory>(url);
   }
 
+  public async getGradesForCategory(categoryId: number, sorting?: string) {
+    const url = sorting
+      ? `/categories/${categoryId}/grades?order=${sorting}`
+      : `/categories/${categoryId}/grades`;
+    return await this.apiRequest.get<IGrade[]>(url);
+  }
+  
   public async getCoursesForCategory(
     categoryId: string
   ): Promise<AxiosResponse<ICourse[]>> {

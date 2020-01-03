@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { IGrade } from "../../settings/DataTypes";
-import { GradeService } from "../../services/GradeService";
 import SlickSlider from "../../components/slider/SlickSlider";
 import SliderNextArrow from "../../components/slider/SliderNextArrow";
 import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
@@ -8,6 +7,8 @@ import { Settings } from "react-slick";
 import { withRouter, RouteComponentProps } from "react-router";
 import { isMobileOnly } from "react-device-detect";
 import { Link } from "react-router-dom";
+import { CategoryService } from "../../services/CategoryService";
+import { BUILD_GRADE_URL } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {
   title: string;
@@ -17,7 +18,7 @@ interface IProps extends RouteComponentProps {
 }
 
 const GradeSlide: React.FunctionComponent<IProps> = props => {
-  const gradeService = new GradeService();
+  const categoryService = new CategoryService();
 
   const [grades, setGrade] = useState<IGrade[]>(
     props.grades ? props.grades : []
@@ -48,7 +49,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
 
   useEffect(() => {
     if (!props.grades && props.categoryId) {
-      gradeService.getGradesForCategory(props.categoryId).then(resp => {
+      categoryService.getGradesForCategory(props.categoryId).then(resp => {
         setGrade(resp.data);
       });
     }
@@ -56,7 +57,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
   }, []);
 
   const handleGradeOnClick = (grade: IGrade) => {
-    const url = "/categories/" + grade.categoryId + "/grades/" + grade.id;
+    const url = BUILD_GRADE_URL(grade.id);
     props.history.push(url);
   };
 
