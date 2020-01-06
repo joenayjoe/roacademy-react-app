@@ -46,6 +46,6 @@ const Grade: React.FunctionComponent<IProps> = props => {
       </React.Fragment>
     );
   }
-  return <div className="grade-container">{gradeContainerItems}</div>;
+  return <div className="grade-container width-75">{gradeContainerItems}</div>;
 };
 export default Grade;

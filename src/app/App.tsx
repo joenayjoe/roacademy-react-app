@@ -48,7 +48,8 @@ import {
   ADMIN_GRADE_URL,
   ADMIN_USERS_URL,
   ADMIN_NEW_COURSE_URL,
-  ADMIN_COURSE_URL
+  ADMIN_COURSE_URL,
+  ADMIN_USER_URL
 } from "../settings/Constants";
 import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
@@ -58,6 +59,7 @@ import AdminCourseList from "../pages/adminpanel/course/AdminCourseList";
 import AdminUserList from "../pages/adminpanel/user/AdminUserList";
 import NewCourse from "../pages/adminpanel/course/NewCourse";
 import AdminCourse from "../pages/adminpanel/course/AdminCourse";
+import AdminUser from "../pages/adminpanel/user/AdminUser";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -80,7 +82,7 @@ const App = () => {
           backdropClickHandler={backdropClickHandler}
         />
 
-        <div className="content-wrapper width-75">
+        <div className="content-wrapper">
           <Switch>
             <PublicRoute exact path={DONATION_URL} component={Donation} />
             <PublicRoute exact path={CATEGORIES_URL} component={CategoryList} />
@@ -171,6 +173,12 @@ const App = () => {
               exact
               path={ADMIN_USERS_URL}
               component={AdminUserList}
+            />
+            <PrivateRoute
+              role={RoleType.ADMIN}
+              exact
+              path={ADMIN_USER_URL}
+              component={AdminUser}
             />
             <PublicRoute component={PageNotFound} />
           </Switch>

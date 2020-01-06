@@ -37,6 +37,6 @@ const CategoryList = () => {
   if (!isLoading) {
     content = <div className="category-list">{getCategories()}</div>;
   }
-  return <div>{content}</div>;
+  return <div className="width-75">{content}</div>;
 };
 export default CategoryList;

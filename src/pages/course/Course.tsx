@@ -5,6 +5,7 @@ import { RouteComponentProps } from "react-router";
 import { ICourse } from "../../settings/DataTypes";
 import { CourseService } from "../../services/CourseService";
 import Spinner from "../../components/spinner/Spinner";
+import CourseDetail from "./CourseDetail";
 
 interface matchedParams {
   course_id: string;
@@ -24,16 +25,11 @@ const Course: React.FunctionComponent<IProps> = props => {
     // eslint-disable-next-line
   }, []);
 
-  let courseContainerItems: JSX.Element = <Spinner size="3x"/>;
+  let courseContainerItems: JSX.Element = <Spinner size="3x" />;
   if (course) {
-    courseContainerItems = (
-      <div className="chapter-list">
-        <h4>{course.name}</h4>
-        <p>All chapters goes here</p>
-      </div>
-    );
+    courseContainerItems = <CourseDetail course={course} />;
   }
-  return <div className="course-container">{courseContainerItems}</div>;
+  return <div className="course-container full-width">{courseContainerItems}</div>;
 };
 
 export default Course;

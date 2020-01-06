@@ -2,10 +2,8 @@ import { AxiosResponse } from "axios";
 import {
   ICategory,
   INewCategory,
-  ICourse,
   HTTPStatus,
-  IEditCategory,
-  IGrade
+  IEditCategory
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 
@@ -45,27 +43,6 @@ export class CategoryService {
     categoryId: string
   ): Promise<AxiosResponse<ICategory>> {
     const url = this.baseUrl + "/" + categoryId + "?withGrade=true";
-    return await this.apiRequest.get<ICategory>(url);
-  }
-
-  public async getGradesForCategory(categoryId: number, sorting?: string) {
-    const url = sorting
-      ? `/categories/${categoryId}/grades?order=${sorting}`
-      : `/categories/${categoryId}/grades`;
-    return await this.apiRequest.get<IGrade[]>(url);
-  }
-  
-  public async getCoursesForCategory(
-    categoryId: string
-  ): Promise<AxiosResponse<ICourse[]>> {
-    const url = this.baseUrl + "/" + categoryId + "/get_courses";
-    return await this.apiRequest.get(url);
-  }
-
-  public async getCategoryWithGradesAndCourses(
-    categoryId: string
-  ): Promise<AxiosResponse<ICategory>> {
-    const url = this.baseUrl + categoryId + "?withGrade=true&withCourse=true";
     return await this.apiRequest.get<ICategory>(url);
   }
 

@@ -188,7 +188,7 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
           </Link>
         </div>
 
-        <div className="navbar-collapse" id="navbarSupportedContent">
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto nav-left">
             <li className="nav-item">
               <DropDownMenu displayName="Categories" icon="th-list" />

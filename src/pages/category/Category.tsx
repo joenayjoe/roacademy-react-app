@@ -7,6 +7,7 @@ import { CategoryService } from "../../services/CategoryService";
 import Spinner from "../../components/spinner/Spinner";
 import GradeSlide from "../grade/GradeSlide";
 import CourseSlide from "../course/CourseSlide";
+import { CourseService } from "../../services/CourseService";
 
 interface MatchParams {
   category_id: string;
@@ -20,6 +21,7 @@ interface IStates {
 const Category: React.FunctionComponent<IProps> = props => {
   const categoryId: string = props.match.params.category_id;
   const categoryService = new CategoryService();
+  const courseService = new CourseService();
 
   const [category, setCategory] = useState<ICategory | null>(null);
   const [courses, setCourses] = useState<ICourse[]>([]);
@@ -34,7 +36,7 @@ const Category: React.FunctionComponent<IProps> = props => {
       .catch(error => {
         console.log("Error =>", error);
       });
-    categoryService.getCoursesForCategory(categoryId).then(resp => {
+    courseService.getCoursesByCategoryId(categoryId).then(resp => {
       setCourses(resp.data);
       setIsLoaded(true);
     });
@@ -69,7 +71,7 @@ const Category: React.FunctionComponent<IProps> = props => {
     );
   }
 
-  return <div className="category-container">{categoryContainer}</div>;
+  return <div className="category-container width-75">{categoryContainer}</div>;
 };
 
 export default withRouter(Category);

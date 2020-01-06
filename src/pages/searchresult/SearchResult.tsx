@@ -19,7 +19,7 @@ class SearchResult extends Component<IProps, IStates> {
   render() {
       let params = parseQueryParams(this.query);
     return (
-      <div className="search-container">
+      <div className="search-container width-75">
         <h2>Search Result</h2>
         <p>Your search term: {params.query}</p>
       </div>

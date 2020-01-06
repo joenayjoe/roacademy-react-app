@@ -144,7 +144,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
         />
       ) : null;
       categoryContainer = (
-        <div className="admin-category-view">
+        <div className="admin-category-view width-75">
           {falshError}
           {editDialog}
           {confirmDialog}

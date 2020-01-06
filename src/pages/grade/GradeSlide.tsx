@@ -7,8 +7,8 @@ import { Settings } from "react-slick";
 import { withRouter, RouteComponentProps } from "react-router";
 import { isMobileOnly } from "react-device-detect";
 import { Link } from "react-router-dom";
-import { CategoryService } from "../../services/CategoryService";
 import { BUILD_GRADE_URL } from "../../settings/Constants";
+import { GradeService } from "../../services/GradeService";
 
 interface IProps extends RouteComponentProps {
   title: string;
@@ -18,7 +18,7 @@ interface IProps extends RouteComponentProps {
 }
 
 const GradeSlide: React.FunctionComponent<IProps> = props => {
-  const categoryService = new CategoryService();
+  const gradeService = new GradeService();
 
   const [grades, setGrade] = useState<IGrade[]>(
     props.grades ? props.grades : []
@@ -49,7 +49,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
 
   useEffect(() => {
     if (!props.grades && props.categoryId) {
-      categoryService.getGradesForCategory(props.categoryId).then(resp => {
+      gradeService.getGradesByCategoryId(props.categoryId).then(resp => {
         setGrade(resp.data);
       });
     }

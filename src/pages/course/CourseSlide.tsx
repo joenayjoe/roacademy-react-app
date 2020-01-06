@@ -47,9 +47,11 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
 
   useEffect(() => {
     if (!courses.length && props.categoryId) {
-      courseService.getCoursesByCategoryId(props.categoryId).then(resp => {
-        setCourses(resp.data);
-      });
+      courseService
+        .getCoursesByCategoryId(props.categoryId.toString())
+        .then(resp => {
+          setCourses(resp.data);
+        });
     }
     // eslint-disable-next-line
   }, []);
@@ -72,7 +74,7 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
   };
 
   const handleCourseOnClick = (course: ICourse) => {
-    props.history.push("/courses/" + course.id);  
+    props.history.push("/courses/" + course.id);
   };
 
   const getCourseSlide = () => {

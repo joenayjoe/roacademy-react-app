@@ -9,7 +9,8 @@ import {
   INewCourse,
   AlertVariant,
   ICategory,
-  IGrade
+  IGrade,
+  CourseStatus
 } from "../../../settings/DataTypes";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { CourseService } from "../../../services/CourseService";
@@ -17,11 +18,13 @@ import { parseError } from "../../../utils/errorParser";
 import Flash from "../../../components/flash/Flash";
 import { CategoryService } from "../../../services/CategoryService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GradeService } from "../../../services/GradeService";
 
 interface IProp extends RouteComponentProps {}
 
 const NewCourse: React.FunctionComponent<IProp> = props => {
   const categoryService = new CategoryService();
+  const gradeService = new GradeService();
   const courseService = new CourseService();
 
   const [name, setName] = useState<string>("");
@@ -30,10 +33,7 @@ const NewCourse: React.FunctionComponent<IProp> = props => {
   const [level, setLevel] = useState<string>("");
   const [objectives, setObjectives] = useState<string[]>([]);
   const [requirements, setRequirements] = useState<string[]>([]);
-  const [status, setStatus] = useState<string>("");
-  const [preRequisiteCourseIds, setPreRequisiteCourseIds] = useState<number[]>(
-    []
-  );
+  const [status] = useState<CourseStatus>(CourseStatus.DRAFT);
   const [gradeId, setGradeId] = useState<number>(0);
   const [categoryId, setCategoryId] = useState<number>(0);
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -51,7 +51,7 @@ const NewCourse: React.FunctionComponent<IProp> = props => {
   const hanldeCategorySelect = (e: ChangeEvent<HTMLSelectElement>) => {
     const categoryId = parseInt(e.target.value, 10);
     setCategoryId(categoryId);
-    categoryService.getGradesForCategory(categoryId).then(resp => {
+    gradeService.getGradesByCategoryId(categoryId).then(resp => {
       setGrades(resp.data);
     });
   };
@@ -66,7 +66,6 @@ const NewCourse: React.FunctionComponent<IProp> = props => {
         level: level,
         objectives: objectives,
         requirements: requirements,
-        preRequisiteCourseIds: preRequisiteCourseIds,
         status: status,
         gradeId: gradeId,
         categoryId: categoryId
@@ -109,7 +108,7 @@ const NewCourse: React.FunctionComponent<IProp> = props => {
   });
 
   return (
-    <div>
+    <div className="new-course width-75">
       <Breadcrumb>
         <BreadcrumbItem href={ADMIN_PANEL_URL}>Admin</BreadcrumbItem>
         <BreadcrumbItem href={ADMIN_COURSES_URL}>Courses</BreadcrumbItem>
@@ -130,23 +129,7 @@ const NewCourse: React.FunctionComponent<IProp> = props => {
                 onChange={e => setName(e.target.value)}
               ></input>
             </div>
-            <div className="form-group">
-              <label>Level</label>
-              <select
-                id="category-select-input"
-                value={level}
-                required
-                className="form-control"
-                onChange={e => setLevel(e.target.value)}
-              >
-                <option value="" disabled>
-                  Choose Level
-                </option>
-                <option value="BEGINNER">BEGINNER</option>
-                <option value="INTERMEDIATE">INTERMEDIATE</option>
-                <option value="ADVANCED">ADVANCED</option>
-              </select>
-            </div>
+
             <div className="form-group">
               <label>Headline</label>
               <input
@@ -166,6 +149,24 @@ const NewCourse: React.FunctionComponent<IProp> = props => {
                 value={description}
                 onChange={e => setDescription(e.target.value)}
               ></textarea>
+            </div>
+
+            <div className="form-group">
+              <label>Level</label>
+              <select
+                id="category-select-input"
+                value={level}
+                required
+                className="form-control"
+                onChange={e => setLevel(e.target.value)}
+              >
+                <option value="" disabled>
+                  Choose Level
+                </option>
+                <option value="BEGINNER">BEGINNER</option>
+                <option value="INTERMEDIATE">INTERMEDIATE</option>
+                <option value="ADVANCED">ADVANCED</option>
+              </select>
             </div>
 
             <div className="form-group">

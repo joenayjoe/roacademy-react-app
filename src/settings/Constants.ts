@@ -43,6 +43,9 @@ export const BUILD_ADMIN_COURSE_URL = (courseId: number) =>
   ADMIN_COURSE_URL.replace(":course_id", courseId.toString());
 
 export const ADMIN_USERS_URL = "/admin/users";
+export const ADMIN_USER_URL = ADMIN_USERS_URL + "/:user_id";
+export const BUILD_ADMIN_USER_URL = (user_id: number) =>
+  ADMIN_USER_URL.replace(":user_id", user_id.toString());
 
 // Login User URLs
 

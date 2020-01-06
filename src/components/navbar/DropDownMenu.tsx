@@ -19,6 +19,7 @@ import {
   BUILD_COURSE_URL,
   BUILD_CATEGORY_URL
 } from "../../settings/Constants";
+import { CourseService } from "../../services/CourseService";
 
 interface IProps extends RouteComponentProps {
   displayName: string;
@@ -39,10 +40,12 @@ interface IStates {
 class DropDownMenu extends Component<IProps, IStates> {
   private categoryService: CategoryService;
   private gradeService: GradeService;
+  private courseService: CourseService;
   constructor(props: IProps) {
     super(props);
     this.categoryService = new CategoryService();
     this.gradeService = new GradeService();
+    this.courseService = new CourseService();
   }
   state: IStates = {
     showDropDownMenu: false,
@@ -123,7 +126,7 @@ class DropDownMenu extends Component<IProps, IStates> {
   fetchGradesForCategory(category: ICategory) {
     if (category.catched === undefined || !category.catched) {
       this.setState({ isLoadingGrade: true });
-      this.categoryService.getGradesForCategory(category.id).then(resp => {
+      this.gradeService.getGradesByCategoryId(category.id).then(resp => {
         let categories = this.state.categories.map(cat => {
           if (cat.id === category.id) {
             cat.grades = resp.data;
@@ -138,7 +141,7 @@ class DropDownMenu extends Component<IProps, IStates> {
   fetchCoursesForGrade(grade: IGrade) {
     if (grade.catched === undefined || !grade.catched) {
       this.setState({ isLoadingCourse: true });
-      this.gradeService.getCoursesForGrade(grade.id).then(resp => {
+      this.courseService.getCoursesByGradeId(grade.id).then(resp => {
         let categories = this.state.categories.map(cat => {
           if (cat.id === grade.categoryId) {
             cat.grades.map(grd => {

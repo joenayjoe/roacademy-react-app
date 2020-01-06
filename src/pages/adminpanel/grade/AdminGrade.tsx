@@ -198,6 +198,6 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
       );
     }
   }
-  return <div className="admin-grade-view">{adminGradeContainer}</div>;
+  return <div className="admin-grade-view width-75">{adminGradeContainer}</div>;
 };
 export default withRouter(AdminGrade);

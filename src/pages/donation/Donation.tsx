@@ -3,7 +3,7 @@ import React, { Component } from "react";
 class Donation extends Component {
   render() {
     return (
-      <div>
+      <div className="width-75">
         <h1>Donation</h1>
         <p>
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates

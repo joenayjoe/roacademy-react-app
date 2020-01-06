@@ -7,7 +7,7 @@ interface IProps extends RouteComponentProps {}
 class Home extends Component<IProps> {
   render() {
     return (
-      <div>
+      <div className="width-75">
         <FlashGenerator
           state={this.props.location.state}
           closeHandler={() =>

@@ -32,6 +32,7 @@ import {
 import Signup from "../../pages/user/Signup";
 import Login from "../../pages/user/Login";
 import Modal from "../modal/Modal";
+import { CourseService } from "../../services/CourseService";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -42,6 +43,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   const categoryService = new CategoryService();
   const gradeService = new GradeService();
   const authService = new AuthService();
+  const courseService = new CourseService();
 
   const authContext = useContext(AuthContext);
 
@@ -112,7 +114,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
   const getGradesForCategory = (category: ICategory) => {
     if (category.catched === undefined || !category.catched) {
-      categoryService.getGradesForCategory(category.id).then(resp => {
+      gradeService.getGradesByCategoryId(category.id).then(resp => {
         let categoryList = categories.map(cat => {
           if (cat.id === category.id) {
             cat.grades = resp.data;
@@ -126,7 +128,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
   const getCoursesForGrade = (grade: IGrade) => {
     if (grade.catched === undefined || !grade.catched) {
-      gradeService.getCoursesForGrade(grade.id).then(resp => {
+      courseService.getCoursesByGradeId(grade.id).then(resp => {
         let categoryList = categories.map(cat => {
           if (cat.id === grade.categoryId) {
             cat.grades.map(grd => {

@@ -24,6 +24,12 @@ export enum RoleType {
   STUDENT = "ROLE_STUDENT"
 }
 
+export enum CourseStatus {
+  DRAFT = "DRAFT",
+  PENDING = "PENDING",
+  PUBLISHED = "PUBLISHED"
+}
+
 export type MenuItemType = ICategory | IGrade | ICourse;
 export enum AlertVariant {
   PRIMARY = "alert alert-primary",
@@ -81,6 +87,7 @@ export interface ICourse extends ILinkItem {
   status: string;
   level: string;
   hits: number;
+  createdBy: IUser;
   tags: ITag[];
 }
 
@@ -93,8 +100,7 @@ export interface INewCourse {
   requirements: string[];
   categoryId: number;
   gradeId: number;
-  preRequisiteCourseIds: number[];
-  status: string;
+  status: CourseStatus;
 }
 
 export interface IChapter extends ILinkItem {

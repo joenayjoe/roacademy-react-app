@@ -31,7 +31,7 @@ class UserSettingContaner extends Component<IProps> {
     let avatarStyle = { width: "120px", height: "120px", fontSize: "36px" };
     let userName = this.authService.getUserFullName(this.context);
     return (
-      <div className="user-profile">
+      <div className="user-profile width-75">
         <div className="user-profile-side-nav">
           <div className="avatar">
             <Avatar styles={avatarStyle} />

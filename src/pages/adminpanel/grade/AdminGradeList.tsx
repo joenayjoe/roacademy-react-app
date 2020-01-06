@@ -46,7 +46,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   const hanldeCategorySelect = (e: ChangeEvent<HTMLSelectElement>) => {
     const categoryId = parseInt(e.target.value, 10);
     setSelectedCategoryId(categoryId);
-    categoryService.getGradesForCategory(categoryId).then(resp => {
+    gradeService.getGradesByCategoryId(categoryId).then(resp => {
       setGrades(resp.data);
     });
   };
@@ -81,8 +81,8 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   };
 
   const handleTableHeadClick = (th: string) => {
-    categoryService
-      .getGradesForCategory(selectedCategoryId, getSorting(th))
+    gradeService
+      .getGradesByCategoryId(selectedCategoryId, getSorting(th))
       .then(resp => {
         setGrades(resp.data);
       });

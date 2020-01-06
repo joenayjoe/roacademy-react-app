@@ -1,6 +1,9 @@
  .top-header {
      width: 100%;
+     background: #fff;
      box-shadow: 0 0 1px 1px rgba(20, 23, 28, .1), 0 3px 1px 0 rgba(20, 23, 28, .1);
+     display: block;
+     position: relative;
  }
  
  .nav-container {
@@ -35,7 +38,7 @@
      display: none;
  }
  
- @media only screen and (max-width: 414px) {
+ @media only screen and (max-width: 767px) {
      #side-drawer-toggler {
          display: initial;
          align-self: flex-end;
@@ -47,15 +50,15 @@
      .mobile-search-icon {
          display: inline-block;
      }
+     .mobile-spacer {
+         flex: 1;
+     }
  }
+ /* deviced with max resolution 1199 : not extra large screen */
  
- @media (max-width: 900px) {
+ @media (max-width: 1199px) {
      #navbarSupportedContent {
          display: none;
-     }
-     .mobile-spacer {
-         display: initial;
-         flex: 1;
      }
      .nav-container {
          width: 100%;

@@ -25,6 +25,8 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
     "Status",
     "Level",
     "Hits",
+    "Category",
+    "Grade",
     "Created At"
   ];
 
@@ -92,6 +94,8 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
           <td> {course.status}</td>
           <td> {course.level}</td>
           <td> {course.hits}</td>
+          <td> {course.categoryId}</td>
+          <td> {course.gradeId}</td>
           <td>{course.createdAt}</td>
         </tr>
       );
@@ -115,7 +119,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
 
         <div className="table-responsive">
           <table className="table table-hover">
-            <thead className="thead-light">
+            <thead className="thead-light text-nowrap">
               <tr>{getThead()}</tr>
             </thead>
             <tbody>{getTbody()}</tbody>

@@ -32,7 +32,7 @@ class UserDashboard extends Component<IProps, IStates> {
       greeting = <h1>Welcome {this.state.currentUser.firstName}</h1>;
     }
     return (
-      <div className="dashboard">
+      <div className="dashboard width-75">
         {greeting}
         <p>User dashboard</p>
       </div>

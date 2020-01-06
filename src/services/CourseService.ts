@@ -4,23 +4,42 @@ import {
   ICourse,
   ISearchRequest,
   INewCourse,
-  HTTPStatus
+  HTTPStatus,
+  CourseStatus
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 
 export class CourseService {
   private apiRequest = new ApiRequest();
   private baseUrl = "/courses";
+
   public async getCourses(order?: string): Promise<AxiosResponse<ICourse[]>> {
     const url = order ? this.baseUrl + "?order=" + order : this.baseUrl;
     return await this.apiRequest.get(url);
   }
 
   public async getCoursesByCategoryId(
-    categoryId: number
+    categoryId: string,
+    status?: CourseStatus[],
+    order?: string
   ): Promise<AxiosResponse<ICourse[]>> {
-    const url = "/categories/" + categoryId + "/courses";
-    return await this.apiRequest.get(url);
+    const st = status ? status : CourseStatus.PUBLISHED;
+    const url = order
+      ? `/courses?category_id=${categoryId}&status=${st}&order=${order}`
+      : `/courses?category_id=${categoryId}&status=${st}`;
+    return await this.apiRequest.get<ICourse[]>(url);
+  }
+
+  public async getCoursesByGradeId(
+    gradeId: number,
+    status?: CourseStatus[],
+    order?: string
+  ): Promise<AxiosResponse<ICourse[]>> {
+    const st = status ? status : CourseStatus.PUBLISHED;
+    const url = order
+      ? `/courses?grade_id=${gradeId}&status=${st}&order=${order}`
+      : `/courses?grade_id=${gradeId}&status=${st}`;
+    return await this.apiRequest.get<ICourse[]>(url);
   }
 
   public async getCourse(courseId: string): Promise<AxiosResponse<ICourse>> {

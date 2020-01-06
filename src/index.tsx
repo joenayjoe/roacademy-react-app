@@ -32,13 +32,21 @@ import {
   faSave,
   faPlus,
   faArrowUp,
-  faArrowDown
+  faArrowDown,
+  faCheck,
+  faDotCircle,
+  faShare,
+  faCalendarCheck,
+  faFile,
+  faFileDownload,
+  faTasks
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
   faFacebookF,
   faFacebook,
-  faGoogle
+  faGoogle,
+  faYoutube
 } from "@fortawesome/free-brands-svg-icons";
 library.add(
   faSignInAlt,
@@ -66,7 +74,15 @@ library.add(
   faEdit,
   faTrash,
   faSave,
-  faPlus
+  faPlus,
+  faCheck,
+  faDotCircle,
+  faShare,
+  faCalendarCheck,
+  faYoutube,
+  faFile,
+  faFileDownload,
+  faTasks
 );
 
 ReactDOM.render(<App />, document.getElementById("root"));
