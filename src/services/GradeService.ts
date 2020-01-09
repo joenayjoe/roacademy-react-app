@@ -10,6 +10,13 @@ import {
 export class GradeService {
   private apiRequest = new ApiRequest();
 
+  public async getGrades(sorting?: string) {
+    const url = sorting
+      ? `/grades?order=${sorting}`
+      : `/grades`;
+    return await this.apiRequest.get<IGrade[]>(url);
+  }
+
   public async getGradesByCategoryId(categoryId: number, sorting?: string) {
     const url = sorting
       ? `/grades?category_id=${categoryId}&order=${sorting}`

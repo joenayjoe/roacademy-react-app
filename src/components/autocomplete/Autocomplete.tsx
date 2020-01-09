@@ -2,11 +2,11 @@ import React, { Component, FormEvent, ChangeEvent, createRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { ILinkItem } from "../../settings/DataTypes";
+import { ISearchResponse } from "../../settings/DataTypes";
 
 interface AutocompleteProps {
   query: string;
-  suggestions: ILinkItem[];
+  suggestions: ISearchResponse[];
   placeholder: string;
   icon?: IconProp;
   autoFoucs?: boolean;
@@ -44,7 +44,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     this.props.onSubmitHandler(this.state.query);
   };
 
-  handleOnSelect = (suggestion: ILinkItem) => {
+  handleOnSelect = (suggestion: ISearchResponse) => {
     this.setState({ query: suggestion.name });
     this.props.onSubmitHandler(suggestion.name);
   };

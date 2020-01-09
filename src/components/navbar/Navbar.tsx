@@ -13,8 +13,8 @@ import {
 } from "react-router-dom";
 import {
   ModalIdentifier,
-  ILinkItem,
-  ISearchRequest
+  ISearchRequest,
+  ISearchResponse
 } from "../../settings/DataTypes";
 import ToggleBar from "../../components/togglebar/ToggleBar";
 import { CourseService } from "../../services/CourseService";
@@ -32,7 +32,7 @@ interface IProbs extends RouteComponentProps {
 const Navbar: React.FunctionComponent<IProbs> = props => {
   const courseService = new CourseService();
 
-  const [suggestions, setSuggestions] = useState<ILinkItem[]>([]);
+  const [suggestions, setSuggestions] = useState<ISearchResponse[]>([]);
   const [showBrandName, setShowBrandName] = useState<boolean>(true);
   const [showMobileSearch, setShowMobileSearch] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");

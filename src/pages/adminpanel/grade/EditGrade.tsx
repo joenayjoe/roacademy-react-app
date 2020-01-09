@@ -16,7 +16,7 @@ const EditGrade: React.FunctionComponent<IProp> = props => {
     const formData: IEditGrade = {
       id: props.grade.id,
       name: name,
-      categoryId: props.grade.categoryId
+      categoryId: props.grade.primaryCategory.id
     };
     props.onSubmitHandler(formData);
   };

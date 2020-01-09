@@ -40,16 +40,37 @@ export enum AlertVariant {
   DANGER = "alert alert-danger"
 }
 
-interface Auditable {
-  createdAt: Date;
-  updatedAt: Date;
-}
-export interface ILinkItem extends Auditable {
+export interface IPrimaryCategory {
   id: number;
   name: string;
 }
 
-export interface ICategory extends ILinkItem {
+export interface IPrimaryGrade {
+  id: number;
+  name: string;
+}
+export interface IPrimaryCourse {
+  id: number;
+  name: string;
+}
+export interface IPrimaryUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface IPrimaryChapter {
+  id: number;
+  name: string;
+}
+
+interface IAuditable {
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ICategory extends IPrimaryCategory, IAuditable {
   grades: IGrade[];
   catched?: boolean;
 }
@@ -71,23 +92,23 @@ export interface IEditGrade {
   categoryId: number;
 }
 
-export interface IGrade extends ILinkItem {
-  categoryId: number;
+export interface IGrade extends IPrimaryGrade, IAuditable {
+  primaryCategory: IPrimaryCategory;
   courses: ICourse[];
   catched?: boolean;
 }
 
-export interface ICourse extends ILinkItem {
+export interface ICourse extends IPrimaryCourse, IAuditable {
   headline: string;
   description: string;
   objectives: string[];
   requirements: string[];
-  categoryId: number;
-  gradeId: number;
+  primaryCategory: IPrimaryCategory;
+  primaryGrade: IPrimaryGrade;
   status: string;
   level: string;
   hits: number;
-  createdBy: IUser;
+  createdBy: IPrimaryUser;
   tags: ITag[];
 }
 
@@ -103,22 +124,24 @@ export interface INewCourse {
   status: CourseStatus;
 }
 
-export interface IChapter extends ILinkItem {
-  courseId: number;
+export interface IChapter extends IPrimaryChapter, IAuditable {
+  primaryCourse: IPrimaryCourse;
 }
 
-export interface ITag extends ILinkItem {}
-
-export interface IUser {
+export interface ITag extends IAuditable {
   id: number;
-  firstName: string;
-  lastName: string;
+  name: string;
+}
+
+export interface IUser extends IPrimaryUser, IAuditable {
   imageUrl: string;
-  email: string;
   roles: IRole[];
 }
 
-export interface IRole extends ILinkItem {}
+export interface IRole extends IAuditable {
+  id: number;
+  name: string;
+}
 
 export interface ISignupRequest {
   firstName: string;
@@ -144,6 +167,10 @@ export interface ILoginResponse {
 
 export interface ISearchRequest {
   query: string;
+}
+export interface ISearchResponse {
+  id: number;
+  name: string;
 }
 
 export interface IToken {

@@ -94,8 +94,8 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
           <td> {course.status}</td>
           <td> {course.level}</td>
           <td> {course.hits}</td>
-          <td> {course.categoryId}</td>
-          <td> {course.gradeId}</td>
+          <td> {course.primaryCategory.name}</td>
+          <td> {course.primaryGrade.name}</td>
           <td>{course.createdAt}</td>
         </tr>
       );

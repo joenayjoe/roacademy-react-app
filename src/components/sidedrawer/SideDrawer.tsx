@@ -130,7 +130,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     if (grade.catched === undefined || !grade.catched) {
       courseService.getCoursesByGradeId(grade.id).then(resp => {
         let categoryList = categories.map(cat => {
-          if (cat.id === grade.categoryId) {
+          if (cat.id === grade.primaryCategory.id) {
             cat.grades.map(grd => {
               if (grd.id === grade.id) {
                 grd.courses = resp.data;
@@ -154,7 +154,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
       const grade = item as IGrade;
       let parent: ICategory | null = null;
       for (let cat of categories) {
-        if (cat.id === grade.categoryId) {
+        if (cat.id === grade.primaryCategory.id) {
           parent = cat;
           break;
         }
@@ -228,10 +228,10 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   const loadPage = (item: MenuItemType) => {
     let url: string;
 
-    if ((item as IGrade).categoryId) {
+    if ((item as IGrade).primaryCategory) {
       item = item as IGrade;
       url = BUILD_GRADE_URL(item.id);
-    } else if ((item as ICourse).gradeId) {
+    } else if ((item as ICourse).primaryGrade) {
       url = BUILD_COURSE_URL(item.id);
     } else {
       url = BUILD_CATEGORY_URL(item.id);

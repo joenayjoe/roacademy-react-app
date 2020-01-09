@@ -162,8 +162,10 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
                 <tr>
                   <th scope="row">Category</th>
                   <td>
-                    <Link to={BUILD_ADMIN_CATEGORY_URL(grade.categoryId)}>
-                      {grade.categoryId}
+                    <Link
+                      to={BUILD_ADMIN_CATEGORY_URL(grade.primaryCategory.id)}
+                    >
+                      {grade.primaryCategory.name}
                     </Link>
                   </td>
                 </tr>
