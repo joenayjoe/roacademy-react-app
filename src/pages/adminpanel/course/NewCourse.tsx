@@ -2,7 +2,8 @@ import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import {
   ADMIN_COURSES_URL,
-  ADMIN_PANEL_URL
+  ADMIN_PANEL_URL,
+  BUILD_ADMIN_COURSE_URL
 } from "../../../settings/Constants";
 import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
 import {
@@ -73,7 +74,7 @@ const NewCourse: React.FunctionComponent<IProp> = props => {
       courseService
         .createCourse(formData)
         .then(resp => {
-          props.history.push(ADMIN_COURSES_URL);
+          props.history.push(BUILD_ADMIN_COURSE_URL(resp.data.id));
         })
         .catch(err => {
           setErrors(parseError(err));

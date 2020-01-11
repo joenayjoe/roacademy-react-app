@@ -178,3 +178,14 @@ export interface IToken {
   exp: number;
   iat: number;
 }
+
+export interface Page<T> {
+  content: T[];
+  totalPages: number;
+  number: number;
+  totalElements: number;
+  numberOfElements: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+}

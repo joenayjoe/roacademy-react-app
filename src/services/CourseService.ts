@@ -5,7 +5,8 @@ import {
   ISearchRequest,
   INewCourse,
   HTTPStatus,
-  CourseStatus
+  CourseStatus,
+  Page
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 
@@ -13,8 +14,13 @@ export class CourseService {
   private apiRequest = new ApiRequest();
   private baseUrl = "/courses";
 
-  public async getCourses(order?: string): Promise<AxiosResponse<ICourse[]>> {
-    const url = order ? this.baseUrl + "?order=" + order : this.baseUrl;
+  public async getCourses(
+    page: number,
+    size: number,
+    order = "id_asc"
+  ): Promise<AxiosResponse<Page<ICourse>>> {
+    const url =
+      this.baseUrl + "?page=" + page + "&size=" + size + "&order=" + order;
     return await this.apiRequest.get(url);
   }
 

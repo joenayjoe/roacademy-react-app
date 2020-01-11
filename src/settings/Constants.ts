@@ -75,3 +75,5 @@ export const BUILD_SEARCH_WITH_QUERY_URL = (query: string) =>
   SEARCH_URL + "?query=" + query;
 
 export const DONATION_URL = "/donation";
+
+export const PAGE_SIZE = 5;

@@ -28,6 +28,7 @@
 .admin-content-wrapper {
     padding-left: 1rem;
     flex: 1;
+    overflow: hidden;
 }
 
 @media only screen and (max-width: 414px) {
