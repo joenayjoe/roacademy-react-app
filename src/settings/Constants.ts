@@ -41,6 +41,9 @@ export const ADMIN_NEW_COURSE_URL = "/admin/courses/new";
 export const ADMIN_COURSE_URL = ADMIN_COURSES_URL + "/:course_id";
 export const BUILD_ADMIN_COURSE_URL = (courseId: number) =>
   ADMIN_COURSE_URL.replace(":course_id", courseId.toString());
+export const ADMIN_EDIT_COURSE_URL = ADMIN_COURSES_URL + "/:course_id/edit";
+export const BUILD_ADMIN_EDIT_COURSE_URL = (course_id: number) =>
+  ADMIN_EDIT_COURSE_URL.replace(":course_id", course_id.toString());
 
 export const ADMIN_USERS_URL = "/admin/users";
 export const ADMIN_USER_URL = ADMIN_USERS_URL + "/:user_id";
@@ -77,3 +80,7 @@ export const BUILD_SEARCH_WITH_QUERY_URL = (query: string) =>
 export const DONATION_URL = "/donation";
 
 export const PAGE_SIZE = 5;
+export const DEFAULT_SORTING_FIELD = "id";
+export const DEFAULT_SORTING_ORDER = "desc";
+export const DEFAULT_SORTING =
+  DEFAULT_SORTING_FIELD + "_" + DEFAULT_SORTING_ORDER;

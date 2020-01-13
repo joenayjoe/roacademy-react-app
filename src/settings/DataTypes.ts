@@ -72,7 +72,6 @@ interface IAuditable {
 
 export interface ICategory extends IPrimaryCategory, IAuditable {
   grades: IGrade[];
-  catched?: boolean;
 }
 
 export interface INewCategory {
@@ -95,7 +94,6 @@ export interface IEditGrade {
 export interface IGrade extends IPrimaryGrade, IAuditable {
   primaryCategory: IPrimaryCategory;
   courses: ICourse[];
-  catched?: boolean;
 }
 
 export interface ICourse extends IPrimaryCourse, IAuditable {

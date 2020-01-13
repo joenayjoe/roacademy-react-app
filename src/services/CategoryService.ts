@@ -6,6 +6,7 @@ import {
   IEditCategory
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
+import { DEFAULT_SORTING } from "../settings/Constants";
 
 export class CategoryService {
   private apiRequest = new ApiRequest();
@@ -21,9 +22,9 @@ export class CategoryService {
   }
 
   public async getCategories(
-    order?: string
+    order = DEFAULT_SORTING
   ): Promise<AxiosResponse<ICategory[]>> {
-    const url = order ? this.baseUrl + "?order=" + order : this.baseUrl;
+    const url = this.baseUrl + "?order=" + order;
     return await this.apiRequest.get<ICategory[]>(url);
   }
 

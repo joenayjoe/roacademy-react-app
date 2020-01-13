@@ -98,6 +98,9 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
     </div>
   );
 
+  const markupDescription = () => {
+    return { __html: course.description };
+  };
   return (
     <div className={`course-detail ${classNames}`}>
       <div className="course-detail-header">
@@ -125,6 +128,9 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
                   Last Updated {course.updatedAt}
                 </div>
               </div>
+              <div className="course-detail-row">
+                <div className="course-detail-item">Level {course.level}</div>
+              </div>
             </div>
             {courseInfoDesktop}
           </div>
@@ -148,7 +154,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
             </div>
             <div className="course-detail-description pt-3">
               <h4>Description</h4>
-              <div>{course.description}</div>
+              <div dangerouslySetInnerHTML={markupDescription()} />
             </div>
           </div>
         </div>

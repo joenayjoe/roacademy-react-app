@@ -9,6 +9,7 @@ import {
   Page
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
+import { DEFAULT_SORTING } from "../settings/Constants";
 
 export class CourseService {
   private apiRequest = new ApiRequest();
@@ -17,7 +18,7 @@ export class CourseService {
   public async getCourses(
     page: number,
     size: number,
-    order = "id_asc"
+    order = DEFAULT_SORTING
   ): Promise<AxiosResponse<Page<ICourse>>> {
     const url =
       this.baseUrl + "?page=" + page + "&size=" + size + "&order=" + order;
@@ -27,24 +28,20 @@ export class CourseService {
   public async getCoursesByCategoryId(
     categoryId: string,
     status?: CourseStatus[],
-    order?: string
+    order = DEFAULT_SORTING
   ): Promise<AxiosResponse<ICourse[]>> {
     const st = status ? status : CourseStatus.PUBLISHED;
-    const url = order
-      ? `/courses?category_id=${categoryId}&status=${st}&order=${order}`
-      : `/courses?category_id=${categoryId}&status=${st}`;
+    const url = `/courses?category_id=${categoryId}&status=${st}&order=${order}`;
     return await this.apiRequest.get<ICourse[]>(url);
   }
 
   public async getCoursesByGradeId(
     gradeId: number,
     status?: CourseStatus[],
-    order?: string
+    order = DEFAULT_SORTING
   ): Promise<AxiosResponse<ICourse[]>> {
     const st = status ? status : CourseStatus.PUBLISHED;
-    const url = order
-      ? `/courses?grade_id=${gradeId}&status=${st}&order=${order}`
-      : `/courses?grade_id=${gradeId}&status=${st}`;
+    const url = `/courses?grade_id=${gradeId}&status=${st}&order=${order}`;
     return await this.apiRequest.get<ICourse[]>(url);
   }
 
@@ -63,6 +60,11 @@ export class CourseService {
   public async createCourse(data: INewCourse): Promise<AxiosResponse<ICourse>> {
     const url = this.baseUrl;
     return await this.apiRequest.post<INewCourse, ICourse>(url, data);
+  }
+
+  public async updateCourse(data: ICourse): Promise<AxiosResponse<ICourse>> {
+    const url = this.baseUrl + "/" + data.id;
+    return await this.apiRequest.put<ICourse, ICourse>(url, data);
   }
 
   public async deleteCourse(

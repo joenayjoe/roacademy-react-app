@@ -1,34 +1,45 @@
 import React, { useState, useEffect } from "react";
 import AdminControl from "../AdminControl";
-import { IGrade, INewGrade } from "../../../settings/DataTypes";
+import {
+  IGrade,
+  INewGrade,
+  Page,
+  HTTPStatus
+} from "../../../settings/DataTypes";
 import { GradeService } from "../../../services/GradeService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RouteComponentProps, withRouter } from "react-router";
-import { BUILD_ADMIN_GRADE_URL } from "../../../settings/Constants";
+import {
+  BUILD_ADMIN_GRADE_URL,
+  PAGE_SIZE,
+  DEFAULT_SORTING_FIELD,
+  DEFAULT_SORTING_ORDER
+} from "../../../settings/Constants";
 import Modal from "../../../components/modal/Modal";
 import NewGrade from "./NewGrade";
 import { camelize } from "../../../utils/StringUtils";
 import { parseError } from "../../../utils/errorParser";
 import Spinner from "../../../components/spinner/Spinner";
+import Pagination from "../../../components/pagination/Pagination";
 
 interface IProps extends RouteComponentProps {}
 
 const AdminGradeList: React.FunctionComponent<IProps> = props => {
   const gradeService = new GradeService();
 
-  const [grades, setGrades] = useState<IGrade[]>([]);
+  const [gradePage, setGradePage] = useState<Page<IGrade> | null>(null);
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newGradeErrors, setNewGradeErrors] = useState<string[]>([]);
-  const [sortCol, setSortCol] = useState<string>("id");
-  const [sortOrder, setSortOrder] = useState<string>("asc");
+  const [sortCol, setSortCol] = useState<string>(DEFAULT_SORTING_FIELD);
+  const [sortOrder, setSortOrder] = useState<string>(DEFAULT_SORTING_ORDER);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const theads = ["ID", "Name", "Category", "Created At"];
 
   useEffect(() => {
-    gradeService.getGrades().then(resp => {
-      setGrades(resp.data);
+    gradeService.getGrades(0, PAGE_SIZE).then(resp => {
+      setGradePage(resp.data);
       setIsLoaded(true);
     });
     // eslint-disable-next-line
@@ -54,9 +65,11 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
     gradeService
       .createGrade(data)
       .then(resp => {
-        setGrades([resp.data, ...grades]);
-        setShowModal(false);
-        setNewGradeErrors([]);
+        if (resp.status === HTTPStatus.CREATED) {
+          setShowModal(false);
+          setNewGradeErrors([]);
+          window.location.reload();
+        }
       })
       .catch(err => {
         setNewGradeErrors(parseError(err));
@@ -65,14 +78,28 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
 
   const handleTableHeadClick = (th: string) => {
     setIsLoaded(false);
-    gradeService.getGrades(getSorting(th)).then(resp => {
-      setGrades(resp.data);
-      setIsLoaded(true);
-    });
+    const currentPage = gradePage ? gradePage.number : 0;
+    gradeService
+      .getGrades(currentPage, PAGE_SIZE, getSorting(th))
+      .then(resp => {
+        setGradePage(resp.data);
+        setIsLoaded(true);
+      });
   };
 
   const handleTableRowClick = (grade: IGrade) => {
     props.history.push(BUILD_ADMIN_GRADE_URL(grade.id));
+  };
+
+  const handlePageClick = (page: number) => {
+    if (page >= 0) {
+      const sorting = sortCol + "_" + sortOrder;
+      setIsLoaded(false);
+      gradeService.getGrades(page, PAGE_SIZE, sorting).then(resp => {
+        setGradePage(resp.data);
+        setIsLoaded(true);
+      });
+    }
   };
 
   const sortDirIcon = (th: string) => {
@@ -97,20 +124,22 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   };
 
   const getTbody = () => {
-    const trows = grades.map(grade => {
-      return (
-        <tr
-          className="link"
-          key={grade.id}
-          onClick={() => handleTableRowClick(grade)}
-        >
-          <td> {grade.id}</td>
-          <td> {grade.name}</td>
-          <td> {grade.name}</td>
-          <td>{grade.createdAt}</td>
-        </tr>
-      );
-    });
+    const trows =
+      gradePage &&
+      gradePage.content.map(grade => {
+        return (
+          <tr
+            className="link"
+            key={grade.id}
+            onClick={() => handleTableRowClick(grade)}
+          >
+            <td> {grade.id}</td>
+            <td> {grade.name}</td>
+            <td> {grade.name}</td>
+            <td>{grade.createdAt}</td>
+          </tr>
+        );
+      });
     return trows;
   };
 
@@ -139,10 +168,21 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
     </div>
   );
 
+  const pagination = gradePage ? (
+    <Pagination
+      totalPage={gradePage.totalPages}
+      first={gradePage.first}
+      last={gradePage.last}
+      currentPage={gradePage.number}
+      pageClickHandler={handlePageClick}
+    />
+  ) : null;
+
   const gradeListView = isLoaded ? (
     <div className="grade-list-view">
       {newGradeBtn}
       {gradeListTable()}
+      {pagination}
     </div>
   ) : (
     <Spinner size="3x" />

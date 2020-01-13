@@ -4,23 +4,29 @@ import {
   IGrade,
   IEditGrade,
   HTTPStatus,
-  INewGrade
+  INewGrade,
+  Page
 } from "../settings/DataTypes";
+import { DEFAULT_SORTING } from "../settings/Constants";
 
 export class GradeService {
   private apiRequest = new ApiRequest();
 
-  public async getGrades(sorting?: string) {
-    const url = sorting
-      ? `/grades?order=${sorting}`
-      : `/grades`;
-    return await this.apiRequest.get<IGrade[]>(url);
+  public async getGrades(
+    page: number,
+    size: number,
+    sorting = DEFAULT_SORTING
+  ) {
+    const url = `/grades?page=${page}&size=${size}&order=${sorting}`;
+    return await this.apiRequest.get<Page<IGrade>>(url);
   }
 
-  public async getGradesByCategoryId(categoryId: number, sorting?: string) {
-    const url = sorting
-      ? `/grades?category_id=${categoryId}&order=${sorting}`
-      : `/grades?category_id=${categoryId}`;
+  public async getGradesByCategoryId(
+    categoryId: number,
+    sorting = DEFAULT_SORTING
+  ) {
+    const url = `/grades?category_id=${categoryId}&order=${sorting}`;
+
     return await this.apiRequest.get<IGrade[]>(url);
   }
   public async getGrade(gradeId: string): Promise<AxiosResponse<IGrade>> {

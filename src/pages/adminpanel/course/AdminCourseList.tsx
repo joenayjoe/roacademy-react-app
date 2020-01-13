@@ -9,7 +9,9 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import {
   ADMIN_NEW_COURSE_URL,
   BUILD_ADMIN_COURSE_URL,
-  PAGE_SIZE
+  PAGE_SIZE,
+  DEFAULT_SORTING_FIELD,
+  DEFAULT_SORTING_ORDER
 } from "../../../settings/Constants";
 import Pagination from "../../../components/pagination/Pagination";
 
@@ -17,8 +19,8 @@ interface IProp extends RouteComponentProps {}
 const AdminCourseList: React.FunctionComponent<IProp> = props => {
   const courseService = new CourseService();
   const [coursePage, setCoursePage] = useState<Page<ICourse> | null>(null);
-  const [sortCol, setSortCol] = useState<string>("id");
-  const [sortOrder, setSortOrder] = useState<string>("asc");
+  const [sortCol, setSortCol] = useState<string>(DEFAULT_SORTING_FIELD);
+  const [sortOrder, setSortOrder] = useState<string>(DEFAULT_SORTING_ORDER);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const theads: string[] = [

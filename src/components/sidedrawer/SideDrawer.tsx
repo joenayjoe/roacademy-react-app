@@ -61,7 +61,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
   useEffect(() => {
     categoryService
-      .getCategories()
+      .getCategories("name_asc")
       .then(response => {
         setCategories(response.data);
       })
@@ -113,38 +113,32 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
 
   const getGradesForCategory = (category: ICategory) => {
-    if (category.catched === undefined || !category.catched) {
-      gradeService.getGradesByCategoryId(category.id).then(resp => {
-        let categoryList = categories.map(cat => {
-          if (cat.id === category.id) {
-            cat.grades = resp.data;
-            cat.catched = true;
-          }
-          return cat;
-        });
-        setCategories(categoryList);
+    gradeService.getGradesByCategoryId(category.id, "id_asc").then(resp => {
+      let categoryList = categories.map(cat => {
+        if (cat.id === category.id) {
+          cat.grades = resp.data;
+        }
+        return cat;
       });
-    }
+      setCategories(categoryList);
+    });
   };
   const getCoursesForGrade = (grade: IGrade) => {
-    if (grade.catched === undefined || !grade.catched) {
-      courseService.getCoursesByGradeId(grade.id).then(resp => {
-        let categoryList = categories.map(cat => {
-          if (cat.id === grade.primaryCategory.id) {
-            cat.grades.map(grd => {
-              if (grd.id === grade.id) {
-                grd.courses = resp.data;
-                grd.catched = true;
-              }
-              return grd;
-            });
-          }
-          return cat;
-        });
-
-        setCategories(categoryList);
+    courseService.getCoursesByGradeId(grade.id).then(resp => {
+      let categoryList = categories.map(cat => {
+        if (cat.id === grade.primaryCategory.id) {
+          cat.grades.map(grd => {
+            if (grd.id === grade.id) {
+              grd.courses = resp.data;
+            }
+            return grd;
+          });
+        }
+        return cat;
       });
-    }
+
+      setCategories(categoryList);
+    });
   };
 
   const handleMenuLinkClick = (item: MenuItemType) => {

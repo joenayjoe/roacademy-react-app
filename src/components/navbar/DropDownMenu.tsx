@@ -124,40 +124,36 @@ class DropDownMenu extends Component<IProps, IStates> {
   };
 
   fetchGradesForCategory(category: ICategory) {
-    if (category.catched === undefined || !category.catched) {
-      this.setState({ isLoadingGrade: true });
-      this.gradeService.getGradesByCategoryId(category.id).then(resp => {
+    this.setState({ isLoadingGrade: true });
+    this.gradeService
+      .getGradesByCategoryId(category.id, "id_asc")
+      .then(resp => {
         let categories = this.state.categories.map(cat => {
           if (cat.id === category.id) {
             cat.grades = resp.data;
-            cat.catched = true;
           }
           return cat;
         });
         this.setState({ categories: categories, isLoadingGrade: false });
       });
-    }
   }
   fetchCoursesForGrade(grade: IGrade) {
-    if (grade.catched === undefined || !grade.catched) {
-      this.setState({ isLoadingCourse: true });
-      this.courseService.getCoursesByGradeId(grade.id).then(resp => {
-        let categories = this.state.categories.map(cat => {
-          if (cat.id === grade.primaryCategory.id) {
-            cat.grades.map(grd => {
-              if (grd.id === grade.id) {
-                grd.courses = resp.data;
-                grd.catched = true;
-              }
-              return grd;
-            });
-          }
-          return cat;
-        });
-
-        this.setState({ categories: categories, isLoadingCourse: false });
+    this.setState({ isLoadingCourse: true });
+    this.courseService.getCoursesByGradeId(grade.id).then(resp => {
+      let categories = this.state.categories.map(cat => {
+        if (cat.id === grade.primaryCategory.id) {
+          cat.grades.map(grd => {
+            if (grd.id === grade.id) {
+              grd.courses = resp.data;
+            }
+            return grd;
+          });
+        }
+        return cat;
       });
-    }
+
+      this.setState({ categories: categories, isLoadingCourse: false });
+    });
   }
 
   handleDropDownMouseEnter = () => {
@@ -176,7 +172,7 @@ class DropDownMenu extends Component<IProps, IStates> {
 
   componentDidMount() {
     this.setState({ isLoadingCategory: true });
-    this.categoryService.getCategories().then(response => {
+    this.categoryService.getCategories("name_asc").then(response => {
       this.setState({ categories: response.data, isLoadingCategory: false });
     });
     document.addEventListener("mousedown", e => this.handleOnClick(e), false);

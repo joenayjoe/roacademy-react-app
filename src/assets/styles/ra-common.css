@@ -80,6 +80,11 @@ input[type="search"]::-webkit-search-results-decoration {
     font-size: 68%;
 }
 
+.content-wrapper {
+    padding-top: 5px;
+    flex: 1 0 auto;
+}
+
 .width-75 {
     width: 75%;
     margin: 0 auto;
@@ -183,6 +188,14 @@ input[type="search"]::-webkit-search-results-decoration {
     grid-template-rows: repeat(2, 1fr);
 }
 
+.slider-lg {
+    display: block;
+}
+
+.slider-xm {
+    display: none;
+}
+
 
 /* deviced with max resolution 1199 : not extra large screen */
 
@@ -197,6 +210,12 @@ input[type="search"]::-webkit-search-results-decoration {
     .slick-card {
         width: 100% !important;
         box-shadow: 0.075rem 0.075rem 0.0375rem rgba(0, 0, 0, 0.15);
+    }
+    .slider-xm {
+        display: block;
+    }
+    .slider-lg {
+        display: none;
     }
 }
 

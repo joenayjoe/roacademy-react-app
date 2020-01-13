@@ -3,11 +3,17 @@ import AdminControl from "../AdminControl";
 import {
   ICategory,
   INewCategory,
+  HTTPStatus,
   AlertVariant
 } from "../../../settings/DataTypes";
 import { CategoryService } from "../../../services/CategoryService";
 import { RouteComponentProps, withRouter } from "react-router";
-import { BUILD_ADMIN_CATEGORY_URL } from "../../../settings/Constants";
+import {
+  BUILD_ADMIN_CATEGORY_URL,
+  DEFAULT_SORTING_FIELD,
+  DEFAULT_SORTING_ORDER,
+  ADMIN_CATEGORIES_URL
+} from "../../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../../../components/modal/Modal";
 import NewCategory from "./NewCategory";
@@ -25,8 +31,8 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [newCategoryErrors, setNewCategoryErrors] = useState<string[]>([]);
 
-  const [sortCol, setSortCol] = useState<string>("id");
-  const [sortOrder, setSortOrder] = useState<string>("asc");
+  const [sortCol, setSortCol] = useState<string>(DEFAULT_SORTING_FIELD);
+  const [sortOrder, setSortOrder] = useState<string>(DEFAULT_SORTING_ORDER);
 
   const theads: string[] = ["ID", "Name", "Created At"];
 
@@ -66,13 +72,15 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
     categoryService
       .createCategory(data)
       .then(resp => {
-        setCategories([resp.data, ...categories]);
-        setShowModal(false);
-        props.history.push(props.location.pathname, {
-          from: props.location,
-          variant: AlertVariant.SUCCESS,
-          message: "Category successfully created."
-        });
+        if (resp.status === HTTPStatus.CREATED) {
+          setCategories([resp.data, ...categories]);
+          setShowModal(false);
+          props.history.push(ADMIN_CATEGORIES_URL, {
+            from: props.location,
+            variant: AlertVariant.SUCCESS,
+            message: "Category successfully created."
+          });
+        }
       })
       .catch(err => {
         const errorMsg: string[] = parseError(err);

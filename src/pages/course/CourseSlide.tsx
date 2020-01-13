@@ -8,7 +8,6 @@ import SlickSlider from "../../components/slider/SlickSlider";
 import SliderNextArrow from "../../components/slider/SliderNextArrow";
 import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
 
-import { isMobileOnly } from "react-device-detect";
 import { withRouter, RouteComponentProps } from "react-router";
 
 interface IProps extends RouteComponentProps {
@@ -57,46 +56,49 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
   }, []);
 
   const getCourses = () => {
-    return courses.map((course: ICourse) => {
-      return (
-        <div
-          className="card slick-card"
-          key={course.id}
-          onClick={() => handleCourseOnClick(course)}
-        >
-          <h5 className="slick-card-title">{course.name}</h5>
-          <div className="card-body">
-            <p className="card-text text-secondary">Author name here</p>
+    if (courses.length) {
+      return courses.map((course: ICourse) => {
+        return (
+          <div
+            className="card slick-card"
+            key={course.id}
+            onClick={() => handleCourseOnClick(course)}
+          >
+            <h5 className="slick-card-title">{course.name}</h5>
+            <div className="card-body">
+              <p className="card-text text-secondary">Author name here</p>
+            </div>
           </div>
-        </div>
-      );
-    });
+        );
+      });
+    }
+    return <div className="alert alert-success">This has no courses yet</div>;
   };
 
   const handleCourseOnClick = (course: ICourse) => {
     props.history.push("/courses/" + course.id);
   };
 
-  const getCourseSlide = () => {
-    if (isMobileOnly) {
-      const courseItems: JSX.Element = (
-        <div className="horizontal-scroll-body">{getCourses()}</div>
-      );
-      return (
-        <div className="horizontal-scroll">
-          {props.title}
-          {courses.length > 0 ? courseItems : null}
-        </div>
-      );
-    } else {
-      return (
-        <SlickSlider settings={settings} title={props.title} href={props.href}>
-          {getCourses()}
-        </SlickSlider>
-      );
-    }
-  };
+  const mobileSider = (
+    <div className="horizontal-scroll slider-xm">
+      {props.title}
+      <div className="horizontal-scroll-body">{getCourses()}</div>
+    </div>
+  );
+  const getCourseSlide = (
+    <React.Fragment>
+      <SlickSlider
+        settings={settings}
+        title={props.title}
+        href={props.href}
+        className="slider-lg"
+      >
+        {getCourses()}
+      </SlickSlider>
+      {mobileSider}
+    </React.Fragment>
+  );
 
-  return <React.Fragment>{getCourseSlide()}</React.Fragment>;
+  return <React.Fragment>{getCourseSlide}</React.Fragment>;
 };
 export default withRouter(CourseSlide);

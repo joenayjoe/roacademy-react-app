@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { ICourse, HTTPStatus, AlertVariant } from "../../../settings/DataTypes";
 import { CourseService } from "../../../services/CourseService";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
 import {
   ADMIN_PANEL_URL,
-  ADMIN_COURSES_URL
+  ADMIN_COURSES_URL,
+  BUILD_ADMIN_EDIT_COURSE_URL
 } from "../../../settings/Constants";
 import Spinner from "../../../components/spinner/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +38,6 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
     // eslint-disable-next-line
   }, []);
 
-  const handeEditCourseClick = () => {};
   const handleDeleteCourse = () => {
     setShowConfirmModal(false);
     courseService
@@ -92,13 +92,12 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
             <FontAwesomeIcon icon="trash" className="pr-1" />
             DELETE
           </button>
-          <button
-            className="btn btn-primary action-btn"
-            onClick={handeEditCourseClick}
-          >
-            <FontAwesomeIcon icon="edit" className="pr-1" />
-            EDIT
-          </button>
+          <Link to={BUILD_ADMIN_EDIT_COURSE_URL(course.id)}>
+            <button className="btn btn-primary action-btn">
+              <FontAwesomeIcon icon="edit" className="pr-1" />
+              EDIT
+            </button>
+          </Link>
         </div>
       </div>
     );

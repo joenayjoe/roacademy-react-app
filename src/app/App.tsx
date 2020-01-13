@@ -5,8 +5,6 @@ import { BrowserRouter, Switch } from "react-router-dom";
 import Donation from "../pages/donation/Donation";
 import Home from "../pages/home/Home";
 
-import "./App.css";
-
 import SideDrawer from "../components/sidedrawer/SideDrawer";
 import Category from "../pages/category/Category";
 import Grade from "../pages/grade/Grade";
@@ -49,7 +47,8 @@ import {
   ADMIN_USERS_URL,
   ADMIN_NEW_COURSE_URL,
   ADMIN_COURSE_URL,
-  ADMIN_USER_URL
+  ADMIN_USER_URL,
+  ADMIN_EDIT_COURSE_URL
 } from "../settings/Constants";
 import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
@@ -60,6 +59,7 @@ import AdminUserList from "../pages/adminpanel/user/AdminUserList";
 import NewCourse from "../pages/adminpanel/course/NewCourse";
 import AdminCourse from "../pages/adminpanel/course/AdminCourse";
 import AdminUser from "../pages/adminpanel/user/AdminUser";
+import EditCourse from "../pages/adminpanel/course/EditCourse";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -168,6 +168,14 @@ const App = () => {
               path={ADMIN_COURSE_URL}
               component={AdminCourse}
             />
+
+            <PrivateRoute
+              role={RoleType.ADMIN}
+              exact
+              path={ADMIN_EDIT_COURSE_URL}
+              component={EditCourse}
+            />
+
             <PrivateRoute
               role={RoleType.ADMIN}
               exact

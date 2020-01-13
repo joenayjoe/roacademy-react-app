@@ -8,6 +8,9 @@ import Spinner from "../../components/spinner/Spinner";
 import GradeSlide from "../grade/GradeSlide";
 import CourseSlide from "../course/CourseSlide";
 import { CourseService } from "../../services/CourseService";
+import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
+import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
+import { CATEGORIES_URL } from "../../settings/Constants";
 
 interface MatchParams {
   category_id: string;
@@ -47,6 +50,10 @@ const Category: React.FunctionComponent<IProps> = props => {
   if (isLoaded && category) {
     categoryContainer = (
       <React.Fragment>
+        <Breadcrumb className="bg-transparent">
+          <BreadcrumbItem href={CATEGORIES_URL}>Categories</BreadcrumbItem>
+          <BreadcrumbItem active>{category.name}</BreadcrumbItem>
+        </Breadcrumb>
         <div className="popular-courses">
           <CourseSlide
             title={`Popular Courses in ${category.name}`}

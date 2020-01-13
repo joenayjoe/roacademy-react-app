@@ -8,18 +8,19 @@ interface IProps {
   title: string;
   settings: Settings;
   href?: string;
+  className?: string;
 }
 const SlickSlider: React.FunctionComponent<IProps> = props => {
   let title = <h5>{props.title}</h5>;
   if (props.href) {
     title = (
       <Link to={props.href}>
-        <h6>{props.title}</h6>
+        <h5>{props.title}</h5>
       </Link>
     );
   }
   return (
-    <div>
+    <div className={props.className ? props.className : ""}>
       {title}
       <Slider {...props.settings}>{props.children}</Slider>
     </div>
