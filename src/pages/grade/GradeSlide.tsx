@@ -75,11 +75,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
         );
       });
     } else {
-      return (
-        <div className="alert alert-success">
-          This category has no topics yet
-        </div>
-      );
+      return <div className="alert alert-success">This has no topics yet</div>;
     }
   };
 

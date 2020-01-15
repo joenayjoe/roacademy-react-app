@@ -27,17 +27,18 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
     arrows: true,
     infinite: false,
     speed: 300,
-    slidesToShow: 5,
-    slidesToScroll: 5,
+    initialSlide: courses.length ? 5 : 1,
+    slidesToShow: courses.length ? 5 : 1,
+    slidesToScroll: courses.length ? 5 : 1,
     nextArrow: <SliderNextArrow />,
     prevArrow: <SliderPrevArrow />,
     responsive: [
       {
         breakpoint: 769,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          initialSlide: 3,
+          slidesToShow: courses.length ? 3 : 1,
+          slidesToScroll: courses.length ? 3 : 1,
+          initialSlide: courses.length ? 3 : 1,
           swipeToSlide: true
         }
       }
@@ -66,7 +67,9 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
           >
             <h5 className="slick-card-title">{course.name}</h5>
             <div className="card-body">
-              <p className="card-text text-secondary">Author name here</p>
+              <p className="card-text text-secondary">
+                {course.createdBy.firstName + " " + course.createdBy.lastName}
+              </p>
             </div>
           </div>
         );
