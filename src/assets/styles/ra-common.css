@@ -148,12 +148,15 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .slick-card .slick-card-title {
     background-color: rgb(46, 57, 87);
-    min-height: 65px;
-    width: 100%;
-    padding-top: 6.5%;
     color: #fff;
     border-top-right-radius: inherit;
     border-top-left-radius: inherit;
+    min-height: 80px;
+    padding: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
 }
 
 .slick-track {
@@ -177,7 +180,7 @@ input[type="search"]::-webkit-search-results-decoration {
     grid-column: 1 / -1;
     grid-gap: 15px;
     grid-auto-flow: column;
-    grid-auto-columns: max-content;
+    grid-auto-columns: minmax(165px, auto);
     overflow-x: scroll;
     scroll-snap-type: x proximity;
     padding-bottom: 0.25rem;

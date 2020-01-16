@@ -167,7 +167,7 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
     <AdminControl>
       <FlashGenerator
         state={props.location.state}
-        closeHandler={() => props.history.push(props.location.pathname)}
+        closeHandler={() => props.history.replace(props.location.pathname)}
       />
       {modalDialog}
       <div>

@@ -39,7 +39,8 @@ import {
   faCalendarCheck,
   faFile,
   faFileDownload,
-  faTasks
+  faTasks,
+  faPlusCircle
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -82,7 +83,8 @@ library.add(
   faYoutube,
   faFile,
   faFileDownload,
-  faTasks
+  faTasks,
+  faPlusCircle
 );
 
 ReactDOM.render(<App />, document.getElementById("root"));

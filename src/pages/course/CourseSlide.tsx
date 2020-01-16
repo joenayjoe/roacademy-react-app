@@ -9,6 +9,7 @@ import SliderNextArrow from "../../components/slider/SliderNextArrow";
 import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
 
 import { withRouter, RouteComponentProps } from "react-router";
+import { BUILD_COURSE_URL } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {
   title: string;
@@ -65,11 +66,11 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
             key={course.id}
             onClick={() => handleCourseOnClick(course)}
           >
-            <h5 className="slick-card-title">{course.name}</h5>
-            <div className="card-body">
-              <p className="card-text text-secondary">
-                {course.createdBy.firstName + " " + course.createdBy.lastName}
-              </p>
+            <div className="card-body slick-card-title">
+              <h5 className="card-title">{course.name}</h5>
+            </div>
+            <div className="card-footer text-secondary">
+              {course.createdBy.firstName + " " + course.createdBy.lastName}
             </div>
           </div>
         );
@@ -79,7 +80,7 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
   };
 
   const handleCourseOnClick = (course: ICourse) => {
-    props.history.push("/courses/" + course.id);
+    props.history.push(BUILD_COURSE_URL(course.id));
   };
 
   const mobileSider = (

@@ -11,7 +11,7 @@ class Home extends Component<IProps> {
         <FlashGenerator
           state={this.props.location.state}
           closeHandler={() =>
-            this.props.history.push(this.props.location.pathname)
+            this.props.history.replace(this.props.location.pathname)
           }
         />
         <h1>Home</h1>
