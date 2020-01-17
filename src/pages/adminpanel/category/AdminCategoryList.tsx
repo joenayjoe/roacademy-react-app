@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import AdminControl from "../AdminControl";
 import {
   ICategory,
   INewCategory,
-  HTTPStatus,
-  AlertVariant
+  HTTPStatus
 } from "../../../settings/DataTypes";
 import { CategoryService } from "../../../services/CategoryService";
 import { RouteComponentProps, withRouter } from "react-router";
@@ -17,10 +16,10 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../../../components/modal/Modal";
 import NewCategory from "./NewCategory";
-import FlashGenerator from "../../../components/flash/FlashGenerator";
 import Spinner from "../../../components/spinner/Spinner";
 import { parseError } from "../../../utils/errorParser";
 import { camelize } from "../../../utils/StringUtils";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 interface IProps extends RouteComponentProps {}
 
@@ -30,9 +29,9 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [newCategoryErrors, setNewCategoryErrors] = useState<string[]>([]);
-
   const [sortCol, setSortCol] = useState<string>(DEFAULT_SORTING_FIELD);
   const [sortOrder, setSortOrder] = useState<string>(DEFAULT_SORTING_ORDER);
+  const alertContext = useContext(AlertContext);
 
   const theads: string[] = ["ID", "Name", "Created At"];
 
@@ -75,11 +74,8 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
         if (resp.status === HTTPStatus.CREATED) {
           setCategories([resp.data, ...categories]);
           setShowModal(false);
-          props.history.push(ADMIN_CATEGORIES_URL, {
-            from: props.location,
-            variant: AlertVariant.SUCCESS,
-            message: "Category successfully created."
-          });
+          alertContext.show("Category successfully created.");
+          props.history.push(ADMIN_CATEGORIES_URL);
         }
       })
       .catch(err => {
@@ -165,10 +161,6 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
     <Spinner size="3x" />
   ) : (
     <AdminControl>
-      <FlashGenerator
-        state={props.location.state}
-        closeHandler={() => props.history.replace(props.location.pathname)}
-      />
       {modalDialog}
       <div>
         <button

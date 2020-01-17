@@ -9,7 +9,7 @@ import {
 } from "../../settings/DataTypes";
 import { withRouter, RouteComponentProps } from "react-router";
 import { parseError } from "../../utils/errorParser";
-import Flash from "../../components/flash/Flash";
+import Alert from "../../components/flash/Alert";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
 import { FACEBOOK_AUTH_URL, GOOGLE_AUTH_URL } from "../../settings/Constants";
@@ -50,7 +50,7 @@ const Login: React.FunctionComponent<IProps> = props => {
 
   let flashError: JSX.Element | undefined;
   if (errorMessages.length) {
-    flashError = <Flash variant={AlertVariant.DANGER} errors={errorMessages} />;
+    flashError = <Alert variant={AlertVariant.DANGER} errors={errorMessages} />;
   }
   return (
     <div className="auth-modal login-modal">

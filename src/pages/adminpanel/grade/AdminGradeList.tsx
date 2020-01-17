@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import AdminControl from "../AdminControl";
 import {
   IGrade,
@@ -21,12 +21,13 @@ import { camelize } from "../../../utils/StringUtils";
 import { parseError } from "../../../utils/errorParser";
 import Spinner from "../../../components/spinner/Spinner";
 import Pagination from "../../../components/pagination/Pagination";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 interface IProps extends RouteComponentProps {}
 
 const AdminGradeList: React.FunctionComponent<IProps> = props => {
   const gradeService = new GradeService();
-
+  const alertContext = useContext(AlertContext);
   const [gradePage, setGradePage] = useState<Page<IGrade> | null>(null);
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -68,7 +69,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
         if (resp.status === HTTPStatus.CREATED) {
           setShowModal(false);
           setNewGradeErrors([]);
-          window.location.reload();
+          alertContext.show("Grade successfully created");
         }
       })
       .catch(err => {

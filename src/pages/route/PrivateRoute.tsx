@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
 import { AlertVariant, RoleType } from "../../settings/DataTypes";
 import { AuthContext } from "../../contexts/AuthContext";
+import { AlertContext } from "../../contexts/AlertContext";
+import { HOME_URL } from "../../settings/Constants";
 
 interface IProps extends RouteProps {
   component: any;
@@ -10,12 +12,20 @@ interface IProps extends RouteProps {
 
 const PrivateRoute: React.FunctionComponent<IProps> = props => {
   const authContext = useContext(AuthContext);
+  const alertContext = useContext(AlertContext);
   const { component: Component, role, ...rest } = props;
+  const hasAccess = authContext.isAuthenticated && authContext.hasRole(role);
+  if (!hasAccess) {
+    let msg = role
+      ? "Access denied"
+      : "You're not log in. Please login to continue.";
+    alertContext.show(msg, AlertVariant.DANGER);
+  }
   return (
     <Route
       {...rest}
       render={props =>
-        authContext.isAuthenticated && authContext.hasRole(role) ? (
+        hasAccess ? (
           <Component
             key={`${props.location.pathname} ${props.location.search}`}
             {...props}
@@ -23,14 +33,7 @@ const PrivateRoute: React.FunctionComponent<IProps> = props => {
         ) : (
           <Redirect
             to={{
-              pathname: "/",
-              state: {
-                from: props.location,
-                variant: AlertVariant.DANGER,
-                message: role
-                  ? "Access denied!"
-                  : "You're not log in. Please login to continue."
-              }
+              pathname: HOME_URL
             }}
           />
         )

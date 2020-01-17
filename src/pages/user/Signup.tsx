@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   ModalIdentifier,
@@ -8,7 +8,9 @@ import {
 import AuthService from "../../services/AuthService";
 import { RouteComponentProps, withRouter } from "react-router";
 import { parseError } from "../../utils/errorParser";
-import Flash from "../../components/flash/Flash";
+import Alert from "../../components/flash/Alert";
+import { HOME_URL } from "../../settings/Constants";
+import { AlertContext } from "../../contexts/AlertContext";
 
 interface IProps extends RouteComponentProps {
   closeHandler: () => void;
@@ -22,6 +24,7 @@ const Signup: React.FunctionComponent<IProps> = props => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const alertContext = useContext(AlertContext);
 
   const handleSignUpSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -38,11 +41,10 @@ const Signup: React.FunctionComponent<IProps> = props => {
     authService
       .signup(formData)
       .then(resp => {
-        props.history.push("/", {
-          from: props.location,
-          variant: AlertVariant.SUCCESS,
-          message: "User Registration successfull. Please login to continue"
-        });
+        alertContext.show(
+          "User registration successful. Please login to continue"
+        );
+        props.history.push(HOME_URL);
         props.closeHandler();
       })
       .catch(error => {
@@ -53,7 +55,7 @@ const Signup: React.FunctionComponent<IProps> = props => {
 
   let flashError: JSX.Element | undefined;
   if (errorMessages.length) {
-    flashError = <Flash variant={AlertVariant.DANGER} errors={errorMessages} />;
+    flashError = <Alert variant={AlertVariant.DANGER} errors={errorMessages} />;
   }
   return (
     <div className="auth-modal signup-modal">

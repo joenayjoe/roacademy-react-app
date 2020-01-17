@@ -4,7 +4,7 @@ import {
   AlertVariant,
   ICategory
 } from "../../../settings/DataTypes";
-import Flash from "../../../components/flash/Flash";
+import Alert from "../../../components/flash/Alert";
 import { CategoryService } from "../../../services/CategoryService";
 
 interface IProps {
@@ -50,7 +50,7 @@ const NewGrade: React.FunctionComponent<IProps> = props => {
   let flashError: JSX.Element | undefined;
   if (props.errorMessages.length) {
     flashError = (
-      <Flash variant={AlertVariant.DANGER} errors={props.errorMessages} />
+      <Alert variant={AlertVariant.DANGER} errors={props.errorMessages} />
     );
   }
   return (

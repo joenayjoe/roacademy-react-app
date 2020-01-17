@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import {
   ADMIN_COURSES_URL,
@@ -11,18 +11,20 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { CourseService } from "../../../services/CourseService";
 import { parseError } from "../../../utils/errorParser";
 import CourseForm from "./CourseForm";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 interface IProp extends RouteComponentProps {}
 
 const NewCourse: React.FunctionComponent<IProp> = props => {
   const courseService = new CourseService();
-
+  const alertContext = useContext(AlertContext);
   const [errors, setErrors] = useState<string[]>([]);
 
   const handleFormSubmit = (formData: INewCourse) => {
     courseService
       .createCourse(formData)
       .then(resp => {
+        alertContext.show("Course successfuly created");
         props.history.push(BUILD_ADMIN_COURSE_URL(resp.data.id));
       })
       .catch(err => {

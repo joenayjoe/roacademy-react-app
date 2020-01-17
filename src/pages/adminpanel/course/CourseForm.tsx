@@ -11,7 +11,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GradeService } from "../../../services/GradeService";
 import { CourseService } from "../../../services/CourseService";
-import Flash from "../../../components/flash/Flash";
+import Flash from "../../../components/flash/Alert";
 import Spinner from "../../../components/spinner/Spinner";
 import { CategoryService } from "../../../services/CategoryService";
 

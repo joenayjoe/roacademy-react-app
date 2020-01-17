@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import { CategoryService } from "../../../services/CategoryService";
 import {
@@ -19,13 +19,15 @@ import { parseError } from "../../../utils/errorParser";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
 import ConfirmDialog from "../../../components/modal/ConfirmDialog";
-import Flash from "../../../components/flash/Flash";
+import Alert from "../../../components/flash/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 interface MatchParams {
   category_id: string;
 }
 interface IProps extends RouteComponentProps<MatchParams> {}
 const AdminCategory: React.FunctionComponent<IProps> = props => {
+  const alertContext = useContext(AlertContext);
   const categoryId: string = props.match.params.category_id;
   const categoryService = new CategoryService();
 
@@ -61,11 +63,8 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
       .deleteCategory(categoryId)
       .then(resp => {
         if (resp.status === HTTPStatus.OK) {
-          props.history.push(ADMIN_CATEGORIES_URL, {
-            from: props.location,
-            variant: AlertVariant.SUCCESS,
-            message: "Category successfully deleted."
-          });
+          alertContext.show("Category successfully deleted.");
+          props.history.push(ADMIN_CATEGORIES_URL);
         }
       })
       .catch(err => {
@@ -79,6 +78,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
       .editCategory(data.id.toString(), data)
       .then(resp => {
         setCategory(resp.data);
+        alertContext.show("Category successfully updated.");
         handleModalClose();
       })
       .catch(err => {
@@ -135,7 +135,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
 
     if (isLoaded) {
       const falshError = errorMessage.length ? (
-        <Flash
+        <Alert
           dismissible
           duration={5000}
           variant={AlertVariant.DANGER}

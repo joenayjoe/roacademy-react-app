@@ -29,6 +29,12 @@ input[type="search"]::-webkit-search-results-decoration {
     --gutter: 20px;
 }
 
+.flash-alert {
+    width: 75%;
+    margin: 0 auto;
+    margin-bottom: 5px;
+}
+
 .ra-icon {
     padding-right: 5px;
 }
@@ -206,6 +212,9 @@ input[type="search"]::-webkit-search-results-decoration {
     .width-75 {
         width: 100%;
         padding: 0.5rem 1.25rem 0 1.25rem;
+    }
+    .flash-alert {
+        width: 100%;
     }
 }
 

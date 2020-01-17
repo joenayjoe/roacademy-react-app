@@ -1,5 +1,5 @@
 import React, { useState, FormEvent } from "react";
-import Flash from "../../../components/flash/Flash";
+import Alert from "../../../components/flash/Alert";
 import { AlertVariant, INewCategory } from "../../../settings/DataTypes";
 
 interface IProp {
@@ -21,7 +21,7 @@ const NewCategory: React.FunctionComponent<IProp> = props => {
   let flashError: JSX.Element | undefined;
   if (props.errorMessages.length) {
     flashError = (
-      <Flash variant={AlertVariant.DANGER} errors={props.errorMessages} />
+      <Alert variant={AlertVariant.DANGER} errors={props.errorMessages} />
     );
   }
   return (

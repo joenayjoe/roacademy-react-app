@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { ICourse, HTTPStatus, AlertVariant } from "../../../settings/DataTypes";
 import { CourseService } from "../../../services/CourseService";
@@ -13,8 +13,9 @@ import Spinner from "../../../components/spinner/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConfirmDialog from "../../../components/modal/ConfirmDialog";
 import { parseError } from "../../../utils/errorParser";
-import Flash from "../../../components/flash/Flash";
+import Alert from "../../../components/flash/Alert";
 import CourseDetail from "../../course/CourseDetail";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 interface MatchParams {
   course_id: string;
@@ -23,6 +24,7 @@ interface MatchParams {
 interface IProps extends RouteComponentProps<MatchParams> {}
 
 const AdminCourse: React.FunctionComponent<IProps> = props => {
+  const alertContext = useContext(AlertContext);
   const courseId: string = props.match.params.course_id;
   const [course, setCourse] = useState<ICourse | null>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -44,11 +46,8 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
       .deleteCourse(courseId)
       .then(resp => {
         if (resp.status === HTTPStatus.OK) {
-          props.history.push(ADMIN_COURSES_URL, {
-            from: props.location,
-            variant: AlertVariant.SUCCESS,
-            message: "Course successfully deleted."
-          });
+          alertContext.show("Course successfully deleted.");
+          props.history.push(ADMIN_COURSES_URL);
         }
       })
       .catch(err => {
@@ -59,7 +58,7 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
   let courseView = <Spinner size="3x" />;
   let confirmDialog;
   const flashErrors = flashMessages.length ? (
-    <Flash
+    <Alert
       errors={flashMessages}
       variant={AlertVariant.WARNING}
       closeHandler={() => setFlashMessages([])}

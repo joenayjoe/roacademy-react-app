@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
 import {
@@ -21,13 +21,15 @@ import Modal from "../../../components/modal/Modal";
 import EditGrade from "./EditGrade";
 import { parseError } from "../../../utils/errorParser";
 import { Link } from "react-router-dom";
-import Flash from "../../../components/flash/Flash";
+import Alert from "../../../components/flash/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 interface MatchParams {
   grade_id: string;
 }
 interface IProp extends RouteComponentProps<MatchParams> {}
 const AdminGrade: React.FunctionComponent<IProp> = props => {
+  const alertContext = useContext(AlertContext);
   const gradeId: string = props.match.params.grade_id;
   const gradeService = new GradeService();
   const [grade, setGrade] = useState<IGrade | null>(null);
@@ -56,6 +58,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
       .then(resp => {
         setGrade(resp.data);
         handleModalClose();
+        alertContext.show("Grade successfully updated");
       })
       .catch(err => {
         setGradeErrorMessages(parseError(err));
@@ -72,6 +75,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
       .deleteGrade(gradeId)
       .then(resp => {
         if (resp.status === HTTPStatus.OK) {
+          alertContext.show("Grade successfully deleted.");
           props.history.push(ADMIN_GRADES_URL);
         }
       })
@@ -127,7 +131,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
     );
     if (isLoaded) {
       const flashError = gradeErrorMessages.length ? (
-        <Flash
+        <Alert
           dismissible
           duration={5000}
           variant={AlertVariant.DANGER}

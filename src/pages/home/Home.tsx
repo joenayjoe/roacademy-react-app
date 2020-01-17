@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { withRouter, RouteComponentProps } from "react-router";
-import FlashGenerator from "../../components/flash/FlashGenerator";
 
 interface IProps extends RouteComponentProps {}
 
@@ -8,12 +7,6 @@ class Home extends Component<IProps> {
   render() {
     return (
       <div className="width-75">
-        <FlashGenerator
-          state={this.props.location.state}
-          closeHandler={() =>
-            this.props.history.replace(this.props.location.pathname)
-          }
-        />
         <h1>Home</h1>
         <p>
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dicta

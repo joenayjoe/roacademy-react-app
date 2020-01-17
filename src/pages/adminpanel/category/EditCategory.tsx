@@ -4,7 +4,7 @@ import {
   IEditCategory,
   AlertVariant
 } from "../../../settings/DataTypes";
-import Flash from "../../../components/flash/Flash";
+import Alert from "../../../components/flash/Alert";
 
 interface IProps {
   id: string;
@@ -28,7 +28,7 @@ const EditCategory: React.FunctionComponent<IProps> = props => {
   let flashError: JSX.Element | undefined;
   if (props.errorMessages.length) {
     flashError = (
-      <Flash variant={AlertVariant.DANGER} errors={props.errorMessages} />
+      <Alert variant={AlertVariant.DANGER} errors={props.errorMessages} />
     );
   }
 

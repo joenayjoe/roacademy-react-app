@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from "react";
 import { IGrade, IEditGrade, AlertVariant } from "../../../settings/DataTypes";
-import Flash from "../../../components/flash/Flash";
+import Alert from "../../../components/flash/Alert";
 
 interface IProp {
   id: string;
@@ -24,7 +24,7 @@ const EditGrade: React.FunctionComponent<IProp> = props => {
   let flashError: JSX.Element | undefined;
   if (props.errorMessages.length) {
     flashError = (
-      <Flash variant={AlertVariant.DANGER} errors={props.errorMessages} />
+      <Alert variant={AlertVariant.DANGER} errors={props.errorMessages} />
     );
   }
 
