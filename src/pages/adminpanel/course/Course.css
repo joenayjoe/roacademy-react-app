@@ -1,0 +1,26 @@
+.chapter-item {
+    border: 1px solid #cacbcc;
+    padding: 1rem 0 1rem 0;
+    margin: 1rem 0;
+    background-color: #f2f3f5;
+}
+
+.new-chapter {
+    background-color: #fff;
+}
+
+.chapter-content {
+    width: 90%;
+    margin: 0 auto;
+    padding: 0 2rem 0rem 2rem;
+}
+
+.chapter-view {
+    display: flex;
+    align-items: center;
+}
+
+.icon-hoverable:hover {
+    background-color: #fff;
+    border-color: transparent;
+}

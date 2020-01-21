@@ -1,28 +1,44 @@
-import React, { useState, ChangeEvent, useEffect, FormEvent } from "react";
+import React, {
+  useState,
+  ChangeEvent,
+  useEffect,
+  FormEvent,
+  useContext
+} from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import {
   CourseStatus,
   ICategory,
   IGrade,
-  ICourse,
   INewCourse,
-  AlertVariant
+  AlertVariant,
+  IEditCourse,
+  ICourse
 } from "../../../settings/DataTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GradeService } from "../../../services/GradeService";
-import { CourseService } from "../../../services/CourseService";
 import Flash from "../../../components/flash/Alert";
 import Spinner from "../../../components/spinner/Spinner";
 import { CategoryService } from "../../../services/CategoryService";
 
-interface IProp {
-  courseId?: number;
-  errors?: string[];
-  submitHandler: (data: ICourse | INewCourse) => void;
-  cancelHandler: () => void;
+import "./Course.css";
+import { AlertContext } from "../../../contexts/AlertContext";
+import { CourseService } from "../../../services/CourseService";
+import {
+  ADMIN_COURSES_URL,
+  BUILD_ADMIN_EDIT_COURSE_URL
+} from "../../../settings/Constants";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { parseError } from "../../../utils/errorParser";
+import ChapterForm from "./ChapterForm";
+
+interface IProp extends RouteComponentProps {
+  course?: ICourse;
 }
 
 const CourseForm: React.FunctionComponent<IProp> = props => {
+  const alertContext = useContext(AlertContext);
+
   const categoryService = new CategoryService();
   const gradeService = new GradeService();
   const courseService = new CourseService();
@@ -39,35 +55,34 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [grades, setGrades] = useState<IGrade[]>([]);
   const [isLoaded, setIsloaded] = useState<boolean>(
-    props.courseId ? false : true
+    props.course ? false : true
   );
-  const [contentPillActive, toogleContentPillActive] = useState<boolean>(true);
+  const [isCoursePillActive, setIsCoursePillActive] = useState<boolean>(true);
+  const [courseErrors, setCourseErrors] = useState<string[]>([]);
 
   useEffect(() => {
     categoryService.getCategories().then(resp => {
       setCategories(resp.data);
     });
 
-    if (props.courseId) {
-      courseService.getCourse(props.courseId.toString()).then(resp => {
-        const course = resp.data;
-        setName(course.name);
-        setHeadline(course.headline);
-        setDescription(course.description);
-        setLevel(course.level);
-        setObjectives(course.objectives);
-        setRequirements(course.requirements);
-        setStatus(course.status as CourseStatus);
-        setGradeId(course.primaryGrade.id);
-        setCategoryId(course.primaryCategory.id);
-        setIsloaded(true);
+    if (props.course) {
+      const course = props.course;
+      setName(course.name);
+      setHeadline(course.headline);
+      setDescription(course.description);
+      setLevel(course.level);
+      setObjectives(course.objectives);
+      setRequirements(course.requirements);
+      setStatus(course.status as CourseStatus);
+      setGradeId(course.primaryGrade.id);
+      setCategoryId(course.primaryCategory.id);
+      setIsloaded(true);
 
-        gradeService
-          .getGradesByCategoryId(course.primaryCategory.id)
-          .then(resp => {
-            setGrades(resp.data);
-          });
-      });
+      gradeService
+        .getGradesByCategoryId(course.primaryCategory.id, "id_asc")
+        .then(resp => {
+          setGrades(resp.data);
+        });
     }
     // eslint-disable-next-line
   }, []);
@@ -76,12 +91,12 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
     const categoryId = parseInt(e.target.value, 10);
     setCategoryId(categoryId);
     setGradeId(0);
-    gradeService.getGradesByCategoryId(categoryId).then(resp => {
+    gradeService.getGradesByCategoryId(categoryId, "id_asc").then(resp => {
       setGrades(resp.data);
     });
   };
 
-  const handleFormSubmit = (e: FormEvent) => {
+  const handleCourseFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (gradeId > 0 && categoryId > 0) {
       let courseData;
@@ -97,12 +112,31 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
         categoryId: categoryId
       };
 
-      if (props.courseId) {
-        courseData = { ...newCourseData, id: props.courseId };
+      if (props.course) {
+        courseData = { ...newCourseData, id: props.course.id };
+        courseService
+          .updateCourse(courseData as IEditCourse)
+          .then(resp => {
+            setCourseErrors([]);
+            props.history.push(BUILD_ADMIN_EDIT_COURSE_URL(resp.data.id));
+            alertContext.show("Course updated successfully");
+          })
+          .catch(err => {
+            setCourseErrors(parseError(err));
+          });
       } else {
         courseData = { ...newCourseData };
+        courseService
+          .createCourse(courseData as INewCourse)
+          .then(resp => {
+            setCourseErrors([]);
+            props.history.push(BUILD_ADMIN_EDIT_COURSE_URL(resp.data.id));
+            alertContext.show("Course created successfully");
+          })
+          .catch(err => {
+            setCourseErrors(parseError(err));
+          });
       }
-      props.submitHandler(courseData);
     }
   };
 
@@ -221,30 +255,162 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
   };
 
   let flashErrors;
-  if (props.errors && props.errors.length) {
-    flashErrors = <Flash variant={AlertVariant.DANGER} errors={props.errors} />;
+  if (courseErrors.length) {
+    flashErrors = <Flash variant={AlertVariant.DANGER} errors={courseErrors} />;
   }
 
-  const formTitle = props.courseId ? "Edit Course" : "Create New Course";
-  let courseForm = <Spinner size="3x" />;
+  const courseForm = (
+    <form onSubmit={handleCourseFormSubmit}>
+      {flashErrors}
+      <div className="form-group">
+        <label>Course title</label>
+        <input
+          className="form-control"
+          placeholder="Course Name"
+          value={name}
+          required
+          onChange={e => setName(e.target.value)}
+        ></input>
+      </div>
+
+      <div className="form-group">
+        <label>Course subtitle</label>
+        <input
+          className="form-control"
+          placeholder="A brief headline"
+          value={headline}
+          required
+          onChange={e => setHeadline(e.target.value)}
+        ></input>
+      </div>
+      <div className="form-group">
+        <label>Course description</label>
+        <Editor
+          apiKey="9ugo4yh8kkd85lktdm9mbxj7lmc8sjnbmc8vqaaaikocd4zy"
+          value={description}
+          init={{
+            height: 300,
+            menubar: false,
+            plugins: ["lists"],
+            toolbar: "bold italic | bullist numlist"
+          }}
+          onChange={e => setDescription(e.target.getContent())}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Course level</label>
+        <select
+          id="category-select-input"
+          value={level}
+          required
+          className="form-control"
+          onChange={e => setLevel(e.target.value)}
+        >
+          <option value="" disabled>
+            Choose Level
+          </option>
+          <option value="BEGINNER">BEGINNER</option>
+          <option value="INTERMEDIATE">INTERMEDIATE</option>
+          <option value="ADVANCED">ADVANCED</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label>Course Category</label>
+        <select
+          id="category-select-input"
+          value={categoryId}
+          className="form-control"
+          onChange={hanldeCategorySelect}
+          required
+        >
+          <option key={0} value="0" disabled>
+            -- Select Category --
+          </option>
+          {categoryOptions}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label>Course subcategory</label>
+        <select
+          id="category-select-input"
+          value={gradeId}
+          className="form-control"
+          onChange={e => setGradeId(parseInt(e.target.value, 10))}
+          required
+        >
+          <option key={0} value="0" disabled>
+            -- Select subcategory --
+          </option>
+          {subCategoryOptions}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label>Objectives: What will students learn in this course</label>
+        <div>
+          {displayObjectives()}
+          <div className="btn btn-outline-dark" onClick={addNewObjective}>
+            <FontAwesomeIcon icon="plus-circle" />
+            <span className="ml-2">Add an answer</span>
+          </div>
+        </div>
+      </div>
+      <div className="form-group">
+        <label>
+          Requirements: Are there any course requirements or prerequisities?
+        </label>
+        <div>
+          {displayRequirements()}
+          <div className="btn btn-outline-dark" onClick={addNewRequirement}>
+            <FontAwesomeIcon icon="plus-circle" />
+            <span className="ml-2">Add an answer</span>
+          </div>
+        </div>
+      </div>
+      <div className="form-group action-btn-group">
+        <button
+          className="btn btn-danger action-btn"
+          onClick={() => props.history.push(ADMIN_COURSES_URL)}
+        >
+          <FontAwesomeIcon icon="times" className="mr-1" />
+          Cancel
+        </button>
+        <button className="btn btn-primary action-btn" type="submit">
+          <FontAwesomeIcon icon="save" className="mr-1" />
+          Save
+        </button>
+      </div>
+    </form>
+  );
+
+  const chapterForm = props.course ? (
+    <ChapterForm course={props.course} />
+  ) : null;
+  const formTitle = props.course ? "Edit Course" : "Create New Course";
+
+  let formContainer = <Spinner size="3x" />;
   if (isLoaded) {
-    courseForm = (
+    formContainer = (
       <div>
         <h4>{formTitle}</h4>
         <nav className="nav nav-pills flex-column flex-sm-row my-3">
           <button
             className={`btn btn-outline-primary mr-sm-2 flex-sm-fill text-sm-center nav-link ${
-              contentPillActive ? "active" : ""
+              isCoursePillActive ? "active" : ""
             }`}
-            onClick={() => toogleContentPillActive(true)}
+            onClick={() => setIsCoursePillActive(true)}
           >
-            Course Info
+            Basic Info
           </button>
           <button
             className={`btn btn-outline-primary mt-2 mt-sm-0 flex-sm-fill text-sm-center nav-link ${
-              contentPillActive ? "" : "active"
+              isCoursePillActive ? "" : "active"
             }`}
-            onClick={() => toogleContentPillActive(false)}
+            disabled={props.course == null ? true : false}
+            onClick={() => setIsCoursePillActive(false)}
           >
             Course Contents
           </button>
@@ -252,150 +418,20 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
         <div className="tab-content">
           <div
             id="courseContent"
-            className={`tab-pane ${contentPillActive ? "active" : ""}`}
+            className={`tab-pane ${isCoursePillActive ? "active" : ""}`}
           >
-            <form onSubmit={handleFormSubmit}>
-              {flashErrors}
-              <div className="form-group">
-                <label>Course title</label>
-                <input
-                  className="form-control"
-                  placeholder="Course Name"
-                  value={name}
-                  required
-                  onChange={e => setName(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="form-group">
-                <label>Course subtitle</label>
-                <input
-                  className="form-control"
-                  placeholder="A brief headline"
-                  value={headline}
-                  required
-                  onChange={e => setHeadline(e.target.value)}
-                ></input>
-              </div>
-              <div className="form-group">
-                <label>Course description</label>
-                <Editor
-                  apiKey="9ugo4yh8kkd85lktdm9mbxj7lmc8sjnbmc8vqaaaikocd4zy"
-                  value={description}
-                  init={{
-                    height: 300,
-                    menubar: false,
-                    plugins: ["lists"],
-                    toolbar: "bold italic | bullist numlist"
-                  }}
-                  onChange={e => setDescription(e.target.getContent())}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Course level</label>
-                <select
-                  id="category-select-input"
-                  value={level}
-                  required
-                  className="form-control"
-                  onChange={e => setLevel(e.target.value)}
-                >
-                  <option value="" disabled>
-                    Choose Level
-                  </option>
-                  <option value="BEGINNER">BEGINNER</option>
-                  <option value="INTERMEDIATE">INTERMEDIATE</option>
-                  <option value="ADVANCED">ADVANCED</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Course Category</label>
-                <select
-                  id="category-select-input"
-                  value={categoryId}
-                  className="form-control"
-                  onChange={hanldeCategorySelect}
-                >
-                  <option key={0} value="0" disabled>
-                    -- Select Category --
-                  </option>
-                  {categoryOptions}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Course subcategory</label>
-                <select
-                  id="category-select-input"
-                  value={gradeId}
-                  className="form-control"
-                  onChange={e => setGradeId(parseInt(e.target.value, 10))}
-                >
-                  <option key={0} value="0" disabled>
-                    -- Select subcategory --
-                  </option>
-                  {subCategoryOptions}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>
-                  Objectives: What will students learn in this course
-                </label>
-                <div>
-                  {displayObjectives()}
-                  <div
-                    className="btn btn-outline-dark"
-                    onClick={addNewObjective}
-                  >
-                    <FontAwesomeIcon icon="plus-circle" />
-                    <span className="ml-2">Add an answer</span>
-                  </div>
-                </div>
-              </div>
-              <div className="form-group">
-                <label>
-                  Requirements: Are there any course requirements or
-                  prerequisities?
-                </label>
-                <div>
-                  {displayRequirements()}
-                  <div
-                    className="btn btn-outline-dark"
-                    onClick={addNewRequirement}
-                  >
-                    <FontAwesomeIcon icon="plus-circle" />
-                    <span className="ml-2">Add an answer</span>
-                  </div>
-                </div>
-              </div>
-              <div className="form-group action-btn-group">
-                <button
-                  className="btn btn-danger action-btn"
-                  onClick={props.cancelHandler}
-                >
-                  <FontAwesomeIcon icon="times" className="mr-1" />
-                  Cancel
-                </button>
-                <button className="btn btn-primary action-btn" type="submit">
-                  <FontAwesomeIcon icon="save" className="mr-1" />
-                  Save
-                </button>
-              </div>
-            </form>
+            {courseForm}
           </div>
           <div
             id="courseChapter"
-            className={`tab-pane ${contentPillActive ? "" : "active"}`}
+            className={`tab-pane ${isCoursePillActive ? "" : "active"}`}
           >
-            Chapter goes here
+            {chapterForm}
           </div>
         </div>
       </div>
     );
   }
-  return <React.Fragment>{courseForm}</React.Fragment>;
+  return <React.Fragment>{formContainer}</React.Fragment>;
 };
-export default CourseForm;
+export default withRouter(CourseForm);

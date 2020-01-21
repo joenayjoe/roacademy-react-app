@@ -33,7 +33,7 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
 
   const courseService = new CourseService();
   useEffect(() => {
-    courseService.getCourse(courseId).then(resp => {
+    courseService.getCourse(+courseId).then(resp => {
       setCourse(resp.data);
       setIsLoaded(true);
     });

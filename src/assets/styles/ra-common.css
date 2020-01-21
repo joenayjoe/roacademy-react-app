@@ -211,7 +211,7 @@ input[type="search"]::-webkit-search-results-decoration {
 @media (max-width: 1199px) {
     .width-75 {
         width: 100%;
-        padding: 0.5rem 1.25rem 0 1.25rem;
+        padding: 0 1.25rem;
     }
     .flash-alert {
         width: 100%;

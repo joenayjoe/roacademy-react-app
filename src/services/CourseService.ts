@@ -6,7 +6,8 @@ import {
   INewCourse,
   HTTPStatus,
   CourseStatus,
-  Page
+  Page,
+  IEditCourse
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 import { DEFAULT_SORTING } from "../settings/Constants";
@@ -45,7 +46,7 @@ export class CourseService {
     return await this.apiRequest.get<ICourse[]>(url);
   }
 
-  public async getCourse(courseId: string): Promise<AxiosResponse<ICourse>> {
+  public async getCourse(courseId: number): Promise<AxiosResponse<ICourse>> {
     const url = this.baseUrl + "/" + courseId;
     return await this.apiRequest.get(url);
   }
@@ -62,9 +63,11 @@ export class CourseService {
     return await this.apiRequest.post<INewCourse, ICourse>(url, data);
   }
 
-  public async updateCourse(data: ICourse): Promise<AxiosResponse<ICourse>> {
+  public async updateCourse(
+    data: IEditCourse
+  ): Promise<AxiosResponse<ICourse>> {
     const url = this.baseUrl + "/" + data.id;
-    return await this.apiRequest.put<ICourse, ICourse>(url, data);
+    return await this.apiRequest.put<IEditCourse, ICourse>(url, data);
   }
 
   public async deleteCourse(

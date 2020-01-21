@@ -60,10 +60,6 @@ export interface IPrimaryUser {
   email: string;
 }
 
-export interface IPrimaryChapter {
-  id: number;
-  name: string;
-}
 
 interface IAuditable {
   createdAt: Date;
@@ -77,23 +73,21 @@ export interface ICategory extends IPrimaryCategory, IAuditable {
 export interface INewCategory {
   name: string;
 }
-export interface IEditCategory {
+export interface IEditCategory extends INewCategory {
   id: number;
-  name: string;
-}
-export interface INewGrade {
-  name: string;
-  categoryId: number;
-}
-export interface IEditGrade {
-  id: number;
-  name: string;
-  categoryId: number;
 }
 
 export interface IGrade extends IPrimaryGrade, IAuditable {
   primaryCategory: IPrimaryCategory;
   courses: ICourse[];
+}
+
+export interface INewGrade {
+  name: string;
+  categoryId: number;
+}
+export interface IEditGrade extends INewGrade {
+  id: number;
 }
 
 export interface ICourse extends IPrimaryCourse, IAuditable {
@@ -107,6 +101,10 @@ export interface ICourse extends IPrimaryCourse, IAuditable {
   level: string;
   hits: number;
   createdBy: IPrimaryUser;
+}
+
+export interface IDetailCourse extends ICourse {
+  chapters: IChapter[];
   tags: ITag[];
 }
 
@@ -122,12 +120,59 @@ export interface INewCourse {
   status: CourseStatus;
 }
 
-export interface IChapter extends IPrimaryChapter, IAuditable {
-  primaryCourse: IPrimaryCourse;
+export interface IEditCourse extends INewCourse {
+  id: number;
 }
 
-export interface ITag extends IAuditable {
+export interface IPrimaryChapter {
   id: number;
+  name: string;
+}
+
+export interface IChapter extends IPrimaryChapter, IAuditable {
+  primaryCourse: IPrimaryCourse;
+  lectures: ILecture[];
+}
+
+export interface INewChapter {
+  name: string;
+  courseId: number;
+}
+
+export interface IEditChapter extends INewChapter{
+  id: number;
+}
+
+export interface IPrimaryLecture {
+  id: number;
+  name: string;
+}
+export interface ILecture extends IPrimaryLecture, IAuditable {
+    description: string;
+    tags: ITag[];
+    createdBy: IPrimaryUser;
+    lectureResource: ILectureResource;
+}
+
+export interface INewLecture {
+  name: string;
+  description: string;
+  chapterId: number;
+  tags: INewTag[];
+}
+export interface IEditLecture extends INewLecture {
+  id: number;
+}
+
+export interface ILectureResource {
+   resource: any;
+}
+
+export interface ITag {
+  id: number;
+  name: string;
+}
+export interface INewTag {
   name: string;
 }
 

@@ -22,7 +22,7 @@ const Course: React.FunctionComponent<IProps> = props => {
   const [course, setCourse] = useState<ICourse | null>(null);
 
   useEffect(() => {
-    courseService.getCourse(courseId).then(response => {
+    courseService.getCourse(+courseId).then(response => {
       setCourse(response.data);
     });
     // eslint-disable-next-line
