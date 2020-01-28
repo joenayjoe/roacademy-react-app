@@ -20,19 +20,57 @@ interface AutocompleteProps {
 interface AutocompleteState {
   isFocus: boolean;
   query: string;
+  typedQuery: string;
+  selectedQueryIndex: number;
 }
 
 class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   state: AutocompleteState = {
     isFocus: false,
-    query: this.props.query
+    query: this.props.query,
+    typedQuery: this.props.query,
+    selectedQueryIndex: -1
   };
 
   autocompleInputRef: any = createRef();
 
   handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ query: e.currentTarget.value });
+    this.setState({
+      query: e.currentTarget.value,
+      typedQuery: e.currentTarget.value
+    });
     this.props.onChangeHandler(e.currentTarget.value);
+  };
+
+  handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    let { selectedQueryIndex, typedQuery } = this.state;
+    if (e.keyCode === 38) {
+      if (selectedQueryIndex === -1) {
+        this.setState({
+          query: this.props.suggestions[this.props.suggestions.length - 1].name,
+          selectedQueryIndex: this.props.suggestions.length - 1
+        });
+      } else if (selectedQueryIndex === 0) {
+        this.setState({ query: typedQuery, selectedQueryIndex: -1 });
+      } else {
+        this.setState({
+          query: this.props.suggestions[selectedQueryIndex - 1].name,
+          selectedQueryIndex: selectedQueryIndex - 1
+        });
+      }
+    } else if (e.keyCode === 40) {
+      if (selectedQueryIndex === this.props.suggestions.length - 1) {
+        this.setState({
+          query: typedQuery,
+          selectedQueryIndex: -1
+        });
+      } else {
+        this.setState({
+          query: this.props.suggestions[selectedQueryIndex + 1].name,
+          selectedQueryIndex: selectedQueryIndex + 1
+        });
+      }
+    }
   };
 
   handleOnSubmit = (e: FormEvent) => {
@@ -82,6 +120,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
         className={`form-control bg-none border-0 ${focusKlass}`}
         autoComplete="off"
         onChange={e => this.handleOnChange(e)}
+        onKeyDown={e => this.handleKeyDown(e)}
         onFocus={this.toogleOnFocus}
         onBlur={this.toogleOnFocus}
         autoFocus={this.props.autoFoucs && this.props.query.length === 0}
@@ -112,18 +151,24 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
       );
     }
 
-    let autoCompleteSuggestionList = this.props.suggestions.map(suggestion => {
-      return (
-        <li key={suggestion.id} className="drop-down-list-item">
-          <div
-            className="menu-link"
-            onMouseDown={() => this.handleOnSelect(suggestion)}
-          >
-            {suggestion.name}
-          </div>
-        </li>
-      );
-    });
+    let autoCompleteSuggestionList = this.props.suggestions.map(
+      (suggestion, idx) => {
+        const klass =
+          this.state.selectedQueryIndex === idx
+            ? "drop-down-list-item drop-down-list-item-hover"
+            : "drop-down-list-item";
+        return (
+          <li key={suggestion.id} className={klass}>
+            <div
+              className="menu-link"
+              onMouseDown={() => this.handleOnSelect(suggestion)}
+            >
+              {suggestion.name}
+            </div>
+          </li>
+        );
+      }
+    );
 
     let openKlass =
       this.props.suggestions.length > 0 && this.state.isFocus ? "open" : "";

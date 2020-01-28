@@ -24,3 +24,14 @@
     background-color: #fff;
     border-color: transparent;
 }
+
+.lecture-item {
+    background-color: #fff;
+    margin: 5px 0 10px 0;
+    padding: 5px 5px 5px 10px;
+    border: 1px solid #cacbcc;
+}
+
+.lecture-item .icon-hoverable:hover {
+    background-color: #f2f3f5;
+}

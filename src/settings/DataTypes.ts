@@ -60,7 +60,6 @@ export interface IPrimaryUser {
   email: string;
 }
 
-
 interface IAuditable {
   createdAt: Date;
   updatedAt: Date;
@@ -139,7 +138,7 @@ export interface INewChapter {
   courseId: number;
 }
 
-export interface IEditChapter extends INewChapter{
+export interface IEditChapter extends INewChapter {
   id: number;
 }
 
@@ -148,31 +147,28 @@ export interface IPrimaryLecture {
   name: string;
 }
 export interface ILecture extends IPrimaryLecture, IAuditable {
-    description: string;
-    tags: ITag[];
-    createdBy: IPrimaryUser;
-    lectureResource: ILectureResource;
+  description: string;
+  tags: ITag[];
+  primaryChapter: IPrimaryChapter;
+  lectureResource: ILectureResource;
 }
 
 export interface INewLecture {
   name: string;
   description: string;
   chapterId: number;
-  tags: INewTag[];
+  tags: ITag[];
 }
 export interface IEditLecture extends INewLecture {
   id: number;
 }
 
 export interface ILectureResource {
-   resource: any;
+  resource: any;
 }
 
 export interface ITag {
-  id: number;
-  name: string;
-}
-export interface INewTag {
+  id: number | null;
   name: string;
 }
 

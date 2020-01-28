@@ -73,7 +73,7 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
       />
     );
     courseView = (
-      <div className="admin-course-view full-width">
+      <div className="admin-course-view">
         {flashErrors}
         {confirmDialog}
         <Breadcrumb className="width-75 bg-transparent">

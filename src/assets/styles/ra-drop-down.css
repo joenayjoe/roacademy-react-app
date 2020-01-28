@@ -45,6 +45,7 @@
 }
 
 .drop-down-list-item:hover,
+.drop-down-list-item-hover,
 .drop-down-list-item.open-sub-menu {
     background-color: #F2F3F5;
 }

@@ -7,12 +7,17 @@ import {
   INewChapter,
   IEditChapter,
   HTTPStatus,
-  AlertVariant
+  AlertVariant,
+  ITag
 } from "../../../settings/DataTypes";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { parseError } from "../../../utils/errorParser";
 import Alert from "../../../components/flash/Alert";
+import RichTextEditor, { EditorValue } from "react-rte";
+import { RTE_TOOLBAR_CONFIG } from "../../../settings/rte_config";
+import TagInput from "../../../components/taginput/TagInput";
+import TagService from "../../../services/TagService";
 
 interface IProp extends RouteComponentProps {
   course: ICourse;
@@ -20,18 +25,33 @@ interface IProp extends RouteComponentProps {
 const ChapterForm: React.FunctionComponent<IProp> = props => {
   const alertContext = useContext(AlertContext);
   const chapterService = new ChapterService();
+  const tagService = new TagService();
 
   const [chapters, setChapters] = useState<IChapter[]>([]);
 
+  // editing chapter state
   const [currentEditChapter, setCurrentEditChapter] = useState<IChapter | null>(
     null
   );
   const [editChapterIndex, setEditChapterIndex] = useState<number | null>(null);
   const [editChapterErrors, setEditChapterErrors] = useState<string[]>([]);
 
+  // new chapter state
   const [newChapterName, setNewChapterName] = useState<string>("");
   const [showNewChapter, setShowNewChapter] = useState<boolean>(false);
   const [newChapterErrors, setNewChapterErrors] = useState<string[]>([]);
+
+  // new lecture state
+  const [newLectureName, setNewLectureName] = useState<string>("");
+  const [newLectureDescription, setNewLectureDescription] = useState<
+    EditorValue
+  >(RichTextEditor.createEmptyValue());
+  const [newLectureTags, setNewLectureTags] = useState<ITag[]>([]);
+  const [tagSuggestions, setTagSuggestions] = useState<ITag[]>([]);
+  const [newLectureErrors, setNewLectureErrors] = useState<string[]>([]);
+  const [chapterForNewLecture, setChapterForNewLecture] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     chapterService.getChaptersByCourseId(props.course.id).then(resp => {
@@ -53,8 +73,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         const chptrs = [...chapters];
         chptrs.push(resp.data);
         setChapters(chptrs);
-        setShowNewChapter(false);
-        setNewChapterErrors([]);
+        resetNewChapter();
       })
       .catch(err => {
         setNewChapterErrors(parseError(err));
@@ -75,10 +94,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
           const chptrs = [...chapters];
           chptrs[editChapterIndex] = resp.data;
           setChapters(chptrs);
-
-          setCurrentEditChapter(null);
-          setEditChapterIndex(null);
-          setEditChapterErrors([]);
+          resetEditChapter();
         })
         .catch(err => {
           setEditChapterErrors(parseError(err));
@@ -99,15 +115,23 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   };
 
   const handleChapterEditCancelClick = () => {
+    resetEditChapter();
+  };
+
+  const resetNewChapter = () => {
+    setShowNewChapter(false);
+    setNewChapterName("");
+    setNewChapterErrors([]);
+  };
+
+  const resetEditChapter = () => {
     setEditChapterIndex(null);
     setCurrentEditChapter(null);
     setEditChapterErrors([]);
   };
 
   const handleNewChapterCancelClick = () => {
-    setShowNewChapter(false);
-    setNewChapterName("");
-    setNewChapterErrors([]);
+    resetNewChapter();
   };
   const handleChapterDeleteClick = (
     courseId: number,
@@ -131,6 +155,65 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
       setCurrentEditChapter(edit_ch);
     }
   };
+
+  const handleAddLectureClick = (chapterId: number) => {
+    setChapterForNewLecture(chapterId);
+    setNewChapterErrors([]);
+  };
+
+  const handleNewLectureCancelClick = () => {
+    resetNewLecture();
+  };
+
+  const resetNewLecture = () => {
+    setChapterForNewLecture(null);
+    setNewLectureName("");
+    setNewLectureDescription(RichTextEditor.createEmptyValue());
+    setNewLectureTags([]);
+    setNewLectureErrors([]);
+  };
+
+  const handleLectureEditClick = (idx: number) => {};
+
+  const handleLectureDeleteClick = (
+    chapterId: number,
+    lectureId: number,
+    idx: number
+  ) => {};
+
+  const addTag = (nt: ITag) => {
+    const trim_t = { ...nt, name: nt.name.trim() };
+    const tags = [...newLectureTags];
+    const found = tags.some(x => x.name === trim_t.name);
+    if (!found && trim_t.name.length > 0) {
+      tags.push(trim_t);
+      setNewLectureTags(tags);
+    }
+    setTagSuggestions([]);
+  };
+
+  const removeTag = (idx: number) => {
+    const t = [...newLectureTags];
+    t.splice(idx, 1);
+    setNewLectureTags(t);
+  };
+
+  const handleTagChange = (val: string) => {
+    if (val.trim().length > 1) {
+      tagService
+        .search(val)
+        .then(resp => {
+          setTagSuggestions(resp.data);
+        })
+        .catch(err => {
+          setTagSuggestions([]);
+        });
+    } else {
+      setTagSuggestions([]);
+    }
+  };
+
+  const handleNewLectureFormSubmit = () => {};
 
   let editChapterErrorFlash = editChapterErrors.length ? (
     <Alert errors={editChapterErrors} variant={AlertVariant.DANGER} />
@@ -173,6 +256,102 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     }
     return null;
   };
+
+  const displayLectures = (chapter: IChapter) => {
+    if (chapter.lectures) {
+      return chapter.lectures.map((lecture, idx) => {
+        return (
+          <div className="lecture-item" key={idx}>
+            <div className={`lecture-view`}>
+              <span className="mr-3">{lecture.name}</span>
+              <button
+                className="btn mr-2 icon-hoverable"
+                onClick={() => handleLectureEditClick(idx)}
+              >
+                <FontAwesomeIcon icon="edit" color="#686f7a" />
+              </button>
+              <button
+                className="btn icon-hoverable"
+                onClick={() =>
+                  handleLectureDeleteClick(
+                    lecture.primaryChapter.id,
+                    lecture.id,
+                    idx
+                  )
+                }
+              >
+                <FontAwesomeIcon icon="trash" color="#686f7a" />
+              </button>
+            </div>
+          </div>
+        );
+      });
+    }
+    return null;
+  };
+
+  const getNewLectureForm = (chapterId: number) => {
+    if (chapterForNewLecture && chapterForNewLecture === chapterId) {
+      return (
+        <div className="new-lecture lecture-item">
+          <form onSubmit={handleNewLectureFormSubmit}>
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                className="form-control"
+                type="text"
+                value={newLectureName}
+                placeholder="Lecture name"
+                onChange={e => setNewLectureName(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Description</label>
+              <RichTextEditor
+                className="rich-text-editor"
+                toolbarConfig={RTE_TOOLBAR_CONFIG}
+                value={newLectureDescription}
+                onChange={val => setNewLectureDescription(val)}
+                placeholder="Enter a lecture description"
+              />
+            </div>
+            <div className="form-group">
+              <label>Write comma separated tags for the lecture</label>
+              <TagInput
+                tags={newLectureTags}
+                suggestions={tagSuggestions}
+                delimeters={[13, 188]}
+                onAddHandler={val => addTag(val)}
+                onDeleteHandler={idx => removeTag(idx)}
+                onChangeHandler={val => handleTagChange(val)}
+              />
+            </div>
+            <div className="form-group action-btn-group">
+              <div className="action-btn">
+                <button
+                  className="btn btn-danger"
+                  type="button"
+                  onClick={handleNewLectureCancelClick}
+                >
+                  <FontAwesomeIcon icon="times" className="mr-2" />
+                  Cancel
+                </button>
+              </div>
+              <div className="action-btn">
+                <button className="btn btn-primary" type="submit">
+                  <FontAwesomeIcon icon="save" className="mr-2" />
+                  Save
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      );
+    }
+    return null;
+  };
+
   let displayChapters;
   if (chapters.length) {
     displayChapters = chapters.map((chapter, idx) => {
@@ -205,6 +384,17 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
               </button>
             </div>
             {getEditChapterForm(chapter.id)}
+            <div className="lecture-list">
+              {displayLectures(chapter)}
+              {getNewLectureForm(chapter.id)}
+              <button
+                className="btn btn-outline-dark"
+                onClick={() => handleAddLectureClick(chapter.id)}
+              >
+                <FontAwesomeIcon icon="plus-circle" className="mr-2" />
+                Add Lecture
+              </button>
+            </div>
           </div>
         </div>
       );

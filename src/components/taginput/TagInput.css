@@ -1,0 +1,44 @@
+.autocomplete-tag ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.autocomplete-tag .tag-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #cccccc;
+    padding: 0.5rem;
+}
+
+.selected-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.autocomplete-tag .tag-item {
+    margin: 2px 4px;
+    border: 1px solid #cccccc;
+    border-radius: 5%;
+    padding: 2px 5px;
+    background-color: #ececf9;
+    width: max-content;
+}
+
+.tag-autosuggestions {
+    border: 1px solid #cccccc;
+    border-top: none;
+}
+
+.autocomplete-tag .tag-input {
+    border: none;
+    margin-top: 0.5rem;
+}
+
+.tag-item .tag-text {
+    margin-right: 3px;
+}
+
+.tag-item .tag-close {
+    cursor: pointer;
+}

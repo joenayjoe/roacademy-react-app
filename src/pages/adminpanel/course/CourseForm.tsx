@@ -5,7 +5,7 @@ import React, {
   FormEvent,
   useContext
 } from "react";
-import { Editor } from "@tinymce/tinymce-react";
+import RichTextEditor, { EditorValue } from "react-rte";
 import {
   CourseStatus,
   ICategory,
@@ -31,6 +31,7 @@ import {
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { parseError } from "../../../utils/errorParser";
 import ChapterForm from "./ChapterForm";
+import { RTE_TOOLBAR_CONFIG } from "../../../settings/rte_config";
 
 interface IProp extends RouteComponentProps {
   course?: ICourse;
@@ -45,7 +46,9 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
 
   const [name, setName] = useState<string>("");
   const [headline, setHeadline] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [description, setDescription] = useState<EditorValue>(
+    RichTextEditor.createEmptyValue()
+  );
   const [level, setLevel] = useState<string>("");
   const [objectives, setObjectives] = useState<string[]>([]);
   const [requirements, setRequirements] = useState<string[]>([]);
@@ -69,7 +72,9 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
       const course = props.course;
       setName(course.name);
       setHeadline(course.headline);
-      setDescription(course.description);
+      setDescription(
+        RichTextEditor.createValueFromString(course.description, "html")
+      );
       setLevel(course.level);
       setObjectives(course.objectives);
       setRequirements(course.requirements);
@@ -103,7 +108,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
       const newCourseData: INewCourse = {
         name: name,
         headline: headline,
-        description: description,
+        description: description.toString("html"),
         level: level,
         objectives: objectives.filter(el => el.trim()),
         requirements: requirements.filter(el => el.trim()),
@@ -277,24 +282,20 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
         <label>Course subtitle</label>
         <input
           className="form-control"
-          placeholder="A brief headline"
           value={headline}
-          required
+          placeholder="A brief headline"
           onChange={e => setHeadline(e.target.value)}
-        ></input>
+          required
+        />
       </div>
       <div className="form-group">
         <label>Course description</label>
-        <Editor
-          apiKey="9ugo4yh8kkd85lktdm9mbxj7lmc8sjnbmc8vqaaaikocd4zy"
+        <RichTextEditor
+          className="rich-text-editor"
+          toolbarConfig={RTE_TOOLBAR_CONFIG}
           value={description}
-          init={{
-            height: 300,
-            menubar: false,
-            plugins: ["lists"],
-            toolbar: "bold italic | bullist numlist"
-          }}
-          onChange={e => setDescription(e.target.getContent())}
+          onChange={val => setDescription(val)}
+          placeholder="Enter a description"
         />
       </div>
 
