@@ -148,8 +148,7 @@ export interface IPrimaryLecture {
 }
 export interface ILecture extends IPrimaryLecture, IAuditable {
   description: string;
-  tags: ITag[];
-  primaryChapter: IPrimaryChapter;
+  tags: string[];
   lectureResource: ILectureResource;
 }
 
@@ -157,7 +156,7 @@ export interface INewLecture {
   name: string;
   description: string;
   chapterId: number;
-  tags: ITag[];
+  tags: string[];
 }
 export interface IEditLecture extends INewLecture {
   id: number;
@@ -168,7 +167,7 @@ export interface ILectureResource {
 }
 
 export interface ITag {
-  id: number | null;
+  id: number;
   name: string;
 }
 

@@ -3,8 +3,8 @@ import { AxiosError } from "axios";
 export const parseError = (error: AxiosError<any>): string[] => {
   let errorMessages: string[] = [];
   let errorResponse = error.response && error.response.data;
-  if(errorResponse === undefined) {
-    return [error+""];
+  if (errorResponse === undefined) {
+    return [error + ""];
   }
   if (errorResponse.errors) {
     for (let [, value] of Object.entries(errorResponse.errors)) {

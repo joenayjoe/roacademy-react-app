@@ -1,48 +1,49 @@
 import React, { useState, ChangeEvent } from "react";
 
 import "./TagInput.css";
-import { ITag } from "../../settings/DataTypes";
 
 interface IProp {
-  tags: ITag[];
-  suggestions: ITag[];
+  tags: string[];
+  suggestions: string[];
   placeholder?: string;
-  onAddHandler: (tag: ITag) => void;
+  onAddHandler: (tag: string) => void;
   onDeleteHandler: (idx: number) => void;
   onChangeHandler?: (text: string) => void;
   delimeters?: number[];
 }
 const TagInput: React.FunctionComponent<IProp> = props => {
-  const [newTag, setNewTag] = useState<ITag | null>(null);
-  const [selectedAutoSuggest, setSelectedAutoSuggest] = useState<number>(-1);
-  const [typedTag, setTypedTag] = useState<ITag | null>(null);
+  const [newTag, setNewTag] = useState<string>("");
+  const [selectedAutoSuggestIndex, setSelectedAutoSuggestIndex] = useState<
+    number
+  >(-1);
+  const [typedTag, setTypedTag] = useState<string>("");
 
   const addTag = (idx: number) => {
     const t = props.suggestions[idx];
     props.onAddHandler(t);
-    setNewTag(null);
+    setNewTag("");
   };
 
   const TagAutoSuggestions = props.suggestions.map((sug, idx) => {
     const klass =
-      selectedAutoSuggest === idx
+      selectedAutoSuggestIndex === idx
         ? "drop-down-list-item drop-down-list-item-hover"
         : "drop-down-list-item";
     return (
       <li
         key={idx}
         className={klass}
-        onMouseEnter={() => setSelectedAutoSuggest(idx)}
+        onMouseEnter={() => setSelectedAutoSuggestIndex(idx)}
       >
-        <div onClick={() => addTag(idx)}>{sug.name}</div>
+        <div onClick={() => addTag(idx)}>{sug}</div>
       </li>
     );
   });
 
   const SelectedTags = props.tags.map((tag, idx) => {
     return (
-      <li key={tag.name} className="tag-item">
-        <span className="tag-text">{tag.name}</span>
+      <li key={idx} className="tag-item">
+        <span className="tag-text">{tag}</span>
         <span
           className="tag-close close"
           onClick={() => props.onDeleteHandler(idx)}
@@ -54,37 +55,37 @@ const TagInput: React.FunctionComponent<IProp> = props => {
   });
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const t: ITag = { id: null, name: e.target.value };
+    const t = e.target.value;
     setNewTag(t);
     setTypedTag(t);
-    props.onChangeHandler && props.onChangeHandler(e.target.value);
+    props.onChangeHandler && props.onChangeHandler(t);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     let delimiters: number[] = props.delimeters ? props.delimeters : [13];
-    if (delimiters.includes(e.keyCode) && newTag) {
+    if (delimiters.includes(e.keyCode) && newTag !== "") {
       e.preventDefault();
       props.onAddHandler(newTag);
-      setNewTag(null);
+      setNewTag("");
     } else {
-      const s = selectedAutoSuggest;
+      const s = selectedAutoSuggestIndex;
 
       if (e.keyCode === 38) {
         if (s === -1) {
-          setSelectedAutoSuggest(props.suggestions.length - 1);
+          setSelectedAutoSuggestIndex(props.suggestions.length - 1);
           setNewTag(props.suggestions[props.suggestions.length - 1]);
         } else if (s === 0) {
-          setSelectedAutoSuggest(-1);
+          setSelectedAutoSuggestIndex(-1);
           setNewTag(typedTag);
         } else {
-          setSelectedAutoSuggest(s - 1);
+          setSelectedAutoSuggestIndex(s - 1);
           setNewTag(props.suggestions[s - 1]);
         }
       } else if (e.keyCode === 40) {
         if (s === props.suggestions.length - 1) {
-          setSelectedAutoSuggest(-1);
+          setSelectedAutoSuggestIndex(-1);
           setNewTag(typedTag);
         } else {
-          setSelectedAutoSuggest(s + 1);
+          setSelectedAutoSuggestIndex(s + 1);
           setNewTag(props.suggestions[s + 1]);
         }
       }
@@ -108,7 +109,7 @@ const TagInput: React.FunctionComponent<IProp> = props => {
       type="text"
       className="tag-input"
       placeholder={props.placeholder ? props.placeholder : "Enter tag"}
-      value={newTag ? newTag.name : ""}
+      value={newTag}
       onChange={e => handleValueChange(e)}
       onKeyDown={e => handleKeyDown(e)}
     />
