@@ -30,7 +30,7 @@ import {
 } from "../../../settings/Constants";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { parseError } from "../../../utils/errorParser";
-import ChapterForm from "./ChapterForm";
+import ChapterForm from "../chapter/ChapterForm";
 import { RTE_TOOLBAR_CONFIG } from "../../../settings/rte_config";
 
 interface IProp extends RouteComponentProps {
