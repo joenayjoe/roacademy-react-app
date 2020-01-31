@@ -5,7 +5,8 @@ import {
   INewLecture,
   ILecture,
   IEditLecture,
-  HTTPStatus
+  HTTPStatus,
+  ILecturePositionUpdateRequest
 } from "../settings/DataTypes";
 
 export class LectureService {
@@ -34,6 +35,16 @@ export class LectureService {
       "/lectures/" +
       lectureId;
     return await this.apiRequest.put<IEditLecture, ILecture>(url, lecture);
+  }
+
+  public async updateLecturePositions(
+    positions: ILecturePositionUpdateRequest[]
+  ): Promise<AxiosResponse<HTTPStatus>> {
+    const url = "/lectures/update_positions";
+    return await this.apiRequest.post<
+      ILecturePositionUpdateRequest[],
+      HTTPStatus
+    >(url, positions);
   }
 
   public async deleteLecture(

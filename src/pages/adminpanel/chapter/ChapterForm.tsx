@@ -10,7 +10,9 @@ import {
   AlertVariant,
   INewLecture,
   ILecture,
-  IEditLecture
+  IEditLecture,
+  IChapterPositinUpdateRequest,
+  ILecturePositionUpdateRequest
 } from "../../../settings/DataTypes";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,6 +23,12 @@ import { RTE_TOOLBAR_CONFIG } from "../../../settings/rte_config";
 import TagInput from "../../../components/taginput/TagInput";
 import TagService from "../../../services/TagService";
 import LectureService from "../../../services/LectureService";
+import {
+  DragDropContext,
+  DropResult,
+  Droppable,
+  Draggable
+} from "react-beautiful-dnd";
 
 interface IProp extends RouteComponentProps {
   course: ICourse;
@@ -70,6 +78,13 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     editingLectureChapter,
     setEditingLectureChapter
   ] = useState<IChapter | null>(null);
+
+  // constants and enums and type
+
+  enum DROPABLE_TYPE {
+    CHAPTER = "chapter",
+    LECTURE = "lecture"
+  }
 
   useEffect(() => {
     chapterService.getChaptersByCourseId(props.course.id).then(resp => {
@@ -344,6 +359,125 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     setEditingLectureErrors([]);
   };
 
+  const reorder = (
+    list: IChapter[] | ILecture[],
+    startIndex: number,
+    endIndex: number
+  ) => {
+    const result = [...list];
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
+  };
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
+    const sourceIndex = result.source.index;
+    const destIndex = result.destination.index;
+    if (result.type === DROPABLE_TYPE.CHAPTER) {
+      const chptrs = reorder(chapters, sourceIndex, destIndex);
+
+      const positionsToUpdate: IChapterPositinUpdateRequest[] = [];
+      chptrs.forEach((ch, idx) => {
+        const p: IChapterPositinUpdateRequest = {
+          chapterId: ch.id,
+          position: idx
+        };
+        positionsToUpdate.push(p);
+      });
+      chapterService
+        .updatePositions(props.course.id, positionsToUpdate)
+        .then(resp => {
+          if (resp.status === HTTPStatus.OK) {
+            setChapters(chptrs as IChapter[]);
+          }
+        });
+    } else if (result.type === DROPABLE_TYPE.LECTURE) {
+      let initVal: any = {};
+      const chLecMap = chapters.reduce((acc, ch) => {
+        acc[ch.id] = ch.lectures;
+        return acc;
+      }, initVal);
+
+      const sourceParentId = parseInt(result.source.droppableId.split("_")[0]);
+      const destParentId = parseInt(
+        result.destination.droppableId.split("_")[0]
+      );
+
+      const sourceLectures = chLecMap[sourceParentId];
+      const destLectures = chLecMap[destParentId];
+
+      let newChapters = [...chapters];
+
+      if (sourceParentId === destParentId) {
+        const reorderedLectures = reorder(
+          sourceLectures,
+          sourceIndex,
+          destIndex
+        );
+        let lecturePositions: ILecturePositionUpdateRequest[] = []
+        newChapters = newChapters.map(ch => {
+          if (ch.id === sourceParentId) {
+            const lectures: ILecture[] = reorderedLectures as ILecture[];
+            ch.lectures = lectures;
+            lectures.forEach((l: ILecture, i: number) => {
+              lecturePositions.push({chapterId: ch.id, lectureId: l.id, position: i});
+            })
+          }
+          return ch;
+        });
+        lectureService.updateLecturePositions(lecturePositions).then(resp => {
+          if(resp.status === HTTPStatus.OK) {
+            setChapters(newChapters);
+          }
+        }).catch(err => {
+          alertContext.show("Something went wrong.", AlertVariant.DANGER);
+        })
+
+      } else {
+        let newSourceLectures = [...sourceLectures];
+        const [draggedLecture] = newSourceLectures.splice(sourceIndex, 1);
+        let newDestLectures = [...destLectures];
+        newDestLectures.splice(destIndex, 0, draggedLecture);
+
+        let lecturePositions: ILecturePositionUpdateRequest[] = [];
+
+        newChapters = newChapters.map(ch => {
+          if (ch.id === sourceParentId) {
+            ch.lectures = newSourceLectures;
+            newSourceLectures.forEach((l: ILecture, i: number) => {
+              lecturePositions.push({
+                chapterId: ch.id,
+                lectureId: l.id,
+                position: i
+              });
+            });
+          } else if (ch.id === destParentId) {
+            ch.lectures = newDestLectures;
+            newDestLectures.forEach((l: ILecture, i: number) => {
+              lecturePositions.push({
+                chapterId: ch.id,
+                lectureId: l.id,
+                position: i
+              });
+            });
+          }
+          return ch;
+        });
+
+        lectureService.updateLecturePositions(lecturePositions).then(resp => {
+          if (resp.status === HTTPStatus.OK) {
+            setChapters(newChapters);
+          }
+        }).catch(err => {
+          alertContext.show("Something went wrong.", AlertVariant.DANGER);
+        });
+      }
+    }
+  };
+
   const editChapterErrorFlash = editChapterErrors.length ? (
     <Alert errors={editChapterErrors} variant={AlertVariant.DANGER} />
   ) : null;
@@ -363,11 +497,11 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   const getNewLectureForm = (chapterId: number) => {
     if (chapterForNewLecture && chapterForNewLecture === chapterId) {
       return (
-        <div className="new-lecture lecture-item">
+        <div className="new-lecture">
           <form onSubmit={e => handleNewLectureFormSubmit(e)}>
             {newLectureErrorFlash}
             <div className="form-group">
-              <label>Name</label>
+              <label>Lecture name</label>
               <input
                 className="form-control"
                 type="text"
@@ -378,7 +512,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
             </div>
 
             <div className="form-group">
-              <label>Description</label>
+              <label>Lecture description</label>
               <RichTextEditor
                 className="rich-text-editor"
                 toolbarConfig={RTE_TOOLBAR_CONFIG}
@@ -388,7 +522,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
               />
             </div>
             <div className="form-group">
-              <label>Comma separated tags that best describe the lecture</label>
+              <label>Lecture tags [comma separated value]</label>
               <TagInput
                 tags={newLectureTags}
                 suggestions={tagSuggestions}
@@ -431,11 +565,11 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
       editingLecture.id === lectureId
     ) {
       return (
-        <div className="lecture-edit-form">
+        <div className="edit-lecture">
           <form onSubmit={e => handleEditLectureFormSubmit(e)}>
             {editLectureErrorFlash}
             <div className="form-group">
-              <label>Name</label>
+              <label>Lecture name</label>
               <input
                 className="form-control"
                 type="text"
@@ -446,7 +580,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
               />
             </div>
             <div className="form-group">
-              <label>Description</label>
+              <label>Lecture description</label>
               <RichTextEditor
                 className="rich-text-editor"
                 toolbarConfig={RTE_TOOLBAR_CONFIG}
@@ -456,7 +590,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
               />
             </div>
             <div className="form-group">
-              <label>Comma separated tags that best describe the lecture</label>
+              <label>Lecture tags [comma separated value]</label>
               <TagInput
                 tags={editingLecture.tags}
                 suggestions={tagSuggestions}
@@ -497,22 +631,43 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         const klass =
           editingLecture && editingLecture.id === lecture.id ? "d-none" : "";
         return (
-          <div className="lecture-item" key={idx}>
-            <div className={`lecture-view ${klass}`}>
-              <span className="mr-3">{lecture.name}</span>
-              <button
-                className="btn mr-2 icon-hoverable"
-                onClick={() => handleLectureEditClick(chapter.id, lecture.id)}
-              >
-                <FontAwesomeIcon icon="edit" color="#686f7a" />
-              </button>
-              <button
-                className="btn icon-hoverable"
-                onClick={() => handleLectureDeleteClick(chapter.id, lecture.id)}
-              >
-                <FontAwesomeIcon icon="trash" color="#686f7a" />
-              </button>
-            </div>
+          <div key={lecture.name}>
+            <Draggable
+              key={`${lecture.id}_${lecture.name}`}
+              draggableId={`${lecture.id}_${lecture.name}`}
+              index={idx}
+            >
+              {(provided3, snapshot) => (
+                <div
+                  ref={provided3.innerRef}
+                  {...provided3.dragHandleProps}
+                  {...provided3.draggableProps}
+                >
+                  <div className={`lecture-item ${klass}`}>
+                    <span className="mr-3">{lecture.name}</span>
+                    <div>
+                      <button
+                        className="btn mr-2 icon-hoverable"
+                        onClick={() =>
+                          handleLectureEditClick(chapter.id, lecture.id)
+                        }
+                      >
+                        <FontAwesomeIcon icon="edit" color="#686f7a" />
+                      </button>
+                      <button
+                        className="btn icon-hoverable"
+                        onClick={() =>
+                          handleLectureDeleteClick(chapter.id, lecture.id)
+                        }
+                      >
+                        <FontAwesomeIcon icon="trash" color="#686f7a" />
+                      </button>
+                    </div>
+                  </div>
+                  {provided3.placeholder}
+                </div>
+              )}
+            </Draggable>
             {getEditingLectureForm(chapter.id, lecture.id)}
           </div>
         );
@@ -524,10 +679,11 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   let getEditChapterForm = (chapterId: number) => {
     if (currentEditChapter && currentEditChapter.id === chapterId) {
       return (
-        <div className={`chapter-edit`}>
+        <div className="edit-chapter">
           <form onSubmit={e => submitChapterEdit(e)}>
             {editChapterErrorFlash}
             <div className="form-group">
+              <label>Chapter name</label>
               <input
                 className="form-control"
                 type="text"
@@ -556,21 +712,21 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   };
 
   const newChapterForm = showNewChapter ? (
-    <div className="new-chapter chapter-item">
-      <h5 className="pl-2">New Section</h5>
+    <div className="new-chapter">
       <div className="chapter-content">
         <form onSubmit={submitNewChapter}>
           {newChapterErrorFlash}
           <div className="form-group">
+            <label>Chapter name</label>
             <input
               className="form-control"
               type="text"
               value={newChapterName}
-              placeholder="Enter a section name"
+              placeholder="Enter a chapter name"
               onChange={e => setNewChapterName(e.target.value)}
             />
           </div>
-          <div className="action-btn-group">
+          <div className="action-btn-group form-group">
             <button
               className="btn btn-danger action-btn"
               type="button"
@@ -593,49 +749,84 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         ? "d-none"
         : "";
     return (
-      <div key={chapter.id} className="chapter-item">
-        <div className="chapter-content">
-          <div className={`chapter-view ${chapterViewClassNames}`}>
-            <span className="mr-3">{chapter.name}</span>
-            <button
-              className="btn mr-2 icon-hoverable"
-              onClick={() => handleChapterEditClick(idx)}
-            >
-              <FontAwesomeIcon icon="edit" color="#686f7a" />
-            </button>
-            <button
-              className="btn icon-hoverable"
-              onClick={() =>
-                handleChapterDeleteClick(
-                  chapter.primaryCourse.id,
-                  chapter.id,
-                  idx
-                )
-              }
-            >
-              <FontAwesomeIcon icon="trash" color="#686f7a" />
-            </button>
+      <Draggable
+        key={`${chapter.id}_${chapter.name}`}
+        draggableId={`${chapter.id}_${chapter.name}`}
+        index={idx}
+      >
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <div className="chapter-item">
+              <div className="chapter-content">
+                <div className={`chapter-view ${chapterViewClassNames}`}>
+                  <span className="mr-3">{chapter.name}</span>
+                  <div>
+                    <button
+                      className="btn mr-2 icon-hoverable"
+                      onClick={() => handleChapterEditClick(idx)}
+                    >
+                      <FontAwesomeIcon icon="edit" color="#686f7a" />
+                    </button>
+                    <button
+                      className="btn icon-hoverable"
+                      onClick={() =>
+                        handleChapterDeleteClick(
+                          chapter.primaryCourse.id,
+                          chapter.id,
+                          idx
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon icon="trash" color="#686f7a" />
+                    </button>
+                  </div>
+                </div>
+                {getEditChapterForm(chapter.id)}
+                <Droppable
+                  droppableId={`${chapter.id}_${chapter.name}`}
+                  type={DROPABLE_TYPE.LECTURE}
+                >
+                  {(provided2, snapshot2) => (
+                    <div ref={provided2.innerRef} {...provided2.droppableProps}>
+                      <div className="lecture-list">
+                        {displayLectures(chapter)}
+                      </div>
+                      {provided2.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+
+                {getNewLectureForm(chapter.id)}
+                <button
+                  className="btn btn-outline-dark"
+                  onClick={() => handleAddLectureClick(chapter.id)}
+                >
+                  <FontAwesomeIcon icon="plus-circle" className="mr-2" />
+                  Add Lecture
+                </button>
+              </div>
+            </div>
+            {provided.placeholder}
           </div>
-          {getEditChapterForm(chapter.id)}
-          <div className="lecture-list">
-            {displayLectures(chapter)}
-            {getNewLectureForm(chapter.id)}
-            <button
-              className="btn btn-outline-dark"
-              onClick={() => handleAddLectureClick(chapter.id)}
-            >
-              <FontAwesomeIcon icon="plus-circle" className="mr-2" />
-              Add Lecture
-            </button>
-          </div>
-        </div>
-      </div>
+        )}
+      </Draggable>
     );
   });
 
   return (
-    <div className="chapter-list">
-      {displayChapters}
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId="dropable" type={DROPABLE_TYPE.CHAPTER}>
+        {(provided, snapshop) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            <div className="chapter-list">{displayChapters}</div>
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
       {newChapterForm}
       <button
         className="btn btn-outline-dark"
@@ -644,7 +835,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         <FontAwesomeIcon icon="plus-circle" className="mr-2" />
         Add Chapter
       </button>
-    </div>
+    </DragDropContext>
   );
 };
 export default withRouter(ChapterForm);

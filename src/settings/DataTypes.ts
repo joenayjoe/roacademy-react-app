@@ -142,6 +142,11 @@ export interface IEditChapter extends INewChapter {
   id: number;
 }
 
+export interface IChapterPositinUpdateRequest {
+  chapterId: number;
+  position: number;
+}
+
 export interface IPrimaryLecture {
   id: number;
   name: string;
@@ -160,6 +165,12 @@ export interface INewLecture {
 }
 export interface IEditLecture extends INewLecture {
   id: number;
+}
+
+export interface ILecturePositionUpdateRequest {
+  chapterId: number;
+  lectureId: number;
+  position: number;
 }
 
 export interface ILectureResource {

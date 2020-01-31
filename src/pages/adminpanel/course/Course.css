@@ -6,6 +6,9 @@
 }
 
 .new-chapter {
+    border: 1px solid #cacbcc;
+    padding: 1rem 0 1rem 0;
+    margin: 1rem 0;
     background-color: #fff;
 }
 
@@ -18,6 +21,7 @@
 .chapter-view {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .icon-hoverable:hover {
@@ -30,8 +34,19 @@
     margin: 5px 0 10px 0;
     padding: 5px 5px 5px 10px;
     border: 1px solid #cacbcc;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .lecture-item .icon-hoverable:hover {
     background-color: #f2f3f5;
+}
+
+.edit-chapter,
+.new-lecture,
+.edit-lecture {
+    border: 1px solid lightslategray;
+    padding: 1rem;
+    margin: 1rem 0;
 }

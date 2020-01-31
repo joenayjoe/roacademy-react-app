@@ -5,7 +5,7 @@ class ApiRequest {
   private axiosInstance: AxiosInstance;
   private cookiesService: CookieService;
   constructor() {
-    const config = { baseURL: "http://127.0.0.1:8080/api" };
+    const config = { baseURL: "http://192.168.1.130:8080/api" };
     this.axiosInstance = axios.create(config);
     this.cookiesService = new CookieService();
   }
@@ -26,6 +26,13 @@ class ApiRequest {
     payload: TRequest
   ): AxiosPromise<TResponse> {
     return this.axiosInstance.put(url, payload, this.axiosConfig());
+  }
+
+  patch<TRequest, TResponse>(
+    url: string,
+    payload: TRequest
+  ): AxiosPromise<TResponse> {
+    return this.axiosInstance.patch(url, payload, this.axiosConfig());
   }
 
   delete(url: string): AxiosPromise<any> {
