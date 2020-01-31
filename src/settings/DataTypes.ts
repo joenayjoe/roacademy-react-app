@@ -131,15 +131,19 @@ export interface IPrimaryChapter {
 export interface IChapter extends IPrimaryChapter, IAuditable {
   primaryCourse: IPrimaryCourse;
   lectures: ILecture[];
+  position: number;
 }
 
 export interface INewChapter {
   name: string;
   courseId: number;
+  position: number;
 }
 
-export interface IEditChapter extends INewChapter {
+export interface IEditChapter {
   id: number;
+  name: string;
+  courseId: number;
 }
 
 export interface IChapterPositinUpdateRequest {
@@ -153,6 +157,7 @@ export interface IPrimaryLecture {
 }
 export interface ILecture extends IPrimaryLecture, IAuditable {
   description: string;
+  position: number;
   tags: string[];
   lectureResource: ILectureResource;
 }
@@ -161,10 +166,15 @@ export interface INewLecture {
   name: string;
   description: string;
   chapterId: number;
+  position: number;
   tags: string[];
 }
-export interface IEditLecture extends INewLecture {
+export interface IEditLecture {
   id: number;
+  name: string;
+  description: string;
+  chapterId: number;
+  tags: string[];
 }
 
 export interface ILecturePositionUpdateRequest {

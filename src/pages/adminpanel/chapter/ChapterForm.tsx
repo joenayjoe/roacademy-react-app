@@ -61,9 +61,10 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   const [newLectureTags, setNewLectureTags] = useState<string[]>([]);
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
   const [newLectureErrors, setNewLectureErrors] = useState<string[]>([]);
-  const [chapterForNewLecture, setChapterForNewLecture] = useState<
-    number | null
-  >(null);
+  const [
+    chapterForNewLecture,
+    setChapterForNewLecture
+  ] = useState<IChapter | null>(null);
 
   // editing lecture state
 
@@ -97,7 +98,8 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     e.preventDefault();
     const newChapter: INewChapter = {
       name: newChapterName,
-      courseId: props.course.id
+      courseId: props.course.id,
+      position: chapters.length
     };
 
     chapterService
@@ -189,9 +191,9 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     }
   };
 
-  const handleAddLectureClick = (chapterId: number) => {
+  const handleAddLectureClick = (chapter: IChapter) => {
     resetNewLecture();
-    setChapterForNewLecture(chapterId);
+    setChapterForNewLecture(chapter);
   };
 
   const handleNewLectureCancelClick = () => {
@@ -245,21 +247,43 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
       });
   };
 
-  const addTag = (nt: string) => {
-    const trim_t = nt.trim();
-    const tags = [...newLectureTags];
-    const found = tags.some(x => x === trim_t);
-    if (!found && trim_t.length > 0) {
-      tags.push(trim_t);
-      setNewLectureTags(tags);
+  const addTag = (text: string, isNewLecture: boolean = true) => {
+    const trim_t = text.trim();
+    if (isNewLecture) {
+      const tags = [...newLectureTags];
+      const found = tags.some(x => x === trim_t);
+      if (!found && trim_t.length > 0) {
+        tags.push(trim_t);
+        setNewLectureTags(tags);
+      }
+    } else if (editingLecture) {
+      const tags = [...editingLecture.tags];
+      const found = tags.some(x => x === trim_t);
+      if (!found && trim_t.length > 0) {
+        tags.push(trim_t);
+        editingLecture.tags = tags;
+        setEditingLecture(editingLecture);
+      }
+    } else {
+      alertContext.show("Invalid lecture", AlertVariant.WARNING);
     }
     setTagSuggestions([]);
   };
 
-  const removeTag = (idx: number) => {
-    const t = [...newLectureTags];
-    t.splice(idx, 1);
-    setNewLectureTags(t);
+  const removeTag = (idx: number, isNewLecture: boolean = true) => {
+    if (isNewLecture) {
+      const tags = [...newLectureTags];
+      tags.splice(idx, 1);
+      setNewLectureTags(tags);
+    } else if (editingLecture) {
+      const el = { ...editingLecture };
+      const tags = [...el.tags];
+      tags.splice(idx, 1);
+      el.tags = tags;
+      setEditingLecture(el);
+    } else {
+      alertContext.show("Invalid lecture", AlertVariant.WARNING);
+    }
   };
 
   const handleTagChange = (val: string) => {
@@ -284,14 +308,15 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         name: newLectureName,
         description: newLectureDescription.toString("html"),
         tags: newLectureTags,
-        chapterId: chapterForNewLecture
+        chapterId: chapterForNewLecture.id,
+        position: chapterForNewLecture.lectures.length
       };
       lectureService
-        .createLecture(props.course.id, chapterForNewLecture, lecutreData)
+        .createLecture(props.course.id, chapterForNewLecture.id, lecutreData)
         .then(resp => {
           const chptrs = [...chapters];
           for (let ch of chptrs) {
-            if (ch.id === chapterForNewLecture) {
+            if (ch.id === chapterForNewLecture.id) {
               ch.lectures.push(resp.data);
               break;
             }
@@ -417,25 +442,31 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
           sourceIndex,
           destIndex
         );
-        let lecturePositions: ILecturePositionUpdateRequest[] = []
+        let lecturePositions: ILecturePositionUpdateRequest[] = [];
         newChapters = newChapters.map(ch => {
           if (ch.id === sourceParentId) {
             const lectures: ILecture[] = reorderedLectures as ILecture[];
             ch.lectures = lectures;
             lectures.forEach((l: ILecture, i: number) => {
-              lecturePositions.push({chapterId: ch.id, lectureId: l.id, position: i});
-            })
+              lecturePositions.push({
+                chapterId: ch.id,
+                lectureId: l.id,
+                position: i
+              });
+            });
           }
           return ch;
         });
-        lectureService.updateLecturePositions(lecturePositions).then(resp => {
-          if(resp.status === HTTPStatus.OK) {
-            setChapters(newChapters);
-          }
-        }).catch(err => {
-          alertContext.show("Something went wrong.", AlertVariant.DANGER);
-        })
-
+        lectureService
+          .updateLecturePositions(lecturePositions)
+          .then(resp => {
+            if (resp.status === HTTPStatus.OK) {
+              setChapters(newChapters);
+            }
+          })
+          .catch(err => {
+            alertContext.show("Something went wrong.", AlertVariant.DANGER);
+          });
       } else {
         let newSourceLectures = [...sourceLectures];
         const [draggedLecture] = newSourceLectures.splice(sourceIndex, 1);
@@ -467,13 +498,16 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
           return ch;
         });
 
-        lectureService.updateLecturePositions(lecturePositions).then(resp => {
-          if (resp.status === HTTPStatus.OK) {
-            setChapters(newChapters);
-          }
-        }).catch(err => {
-          alertContext.show("Something went wrong.", AlertVariant.DANGER);
-        });
+        lectureService
+          .updateLecturePositions(lecturePositions)
+          .then(resp => {
+            if (resp.status === HTTPStatus.OK) {
+              setChapters(newChapters);
+            }
+          })
+          .catch(err => {
+            alertContext.show("Something went wrong.", AlertVariant.DANGER);
+          });
       }
     }
   };
@@ -495,7 +529,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   ) : null;
 
   const getNewLectureForm = (chapterId: number) => {
-    if (chapterForNewLecture && chapterForNewLecture === chapterId) {
+    if (chapterForNewLecture && chapterForNewLecture.id === chapterId) {
       return (
         <div className="new-lecture">
           <form onSubmit={e => handleNewLectureFormSubmit(e)}>
@@ -595,8 +629,8 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 tags={editingLecture.tags}
                 suggestions={tagSuggestions}
                 delimeters={[13, 188]}
-                onAddHandler={val => addTag(val)}
-                onDeleteHandler={idx => removeTag(idx)}
+                onAddHandler={val => addTag(val, false)}
+                onDeleteHandler={idx => removeTag(idx, false)}
                 onChangeHandler={val => handleTagChange(val)}
               />
             </div>
@@ -791,7 +825,13 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                   type={DROPABLE_TYPE.LECTURE}
                 >
                   {(provided2, snapshot2) => (
-                    <div ref={provided2.innerRef} {...provided2.droppableProps}>
+                    <div
+                      ref={provided2.innerRef}
+                      {...provided2.droppableProps}
+                      className={
+                        snapshot2.isDraggingOver ? "is-dragging-over" : ""
+                      }
+                    >
                       <div className="lecture-list">
                         {displayLectures(chapter)}
                       </div>
@@ -803,7 +843,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 {getNewLectureForm(chapter.id)}
                 <button
                   className="btn btn-outline-dark"
-                  onClick={() => handleAddLectureClick(chapter.id)}
+                  onClick={() => handleAddLectureClick(chapter)}
                 >
                   <FontAwesomeIcon icon="plus-circle" className="mr-2" />
                   Add Lecture
@@ -821,7 +861,11 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="dropable" type={DROPABLE_TYPE.CHAPTER}>
         {(provided, snapshop) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            className={snapshop.isDraggingOver ? "is-dragging-over" : ""}
+          >
             <div className="chapter-list">{displayChapters}</div>
             {provided.placeholder}
           </div>

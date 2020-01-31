@@ -33,6 +33,7 @@
 .autocomplete-tag .tag-input {
     border: none;
     margin-top: 0.5rem;
+    height: calc(1.5em + 0.75rem + 2px)
 }
 
 .tag-item .tag-text {
