@@ -4,13 +4,12 @@ import {
   IGrade,
   MenuItemType,
   ModalIdentifier,
-  ICourse,
-  RoleType
+  RoleType,
+  AlertVariant
 } from "../../settings/DataTypes";
 
 import "./SideDrawer.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AxiosError } from "axios";
 import { RouteComponentProps, withRouter } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
 import { GradeService } from "../../services/GradeService";
@@ -33,6 +32,9 @@ import Signup from "../../pages/user/Signup";
 import Login from "../../pages/user/Login";
 import Modal from "../modal/Modal";
 import { CourseService } from "../../services/CourseService";
+import { AlertContext } from "../../contexts/AlertContext";
+import { parseError } from "../../utils/errorParser";
+import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -46,6 +48,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   const courseService = new CourseService();
 
   const authContext = useContext(AuthContext);
+  const alertContext = useContext(AlertContext);
 
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [levelTwoParent, setLevelTwoParent] = useState<MenuItemType | null>(
@@ -66,7 +69,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
         setCategories(response.data);
       })
       .catch(error => {
-        console.log("Error:", (error as AxiosError).message);
+        alertContext.show(parseError(error).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
   }, []);
@@ -141,7 +144,8 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     });
   };
 
-  const handleMenuLinkClick = (item: MenuItemType) => {
+  const handleMenuLinkClick = (e: React.MouseEvent, item: MenuItemType) => {
+    e.preventDefault();
     if (isCourse(item)) {
       loadPage(item);
     } else if (isGrade(item)) {
@@ -200,9 +204,13 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   const getShowAllItemLink = (data: MenuItemType) => {
     return (
       <li key={data.id}>
-        <div className="menu-link" onClick={() => loadPage(data)}>
+        <Link
+          className="menu-link"
+          to={buildURL(data)}
+          onClick={() => loadPage(data)}
+        >
           All {data.name}
-        </div>
+        </Link>
       </li>
     );
   };
@@ -219,7 +227,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     setShowAuthLinks(true);
   };
 
-  const loadPage = (item: MenuItemType) => {
+  const buildURL = (item: MenuItemType) => {
     let url: string;
 
     if (isCourse(item)) {
@@ -229,6 +237,10 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     } else {
       url = BUILD_CATEGORY_URL(item.id);
     }
+    return url;
+  };
+  const loadPage = (item: MenuItemType) => {
+    const url = buildURL(item);
     props.backdropClickHandler();
     props.history.push(url);
   };
@@ -237,12 +249,13 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     const levelThreeMenuItems = grade.courses.map(course => {
       return (
         <li key={course.id}>
-          <div
+          <Link
             className="menu-link"
-            onClick={() => handleMenuLinkClick(course)}
+            to={BUILD_COURSE_URL(course.id)}
+            onClick={e => handleMenuLinkClick(e, course)}
           >
             {course.name}
-          </div>
+          </Link>
         </li>
       );
     });
@@ -260,11 +273,14 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
       let openKlass = selectedMenuItem === grade ? "open-sub-menu" : "";
       return (
         <li key={grade.id} className={openKlass}>
-          <div className="menu-link" onClick={() => handleMenuLinkClick(grade)}>
+          <Link
+            className="menu-link"
+            to={BUILD_GRADE_URL(grade.id)}
+            onClick={e => handleMenuLinkClick(e, grade)}
+          >
             {grade.name}
             {getExpander()}
-          </div>
-
+          </Link>
           {getLevelThreeMenuItems(grade)}
         </li>
       );
@@ -396,13 +412,14 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
           : "";
       return (
         <li key={category.id} className={openKlass}>
-          <div
+          <Link
             className="menu-link"
-            onClick={() => handleMenuLinkClick(category)}
+            to={BUILD_CATEGORY_URL(category.id)}
+            onClick={e => handleMenuLinkClick(e, category)}
           >
             {category.name}
             {getExpander()}
-          </div>
+          </Link>
 
           {getLevelTwoMenuItems(category)}
         </li>
