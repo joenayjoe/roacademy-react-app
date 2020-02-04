@@ -1,4 +1,10 @@
-import React, { Component, createRef } from "react";
+import React, {
+  createRef,
+  useState,
+  useEffect,
+  RefObject,
+  useRef
+} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { isMobile } from "react-device-detect";
@@ -26,121 +32,107 @@ interface IProps extends RouteComponentProps {
   icon?: IconProp;
 }
 
-interface IStates {
-  showDropDownMenu: boolean;
-  selectedMenuItem: MenuItemType | null;
-  levelTwoParent: MenuItemType | null;
-  categories: ICategory[];
-  showLgScreenDropDownMenu: boolean;
-  isLoadingCategory: boolean;
-  isLoadingGrade: boolean;
-  isLoadingCourse: boolean;
-}
+const DropDownMenu: React.FunctionComponent<IProps> = props => {
+  // api services
+  const categoryService = new CategoryService();
+  const gradeService = new GradeService();
+  const courseService = new CourseService();
 
-class DropDownMenu extends Component<IProps, IStates> {
-  private categoryService: CategoryService;
-  private gradeService: GradeService;
-  private courseService: CourseService;
-  constructor(props: IProps) {
-    super(props);
-    this.categoryService = new CategoryService();
-    this.gradeService = new GradeService();
-    this.courseService = new CourseService();
-  }
-  state: IStates = {
-    showDropDownMenu: false,
-    selectedMenuItem: null,
-    levelTwoParent: null,
-    categories: [],
-    showLgScreenDropDownMenu: false,
-    isLoadingCategory: false,
-    isLoadingGrade: false,
-    isLoadingCourse: false
-  };
+  // states
+  const [showDropDownMenu, setShowDropDownMenu] = useState<boolean>(false);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemType | null>(
+    null
+  );
+  const [levelTwoParent, setLevelTwoParent] = useState<MenuItemType | null>(
+    null
+  );
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [showLgScreenDropDownMenu, setShowLgScreenDropDownMenu] = useState<
+    boolean
+  >(false);
+  const [isLoadingCategory, setIsLoadingCategory] = useState<boolean>(false);
+  const [isLoadingGrade, setIsLoadingGrade] = useState<boolean>(false);
+  const [isLoadingCourse, setIsLoadingCourse] = useState<boolean>(false);
 
-  menuBtnNode: any = createRef();
-  menuNode: any = createRef();
+  // refs
+  let menuBtnNode = useRef<HTMLButtonElement>(null);
+  let menuNode = useRef<HTMLUListElement>(null);
 
-  loadPage = (item: MenuItemType) => {
+  const loadPage = (item: MenuItemType) => {
     let url: string;
 
-    if ((item as IGrade).primaryCategory) {
-      item = item as IGrade;
-      url = BUILD_GRADE_URL(item.id);
-    } else if ((item as ICourse).primaryGrade) {
+    if (isCourse(item)) {
       url = BUILD_COURSE_URL(item.id);
+    } else if (isGrade(item)) {
+      url = BUILD_GRADE_URL(item.id);
     } else {
       url = BUILD_CATEGORY_URL(item.id);
     }
-    this.setState({
-      showLgScreenDropDownMenu: false,
-      showDropDownMenu: false
-    });
-    this.props.history.push(url);
+
+    setShowLgScreenDropDownMenu(false);
+    setShowDropDownMenu(false);
+    props.history.push(url);
   };
 
-  handleMenuItemMouseEnter = (item: MenuItemType) => {
-    if (isGrade(item)) {
-      this.fetchCoursesForGrade(item as IGrade);
-    } else if (isCourse(item)) {
-      this.loadPage(item);
+  const handleMenuItemMouseEnter = (item: MenuItemType) => {
+    if (isCourse(item)) {
+      loadPage(item);
+    } else if (isGrade(item)) {
+      fetchCoursesForGrade(item as IGrade);
     } else {
-      this.fetchGradesForCategory(item as ICategory);
+      fetchGradesForCategory(item as ICategory);
     }
   };
 
-  handleMenuLinkClick = (item: MenuItemType) => {
+  const handleMenuLinkClick = (item: MenuItemType) => {
     if (isMobile) {
-      if (isGrade(item)) {
+      if (isCourse(item)) {
+        loadPage(item);
+      } else if (isGrade(item)) {
         const grade = item as IGrade;
         let parent: ICategory | null = null;
-        for (let cat of this.state.categories) {
+        for (let cat of categories) {
           if (cat.id === grade.primaryCategory.id) {
             parent = cat;
             break;
           }
         }
-        this.fetchCoursesForGrade(grade);
-        this.setState({ levelTwoParent: parent ? parent : null });
-      } else if (isCourse(item)) {
-        this.loadPage(item);
+        fetchCoursesForGrade(grade);
+
+        setLevelTwoParent(parent ? parent : null);
       } else {
-        this.fetchGradesForCategory(item as ICategory);
+        fetchGradesForCategory(item as ICategory);
       }
-      this.setState({
-        selectedMenuItem: item
-      });
+
+      setSelectedMenuItem(item);
     } else {
-      this.loadPage(item);
+      loadPage(item);
     }
   };
 
-  handleBackBtnClick = () => {
-    const ltp = this.state.levelTwoParent;
-    this.setState({
-      selectedMenuItem: ltp,
-      levelTwoParent: null
-    });
+  const handleBackBtnClick = () => {
+    const ltp = levelTwoParent;
+    setSelectedMenuItem(ltp);
+    setLevelTwoParent(null);
   };
 
-  fetchGradesForCategory(category: ICategory) {
-    this.setState({ isLoadingGrade: true });
-    this.gradeService
-      .getGradesByCategoryId(category.id, "id_asc")
-      .then(resp => {
-        let categories = this.state.categories.map(cat => {
-          if (cat.id === category.id) {
-            cat.grades = resp.data;
-          }
-          return cat;
-        });
-        this.setState({ categories: categories, isLoadingGrade: false });
+  const fetchGradesForCategory = (category: ICategory) => {
+    setIsLoadingGrade(true);
+    gradeService.getGradesByCategoryId(category.id, "id_asc").then(resp => {
+      let updated_cats: ICategory[] = categories.map((cat: ICategory) => {
+        if (cat.id === category.id) {
+          cat.grades = resp.data;
+        }
+        return cat;
       });
-  }
-  fetchCoursesForGrade(grade: IGrade) {
-    this.setState({ isLoadingCourse: true });
-    this.courseService.getCoursesByGradeId(grade.id).then(resp => {
-      let categories = this.state.categories.map(cat => {
+      setCategories(updated_cats);
+      setIsLoadingGrade(false);
+    });
+  };
+  const fetchCoursesForGrade = (grade: IGrade) => {
+    setIsLoadingCourse(true);
+    courseService.getCoursesByGradeId(grade.id).then(resp => {
+      let updated_cats = categories.map(cat => {
         if (cat.id === grade.primaryCategory.id) {
           cat.grades.map(grd => {
             if (grd.id === grade.id) {
@@ -151,49 +143,54 @@ class DropDownMenu extends Component<IProps, IStates> {
         }
         return cat;
       });
-
-      this.setState({ categories: categories, isLoadingCourse: false });
+      setCategories(updated_cats);
+      setIsLoadingCourse(false);
     });
-  }
-
-  handleDropDownMouseEnter = () => {
-    this.setState({ showLgScreenDropDownMenu: true });
   };
 
-  handleOnClick = (e: Event) => {
-    if (this.menuBtnNode.current.contains(e.target)) {
-      this.setState(prevState => {
-        return { showDropDownMenu: !prevState.showDropDownMenu };
-      });
-    } else if (!isMobile || (isMobile && !this.menuNode.contains(e.target))) {
-      this.setState({ showDropDownMenu: false });
+  const handleDropDownMouseEnter = () => {
+    setShowLgScreenDropDownMenu(true);
+  };
+
+  const handleOnClick = (e: MouseEvent) => {
+    if (
+      menuBtnNode &&
+      menuBtnNode.current &&
+      menuBtnNode.current.contains(e.target as HTMLElement)
+    ) {
+      setShowDropDownMenu(!showDropDownMenu);
+    } else if (
+      !isMobile ||
+      (isMobile &&
+        !(
+          menuNode &&
+          menuNode.current &&
+          menuNode.current.contains(e.target as HTMLElement)
+        ))
+    ) {
+      setShowDropDownMenu(false);
     }
   };
 
-  componentDidMount() {
-    this.setState({ isLoadingCategory: true });
-    this.categoryService.getCategories("name_asc").then(response => {
-      this.setState({ categories: response.data, isLoadingCategory: false });
+  useEffect(() => {
+    setIsLoadingCategory(true);
+    categoryService.getCategories("name_asc").then(response => {
+      setCategories(response.data);
+      setIsLoadingCategory(false);
     });
-    document.addEventListener("mousedown", e => this.handleOnClick(e), false);
-  }
+    document.addEventListener("mousedown", e => handleOnClick(e), false);
 
-  componentWillUnmount() {
-    document.removeEventListener(
-      "mousedown",
-      e => this.handleOnClick(e),
-      false
-    );
-  }
+    return () => {
+      document.removeEventListener("mousedown", e => handleOnClick(e), false);
+    };
+    // eslint-disable-next-line
+  }, []);
 
-  dropDownMenuLevelThree(data: IGrade) {
+  const dropDownMenuLevelThree = (data: IGrade) => {
     let dropDownMenuItem = data.courses.map((item: ICourse) => {
       return (
         <li key={item.id} className="drop-down-list-item">
-          <div
-            className="menu-link"
-            onClick={() => this.handleMenuLinkClick(item)}
-          >
+          <div className="menu-link" onClick={() => handleMenuLinkClick(item)}>
             <span>{item.name}</span>
           </div>
         </li>
@@ -206,7 +203,7 @@ class DropDownMenu extends Component<IProps, IStates> {
           <li
             key="back-l-3"
             className="drop-down-list-item back-menu-link"
-            onClick={this.handleBackBtnClick}
+            onClick={handleBackBtnClick}
           >
             <div>
               <FontAwesomeIcon icon="angle-left" />
@@ -215,22 +212,21 @@ class DropDownMenu extends Component<IProps, IStates> {
           </li>
         ) : null}
         <li key={data.id} className="drop-down-list-item">
-          <div className="menu-link" onClick={() => this.loadPage(data)}>
+          <div className="menu-link" onClick={() => loadPage(data)}>
             <span>All {data.name}</span>
           </div>
         </li>
-        {this.state.isLoadingCourse ? <Spinner /> : dropDownMenuItem}
+        {isLoadingCourse ? <Spinner /> : dropDownMenuItem}
       </ul>
     );
-  }
+  };
 
-  dropDownMenuLevelTwo(data: ICategory) {
+  const dropDownMenuLevelTwo = (data: ICategory) => {
     let dropDownMenuItem = data.grades.map((item: IGrade) => {
       let expander: any;
       let submenu: any;
       let openKlass =
-        this.state.levelTwoParent === data &&
-        this.state.selectedMenuItem === item
+        levelTwoParent === data && selectedMenuItem === item
           ? "open-sub-menu"
           : "";
       expander = (
@@ -239,18 +235,15 @@ class DropDownMenu extends Component<IProps, IStates> {
         </span>
       );
 
-      submenu = this.dropDownMenuLevelThree(item);
+      submenu = dropDownMenuLevelThree(item);
 
       return (
         <li
           key={item.id}
           className={`drop-down-list-item ${openKlass}`}
-          onMouseEnter={() => this.handleMenuItemMouseEnter(item)}
+          onMouseEnter={() => handleMenuItemMouseEnter(item)}
         >
-          <div
-            className="menu-link"
-            onClick={() => this.handleMenuLinkClick(item)}
-          >
+          <div className="menu-link" onClick={() => handleMenuLinkClick(item)}>
             <span>{item.name}</span>
             {expander}
           </div>
@@ -265,7 +258,7 @@ class DropDownMenu extends Component<IProps, IStates> {
           <li
             key="back-l-2"
             className="drop-down-list-item back-menu-link"
-            onClick={this.handleBackBtnClick}
+            onClick={handleBackBtnClick}
           >
             <div>
               <FontAwesomeIcon icon="angle-left" />
@@ -274,22 +267,21 @@ class DropDownMenu extends Component<IProps, IStates> {
           </li>
         ) : null}
         <li key={data.id} className="drop-down-list-item">
-          <div className="menu-link" onClick={() => this.loadPage(data)}>
+          <div className="menu-link" onClick={() => loadPage(data)}>
             <span> All {data.name}</span>
           </div>
         </li>
-        {this.state.isLoadingGrade ? <Spinner /> : dropDownMenuItem}
+        {isLoadingGrade ? <Spinner /> : dropDownMenuItem}
       </ul>
     );
-  }
+  };
 
-  dropDownMenuLevelOne(data: ICategory[]) {
+  const dropDownMenuLevelOne = (data: ICategory[]) => {
     let dropDownMenuItem = data.map((item: ICategory) => {
       let expander: any;
       let submenu: any;
       let openKlass =
-        this.state.selectedMenuItem === item ||
-        this.state.levelTwoParent === item
+        selectedMenuItem === item || levelTwoParent === item
           ? "open-sub-menu"
           : "";
       expander = (
@@ -298,18 +290,15 @@ class DropDownMenu extends Component<IProps, IStates> {
         </span>
       );
 
-      submenu = this.dropDownMenuLevelTwo(item);
+      submenu = dropDownMenuLevelTwo(item);
 
       return (
         <li
           key={item.id}
           className={`drop-down-list-item ${openKlass}`}
-          onMouseEnter={() => this.handleMenuItemMouseEnter(item)}
+          onMouseEnter={() => handleMenuItemMouseEnter(item)}
         >
-          <div
-            className="menu-link"
-            onClick={() => this.handleMenuLinkClick(item)}
-          >
+          <div className="menu-link" onClick={() => handleMenuLinkClick(item)}>
             <span>{item.name}</span>
             {expander}
           </div>
@@ -318,34 +307,28 @@ class DropDownMenu extends Component<IProps, IStates> {
       );
     });
 
-    let disPlayKlass = this.state.showLgScreenDropDownMenu ? "" : "d-none";
+    let disPlayKlass = showLgScreenDropDownMenu ? "" : "d-none";
     return (
       <ul
         className={`drop-down-list drop-down-list-level-one drop-down-list-arrow-left ${disPlayKlass}`}
-        ref={node => (this.menuNode = node)}
+        ref={menuNode}
       >
-        {this.state.isLoadingCategory ? (
-          <Spinner classNames="pt-4" />
-        ) : (
-          dropDownMenuItem
-        )}
+        {isLoadingCategory ? <Spinner classNames="pt-4" /> : dropDownMenuItem}
       </ul>
     );
-  }
+  };
 
-  render() {
-    return (
-      <DropDown
-        name="Categories"
-        classNames="drop-down-on-hover"
-        showDropDown={this.state.showDropDownMenu}
-        icon={this.props.icon}
-        dropDownBtnRef={this.menuBtnNode}
-        handleMouseEnter={this.handleDropDownMouseEnter}
-      >
-        {this.dropDownMenuLevelOne(this.state.categories)}
-      </DropDown>
-    );
-  }
-}
+  return (
+    <DropDown
+      name="Categories"
+      classNames="drop-down-on-hover"
+      showDropDown={showDropDownMenu}
+      icon={props.icon}
+      dropDownBtnRef={menuBtnNode}
+      handleMouseEnter={handleDropDownMouseEnter}
+    >
+      {dropDownMenuLevelOne(categories)}
+    </DropDown>
+  );
+};
 export default withRouter(DropDownMenu);

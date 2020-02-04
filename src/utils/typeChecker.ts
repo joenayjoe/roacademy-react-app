@@ -7,7 +7,7 @@ export const isGrade = (item: MenuItemType) => {
 };
 
 export const isCourse = (item: MenuItemType) => {
-  if ((item as ICourse).primaryGrade) {
+  if ((item as ICourse).primaryCategory && (item as ICourse).primaryGrade) {
     return true;
   }
   return false;

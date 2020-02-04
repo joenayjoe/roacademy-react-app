@@ -222,11 +222,10 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   const loadPage = (item: MenuItemType) => {
     let url: string;
 
-    if ((item as IGrade).primaryCategory) {
-      item = item as IGrade;
-      url = BUILD_GRADE_URL(item.id);
-    } else if ((item as ICourse).primaryGrade) {
+    if (isCourse(item)) {
       url = BUILD_COURSE_URL(item.id);
+    } else if (isGrade(item)) {
+      url = BUILD_GRADE_URL(item.id);
     } else {
       url = BUILD_CATEGORY_URL(item.id);
     }
