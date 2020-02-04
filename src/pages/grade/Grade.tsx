@@ -8,7 +8,10 @@ import Spinner from "../../components/spinner/Spinner";
 import CourseSlide from "../course/CourseSlide";
 import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
-import { BUILD_CATEGORY_URL } from "../../settings/Constants";
+import {
+  BUILD_CATEGORY_URL,
+  DEFAULT_COURSE_STATUS
+} from "../../settings/Constants";
 
 interface matchedParams {
   grade_id: string;
@@ -23,9 +26,11 @@ const Grade: React.FunctionComponent<IProps> = props => {
   const [grade, setGrade] = useState<IGrade | null>(null);
 
   useEffect(() => {
-    gradeService.getGradeWithCourses(gradeId).then(response => {
-      setGrade(response.data);
-    });
+    gradeService
+      .getGradeWithCourses(gradeId, DEFAULT_COURSE_STATUS)
+      .then(response => {
+        setGrade(response.data);
+      });
     // eslint-disable-next-line
   }, []);
 

@@ -7,7 +7,7 @@ import {
   INewGrade,
   Page
 } from "../settings/DataTypes";
-import { DEFAULT_SORTING } from "../settings/Constants";
+import { DEFAULT_SORTING, DEFAULT_COURSE_STATUS } from "../settings/Constants";
 
 export class GradeService {
   private apiRequest = new ApiRequest();
@@ -35,9 +35,10 @@ export class GradeService {
   }
 
   public async getGradeWithCourses(
-    gradeId: string
+    gradeId: string,
+    status = DEFAULT_COURSE_STATUS
   ): Promise<AxiosResponse<IGrade>> {
-    const url = `/grades/${gradeId}?withCourse=true`;
+    const url = `/grades/${gradeId}?withCourse=true&status=${status}`;
     return await this.apiRequest.get<IGrade>(url);
   }
 

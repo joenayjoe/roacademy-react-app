@@ -3,7 +3,10 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { ICourse, AlertVariant } from "../../../settings/DataTypes";
 import CourseForm from "./CourseForm";
 import { CourseService } from "../../../services/CourseService";
-import { ADMIN_COURSES_URL } from "../../../settings/Constants";
+import {
+  ADMIN_COURSES_URL,
+  ADMIN_COURSE_STATUS
+} from "../../../settings/Constants";
 import { AlertContext } from "../../../contexts/AlertContext";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
@@ -22,7 +25,7 @@ const EditCourse: React.FunctionComponent<IProp> = props => {
 
   useEffect(() => {
     courseService
-      .getCourse(+courseId)
+      .getCourse(+courseId, ADMIN_COURSE_STATUS)
       .then(resp => {
         setCourse(resp.data);
       })

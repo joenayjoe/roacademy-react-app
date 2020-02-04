@@ -1,3 +1,5 @@
+import { CourseStatus } from "./DataTypes";
+
 export const DOMAIN = "http://localhost"; //"http://192.168.1.131";
 
 export const API_PORT = ":8080";
@@ -84,3 +86,9 @@ export const DEFAULT_SORTING_FIELD = "id";
 export const DEFAULT_SORTING_ORDER = "desc";
 export const DEFAULT_SORTING =
   DEFAULT_SORTING_FIELD + "_" + DEFAULT_SORTING_ORDER;
+export const DEFAULT_COURSE_STATUS = [CourseStatus.PUBLISHED];
+export const ADMIN_COURSE_STATUS = [
+  CourseStatus.PENDING,
+  CourseStatus.PUBLISHED,
+  CourseStatus.DRAFT
+];

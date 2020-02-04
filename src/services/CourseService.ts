@@ -7,10 +7,11 @@ import {
   HTTPStatus,
   CourseStatus,
   Page,
-  IEditCourse
+  IEditCourse,
+  ICourseStatusUpdateRequest
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
-import { DEFAULT_SORTING } from "../settings/Constants";
+import { DEFAULT_SORTING, DEFAULT_COURSE_STATUS } from "../settings/Constants";
 
 export class CourseService {
   private apiRequest = new ApiRequest();
@@ -19,20 +20,28 @@ export class CourseService {
   public async getCourses(
     page: number,
     size: number,
+    status = DEFAULT_COURSE_STATUS,
     order = DEFAULT_SORTING
   ): Promise<AxiosResponse<Page<ICourse>>> {
     const url =
-      this.baseUrl + "?page=" + page + "&size=" + size + "&order=" + order;
+      this.baseUrl +
+      "?page=" +
+      page +
+      "&size=" +
+      size +
+      "&status=" +
+      status +
+      "&order=" +
+      order;
     return await this.apiRequest.get(url);
   }
 
   public async getCoursesByCategoryId(
     categoryId: string,
-    status?: CourseStatus[],
+    status = DEFAULT_COURSE_STATUS,
     order = DEFAULT_SORTING
   ): Promise<AxiosResponse<ICourse[]>> {
-    const st = status ? status : CourseStatus.PUBLISHED;
-    const url = `/courses?category_id=${categoryId}&status=${st}&order=${order}`;
+    const url = `/courses?category_id=${categoryId}&status=${status}&order=${order}`;
     return await this.apiRequest.get<ICourse[]>(url);
   }
 
@@ -46,8 +55,11 @@ export class CourseService {
     return await this.apiRequest.get<ICourse[]>(url);
   }
 
-  public async getCourse(courseId: number): Promise<AxiosResponse<ICourse>> {
-    const url = this.baseUrl + "/" + courseId;
+  public async getCourse(
+    courseId: number,
+    status = DEFAULT_COURSE_STATUS
+  ): Promise<AxiosResponse<ICourse>> {
+    const url = this.baseUrl + "/" + courseId + "?status=" + status;
     return await this.apiRequest.get(url);
   }
 
@@ -68,6 +80,17 @@ export class CourseService {
   ): Promise<AxiosResponse<ICourse>> {
     const url = this.baseUrl + "/" + data.id;
     return await this.apiRequest.put<IEditCourse, ICourse>(url, data);
+  }
+
+  public async publishCourse(
+    courseId: number,
+    payload: ICourseStatusUpdateRequest
+  ): Promise<AxiosResponse<HTTPStatus>> {
+    const url = this.baseUrl + "/" + courseId;
+    return await this.apiRequest.post<ICourseStatusUpdateRequest, HTTPStatus>(
+      url,
+      payload
+    );
   }
 
   public async deleteCourse(

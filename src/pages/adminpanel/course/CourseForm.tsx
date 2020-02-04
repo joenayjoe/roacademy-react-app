@@ -13,7 +13,9 @@ import {
   INewCourse,
   AlertVariant,
   IEditCourse,
-  ICourse
+  ICourse,
+  ICourseStatusUpdateRequest,
+  HTTPStatus
 } from "../../../settings/DataTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GradeService } from "../../../services/GradeService";
@@ -60,8 +62,14 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
   const [isLoaded, setIsloaded] = useState<boolean>(
     props.course ? false : true
   );
-  const [isCoursePillActive, setIsCoursePillActive] = useState<boolean>(true);
   const [courseErrors, setCourseErrors] = useState<string[]>([]);
+
+  enum PillEnum {
+    COURSE,
+    CHAPTER,
+    PUBLISH
+  }
+  const [activePill, setActivePill] = useState<PillEnum>(PillEnum.COURSE);
 
   useEffect(() => {
     categoryService.getCategories().then(resp => {
@@ -259,6 +267,30 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
     }
   };
 
+  const publishCourse = () => {
+    if (props.course) {
+      const payload: ICourseStatusUpdateRequest = {
+        id: props.course.id,
+        status: CourseStatus.PUBLISHED
+      };
+      courseService
+        .publishCourse(props.course.id, payload)
+        .then(resp => {
+          if (resp.status === HTTPStatus.OK) {
+            alertContext.show("Course successfully published");
+            setActivePill(PillEnum.COURSE);
+          } else {
+            alertContext.show("Course published failed.", AlertVariant.DANGER);
+          }
+        })
+        .catch(err => {
+          alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        });
+    } else {
+      alertContext.show("No couse is selected", AlertVariant.DANGER);
+    }
+  };
+
   let flashErrors;
   if (courseErrors.length) {
     flashErrors = <Flash variant={AlertVariant.DANGER} errors={courseErrors} />;
@@ -400,34 +432,77 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
         <nav className="nav nav-pills flex-column flex-sm-row my-3">
           <button
             className={`btn btn-outline-primary mr-sm-2 flex-sm-fill text-sm-center nav-link ${
-              isCoursePillActive ? "active" : ""
+              activePill === PillEnum.COURSE ? "active" : ""
             }`}
-            onClick={() => setIsCoursePillActive(true)}
+            onClick={() => setActivePill(PillEnum.COURSE)}
           >
             Basic Info
           </button>
           <button
-            className={`btn btn-outline-primary mt-2 mt-sm-0 flex-sm-fill text-sm-center nav-link ${
-              isCoursePillActive ? "" : "active"
+            className={`btn btn-outline-primary mt-2 mt-sm-0 mr-sm-2 flex-sm-fill text-sm-center nav-link ${
+              activePill === PillEnum.CHAPTER ? "active" : ""
             }`}
             disabled={props.course == null ? true : false}
-            onClick={() => setIsCoursePillActive(false)}
+            onClick={() => setActivePill(PillEnum.CHAPTER)}
           >
             Course Contents
+          </button>
+          <button
+            className={`btn btn-outline-primary mt-2 mt-sm-0 flex-sm-fill text-sm-center nav-link ${
+              activePill === PillEnum.PUBLISH ? "active" : ""
+            }`}
+            disabled={props.course == null ? true : false}
+            onClick={() => setActivePill(PillEnum.PUBLISH)}
+          >
+            Publish
           </button>
         </nav>
         <div className="tab-content">
           <div
             id="courseContent"
-            className={`tab-pane ${isCoursePillActive ? "active" : ""}`}
+            className={`tab-pane ${
+              activePill === PillEnum.COURSE ? "active" : ""
+            }`}
           >
             {courseForm}
           </div>
           <div
             id="courseChapter"
-            className={`tab-pane ${isCoursePillActive ? "" : "active"}`}
+            className={`tab-pane ${
+              activePill === PillEnum.CHAPTER ? "active" : ""
+            }`}
           >
             {chapterForm}
+          </div>
+          <div
+            id="coursePublish"
+            className={`tab-pane ${
+              activePill === PillEnum.PUBLISH ? "active" : ""
+            }`}
+          >
+            <div className="course-publish border p-3 d-flex justify-content-center">
+              <div className="form-group ">
+                <label>Do you want to publish the course</label>
+                <div className="action-btn-group">
+                  <button
+                    type="button"
+                    className="btn btn-danger action-btn"
+                    onClick={() => setActivePill(PillEnum.COURSE)}
+                  >
+                    <FontAwesomeIcon icon="times" className="mr-2" />
+                    No
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary action-btn"
+                    onClick={publishCourse}
+                  >
+                    <FontAwesomeIcon icon="check" className="mr-2" />
+                    Yes
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

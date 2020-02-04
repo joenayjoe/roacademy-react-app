@@ -44,7 +44,8 @@ import {
   faExclamationCircle,
   faInfoCircle,
   faFlag,
-  faCheckCircle
+  faCheckCircle,
+  faMinus
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -80,6 +81,7 @@ library.add(
   faTrash,
   faSave,
   faPlus,
+  faMinus,
   faCheck,
   faDotCircle,
   faShare,

@@ -1,16 +1,28 @@
-import React from "react";
-import { ICourse } from "../../settings/DataTypes";
+import React, { useState } from "react";
+import { ICourse, IChapter } from "../../settings/DataTypes";
 import { Link } from "react-router-dom";
 import { BUILD_ADMIN_USER_URL } from "../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Collapse from "../../components/collapse/Collapse";
 
 interface IProp {
   course: ICourse;
+  chapters: IChapter[];
   className?: string;
 }
 const CourseDetail: React.FunctionComponent<IProp> = props => {
+  const [collapsedChapter, setCollapsedChapter] = useState<IChapter | null>(
+    null
+  );
+
   const course = props.course;
-  const classNames = props.className ? props.className : "";
+
+  const handleChalpetClick = (ch: IChapter) => {
+    collapsedChapter && collapsedChapter.id === ch.id
+      ? setCollapsedChapter(null)
+      : setCollapsedChapter(ch);
+  };
+
   const courseObjectives = course.objectives.map(obj => {
     return (
       <li key={obj} className="course-objective-item">
@@ -60,7 +72,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
       <div className="course-enroll-btn mb-2">
         <button className="btn btn-outline-primary btn-block">
           <FontAwesomeIcon icon="calendar-check" />
-          <strong className="pl-2"> Enroll Now</strong>
+          <strong className="pl-2"> Subscribe</strong>
         </button>
       </div>
       <div className="share-btn mb-2">
@@ -84,7 +96,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
           <div className="course-enroll-btn mb-2">
             <button className="btn btn-warning btn-block">
               <FontAwesomeIcon icon="calendar-check" />
-              <span className="pl-2">Enroll Now</span>
+              <span className="pl-2">Subscribe</span>
             </button>
           </div>
           <div className="share-btn mb-2">
@@ -98,9 +110,52 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
     </div>
   );
 
+  const getLectureList = (ch: IChapter) => {
+    return ch.lectures.map(lecture => {
+      return (
+        <div
+          key={`${lecture.id}_${lecture.name}`}
+          className="lecture-list-item"
+        >
+          <span className="mr-3">
+            <FontAwesomeIcon icon={["fab", "youtube"]}></FontAwesomeIcon>
+          </span>
+          <span>{lecture.name}</span>
+        </div>
+      );
+    });
+  };
+
+  const chapterList = props.chapters.map(ch => {
+    const icon =
+      collapsedChapter && collapsedChapter.id === ch.id ? "minus" : "plus";
+    return (
+      <div key={`${ch.id}_${ch.name}`} className="chapter-list-item">
+        <div
+          className="chapter-list-header"
+          onClick={() => handleChalpetClick(ch)}
+        >
+          <span className="mr-2">
+            <FontAwesomeIcon icon={icon} size="sm" color="#003845" />
+          </span>
+          <span>{ch.name}</span>
+        </div>
+        <Collapse
+          isOpen={
+            collapsedChapter && collapsedChapter.id === ch.id ? true : false
+          }
+        >
+          <div className="lecture-container">{getLectureList(ch)}</div>
+        </Collapse>
+      </div>
+    );
+  });
+
   const markupDescription = () => {
     return { __html: course.description };
   };
+
+  const classNames = props.className ? props.className : "";
   return (
     <div className={`course-detail ${classNames}`}>
       <div className="course-detail-header">
@@ -146,7 +201,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
             </div>
             <div className="course-detail-sections pt-4">
               <h4>Course content</h4>
-              <p>All Sections gores here</p>
+              <div className="chapter-container">{chapterList}</div>
             </div>
             <div className="course-detail-requirements pt-3">
               <h4>Requirements</h4>

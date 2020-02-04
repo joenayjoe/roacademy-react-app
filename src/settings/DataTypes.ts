@@ -123,6 +123,11 @@ export interface IEditCourse extends INewCourse {
   id: number;
 }
 
+export interface ICourseStatusUpdateRequest {
+  id: number;
+  status: CourseStatus;
+}
+
 export interface IPrimaryChapter {
   id: number;
   name: string;

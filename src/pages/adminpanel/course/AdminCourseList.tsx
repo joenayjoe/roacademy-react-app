@@ -11,7 +11,8 @@ import {
   BUILD_ADMIN_COURSE_URL,
   PAGE_SIZE,
   DEFAULT_SORTING_FIELD,
-  DEFAULT_SORTING_ORDER
+  DEFAULT_SORTING_ORDER,
+  ADMIN_COURSE_STATUS
 } from "../../../settings/Constants";
 import Pagination from "../../../components/pagination/Pagination";
 
@@ -35,7 +36,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
   ];
 
   useEffect(() => {
-    courseService.getCourses(0, PAGE_SIZE).then(resp => {
+    courseService.getCourses(0, PAGE_SIZE, ADMIN_COURSE_STATUS).then(resp => {
       setCoursePage(resp.data);
       setIsLoading(false);
     });
@@ -58,7 +59,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
     setIsLoading(true);
     const currentPage = coursePage ? coursePage.number : 0;
     courseService
-      .getCourses(currentPage, PAGE_SIZE, getSorting(th))
+      .getCourses(currentPage, PAGE_SIZE, ADMIN_COURSE_STATUS, getSorting(th))
       .then(resp => {
         setCoursePage(resp.data);
         setIsLoading(false);
@@ -73,10 +74,12 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
     if (page >= 0) {
       setIsLoading(true);
       const order = sortCol + "_" + sortOrder;
-      courseService.getCourses(page, PAGE_SIZE, order).then(resp => {
-        setCoursePage(resp.data);
-        setIsLoading(false);
-      });
+      courseService
+        .getCourses(page, PAGE_SIZE, ADMIN_COURSE_STATUS, order)
+        .then(resp => {
+          setCoursePage(resp.data);
+          setIsLoading(false);
+        });
     }
   };
 
