@@ -341,8 +341,8 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   const getAuthLinks = () => {
     let authLink;
     if (authContext.isAuthenticated) {
-      let userName = authService.getUserFullName(authContext);
-      let userEmail = authService.getUserEmail(authContext);
+      let userName = authService.getUserFullName(authContext.currentUser);
+      let userEmail = authService.getUserEmail(authContext.currentUser);
       let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
 
       let openKlass = showAuthLinks ? "open-sub-menu" : "";

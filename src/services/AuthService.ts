@@ -10,8 +10,6 @@ import {
 } from "../settings/DataTypes";
 import { CookieService } from "./CookieService";
 import JwtDecode from "jwt-decode";
-import { ContextType } from "react";
-import { AuthContext } from "../contexts/AuthContext";
 import {
   LOGGED_IN_USER_COOKIES_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
@@ -95,23 +93,23 @@ class AuthService {
     return accessToken !== undefined && !this.isTokenExpired(accessToken);
   }
 
-  public getUserFullName(context: ContextType<typeof AuthContext>): string {
-    if (context && context.currentUser) {
-      return context.currentUser.firstName + " " + context.currentUser.lastName;
+  public getUserFullName(user: IUser | null): string {
+    if (user) {
+      return user.firstName + " " + user.lastName;
     }
     return "";
   }
 
-  public getUserNameInitials(context: ContextType<typeof AuthContext>): string {
-    if (context && context.currentUser) {
-      return context.currentUser.firstName[0] + context.currentUser.lastName[0];
+  public getUserNameInitials(user: IUser | null): string {
+    if (user) {
+      return user.firstName[0] + user.lastName[0];
     }
     return "";
   }
 
-  public getUserEmail(context: ContextType<typeof AuthContext>): string {
-    if (context && context.currentUser) {
-      return context.currentUser.email;
+  public getUserEmail(user: IUser | null): string {
+    if (user) {
+      return user.email;
     }
     return "";
   }

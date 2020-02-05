@@ -45,7 +45,10 @@ import {
   faInfoCircle,
   faFlag,
   faCheckCircle,
-  faMinus
+  faMinus,
+  faFilePdf,
+  faFileVideo,
+  faKeyboard
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -89,12 +92,15 @@ library.add(
   faYoutube,
   faFile,
   faFileDownload,
+  faFilePdf,
+  faFileVideo,
   faTasks,
   faPlusCircle,
   faExclamationCircle,
   faInfoCircle,
   faCheckCircle,
-  faFlag
+  faFlag,
+  faKeyboard
 );
 
 ReactDOM.render(<App />, document.getElementById("root"));

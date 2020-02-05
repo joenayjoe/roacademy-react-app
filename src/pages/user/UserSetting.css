@@ -30,6 +30,7 @@
 .user-profile-side-nav ul li.active {
     background-color: #F2F3F5;
     color: #007791;
+    font-weight: 600;
 }
 
 .user-profile-form-wrapper {

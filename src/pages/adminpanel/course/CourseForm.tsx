@@ -451,7 +451,12 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
             className={`btn btn-outline-primary mt-2 mt-sm-0 flex-sm-fill text-sm-center nav-link ${
               activePill === PillEnum.PUBLISH ? "active" : ""
             }`}
-            disabled={props.course == null ? true : false}
+            disabled={
+              props.course == null ||
+              (props.course && props.course.status === CourseStatus.PUBLISHED)
+                ? true
+                : false
+            }
             onClick={() => setActivePill(PillEnum.PUBLISH)}
           >
             Publish

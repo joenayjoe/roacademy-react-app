@@ -125,11 +125,9 @@
 }
 
 .lecture-list-item {
-    padding: 0.25rem 0;
     border: 1px solid#dedfe0;
     border-top: none;
     padding: 0.7rem 2rem;
-    cursor: pointer;
 }
 
 

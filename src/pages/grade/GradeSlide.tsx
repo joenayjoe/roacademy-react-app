@@ -56,7 +56,8 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
     // eslint-disable-next-line
   }, []);
 
-  const handleGradeOnClick = (grade: IGrade) => {
+  const handleGradeOnClick = (e: React.MouseEvent, grade: IGrade) => {
+    e.preventDefault();
     const url = BUILD_GRADE_URL(grade.id);
     props.history.push(url);
   };
@@ -65,13 +66,15 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
     if (grades.length) {
       return grades.map(grade => {
         return (
-          <div
-            className="card slick-card"
+          <Link
             key={grade.id}
-            onClick={() => handleGradeOnClick(grade)}
+            to={BUILD_GRADE_URL(grade.id)}
+            onClick={e => handleGradeOnClick(e, grade)}
           >
-            <div className="card-body">{grade.name}</div>
-          </div>
+            <div className="card slick-card">
+              <div className="card-body">{grade.name}</div>
+            </div>
+          </Link>
         );
       });
     } else {

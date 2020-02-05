@@ -1,4 +1,4 @@
-import React, { Component, ContextType, createRef } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { RouteComponentProps, withRouter } from "react-router";
 import Avatar from "./Avatar";
@@ -10,150 +10,141 @@ import {
   USER_COURSES_URL,
   USER_ACCOUNT_SETTING_URL
 } from "../../settings/Constants";
+import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {}
-interface IStates {
-  showDropDown: boolean;
-  isMenuLinkClicked: boolean;
-}
 
-class UserDropDown extends Component<IProps, IStates> {
-  static contextType = AuthContext;
-  context!: ContextType<typeof AuthContext>;
-  private authService: AuthService;
+const UserDropDown: React.FunctionComponent<IProps> = props => {
+  const authContext = useContext(AuthContext);
+  const authService = new AuthService();
 
-  avatarNode: any = createRef();
+  let avatarNode = useRef<HTMLDivElement>(null);
 
-  constructor(props: IProps) {
-    super(props);
-    this.authService = new AuthService();
-    this.state = {
-      showDropDown: false,
-      isMenuLinkClicked: false
-    };
-  }
+  // states
+  const [showDropDown, setShowDropDown] = useState<boolean>(false);
+  const [isMenuLinkClicked, setIsMenuLinkClicked] = useState<boolean>(false);
 
-  componentDidMount() {
-    document.addEventListener(
-      "click",
-      e => this.toogleShowAvatarDropDown(e),
-      false
-    );
-  }
-  componentWillUnmount() {
-    document.removeEventListener(
-      "click",
-      e => this.toogleShowAvatarDropDown(e),
-      false
-    );
-  }
-
-  toogleShowAvatarDropDown = (e: Event) => {
-    if (this.avatarNode.current === null) return;
-    if (this.avatarNode.current.contains(e.target)) {
-      this.setState(prevState => {
-        return {
-          showDropDown: !prevState.showDropDown,
-          isMenuLinkClicked: false
-        };
-      });
-    } else {
-      this.setState({ showDropDown: false });
-    }
-  };
-
-  handleMenuLinkClick = (url: string) => {
-    this.setState({ showDropDown: false, isMenuLinkClicked: true });
-    this.props.history.push(url);
-  };
-
-  handleLogout = () => {
-    this.context && this.context.logout();
-    this.props.history.push("/");
-  };
-  render() {
-    let userName = this.authService.getUserFullName(this.context);
-    let userEmail = this.authService.getUserEmail(this.context);
-    let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
-
-    let openKlass = this.state.showDropDown ? "open" : "";
-    let hideMenu = this.state.isMenuLinkClicked ? "d-none" : "";
-
-    let adminPanelLi;
-    if (this.context.hasRole(RoleType.ADMIN)) {
-      adminPanelLi = (
-        <li className="drop-down-list-item">
-          <div
-            className="menu-link"
-            onClick={e => this.handleMenuLinkClick(ADMIN_PANEL_URL)}
-          >
-            Admin Panel
-          </div>
-        </li>
+  useEffect(() => {
+    document.addEventListener("click", e => toogleShowAvatarDropDown(e), false);
+    return () => {
+      document.removeEventListener(
+        "click",
+        e => toogleShowAvatarDropDown(e),
+        false
       );
+    };
+    // eslint-disable-next-line
+  }, []);
+
+  const toogleShowAvatarDropDown = (e: Event) => {
+    if (!avatarNode || !avatarNode.current) return;
+    if (
+      avatarNode &&
+      avatarNode.current &&
+      avatarNode.current.contains(e.target as HTMLDivElement)
+    ) {
+      setShowDropDown(!showDropDown);
+      setIsMenuLinkClicked(false);
+    } else {
+      setShowDropDown(false);
     }
+  };
 
-    return (
-      <div
-        className={`nav-item drop-down drop-down-on-hover ${openKlass}`}
-        onMouseEnter={() => this.setState({ isMenuLinkClicked: false })}
-      >
-        <Avatar styles={avatarStyle} avatarRef={this.avatarNode} />
+  const handleMenuLinkClick = (e: React.MouseEvent, url: string) => {
+    e.preventDefault();
+    setShowDropDown(false);
+    setIsMenuLinkClicked(true);
+    props.history.push(url);
+  };
 
-        <ul
-          className={`drop-down-list drop-down-list-arrow-right drop-down-right ${hideMenu}`}
+  const handleLogout = () => {
+    authContext.logout();
+    props.history.push("/");
+  };
+
+  let userName = authService.getUserFullName(authContext.currentUser);
+  let userEmail = authService.getUserEmail(authContext.currentUser);
+  let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
+
+  let openKlass = showDropDown ? "open" : "";
+  let hideMenu = isMenuLinkClicked ? "d-none" : "";
+
+  let adminPanelLi;
+  if (authContext.hasRole(RoleType.ADMIN)) {
+    adminPanelLi = (
+      <li className="drop-down-list-item">
+        <Link
+          to={ADMIN_PANEL_URL}
+          onClick={e => handleMenuLinkClick(e, ADMIN_PANEL_URL)}
         >
-          <li className="drop-down-list-item mt-2">
-            <div
-              className="menu-link"
-              onClick={e => this.handleMenuLinkClick(USER_PROFILE_SETTING_URL)}
-            >
+          <div className="menu-link">Admin Panel</div>
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <div
+      className={`nav-item drop-down drop-down-on-hover ${openKlass}`}
+      onMouseEnter={() => setIsMenuLinkClicked(false)}
+    >
+      <Avatar styles={avatarStyle} avatarRef={avatarNode} />
+
+      <ul
+        className={`drop-down-list drop-down-list-arrow-right drop-down-right ${hideMenu}`}
+      >
+        <li className="drop-down-list-item mt-2">
+          <Link
+            to={USER_PROFILE_SETTING_URL}
+            onClick={e => handleMenuLinkClick(e, USER_PROFILE_SETTING_URL)}
+          >
+            <div className="menu-link">
               <Avatar styles={avatarStyle} />
               <span className="ml-2">
                 <span>{userName}</span> <br />
                 <small className="text-secondary">{userEmail}</small>
               </span>
             </div>
-          </li>
-          <li className="drop-down-list-item">
-            <div
-              className="menu-link"
-              onClick={e => this.handleMenuLinkClick(USER_COURSES_URL)}
-            >
-              My Courses
-            </div>
-          </li>
-          {adminPanelLi}
-          <li className="dropdown-divider"></li>
-          <li className="drop-down-list-item">
-            <div
-              className="menu-link"
-              onClick={e => this.handleMenuLinkClick(USER_PROFILE_SETTING_URL)}
-            >
-              Edit Profile
-            </div>
-          </li>
-          <li className="drop-down-list-item">
-            <div
-              className="menu-link"
-              onClick={e => this.handleMenuLinkClick(USER_ACCOUNT_SETTING_URL)}
-            >
-              Edit Account
-            </div>
-          </li>
-          <li className="dropdown-divider"></li>
-          <li className="drop-down-list-item ">
-            <div className="menu-link">Help</div>
-          </li>
-          <li className="drop-down-list-item">
-            <div className="menu-link" onClick={this.handleLogout}>
-              Signout
-            </div>
-          </li>
-        </ul>
-      </div>
-    );
-  }
-}
+          </Link>
+        </li>
+        <li className="drop-down-list-item">
+          <Link
+            to={USER_COURSES_URL}
+            onClick={e => handleMenuLinkClick(e, USER_COURSES_URL)}
+          >
+            <div className="menu-link">My Courses</div>
+          </Link>
+        </li>
+        {adminPanelLi}
+        <li className="dropdown-divider"></li>
+        <li className="drop-down-list-item">
+          <Link
+            to={USER_PROFILE_SETTING_URL}
+            onClick={e => handleMenuLinkClick(e, USER_PROFILE_SETTING_URL)}
+          >
+            <div className="menu-link">Edit Profile</div>
+          </Link>
+        </li>
+        <li className="drop-down-list-item">
+          <Link
+            to={USER_ACCOUNT_SETTING_URL}
+            onClick={e => handleMenuLinkClick(e, USER_ACCOUNT_SETTING_URL)}
+          >
+            <div className="menu-link">Edit Account</div>
+          </Link>
+        </li>
+        <li className="dropdown-divider"></li>
+        <li className="drop-down-list-item ">
+          <div className="menu-link">Help</div>
+        </li>
+        <li className="drop-down-list-item">
+          <div className="menu-link" onClick={handleLogout}>
+            Signout
+          </div>
+        </li>
+      </ul>
+    </div>
+  );
+};
 
 export default withRouter(UserDropDown);

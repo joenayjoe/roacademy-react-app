@@ -1,92 +1,87 @@
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import Avatar from "../../components/avatar/Avatar";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
 
 import "./UserSetting.css";
 import { withRouter, RouteComponentProps } from "react-router";
+import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {}
-class UserSettingContaner extends Component<IProps> {
-  private authService: AuthService;
+const UserSettingContaner: React.FunctionComponent<IProps> = props => {
+  const authService = new AuthService();
 
-  PROFILE_SETTING_URL = "/user/profile-settings";
-  ACCOUNT_SETTING_URL = "/user/account-settings";
-  NOTIFICATION_SETTING_URL = "/user/notification-settings";
-  PHOTO_SETTING_URL = "/user/photo-settings";
-  DELET_PROFILE_URL = "/user/delete-profile";
+  const PROFILE_SETTING_URL = "/user/profile-settings";
+  const ACCOUNT_SETTING_URL = "/user/account-settings";
+  const NOTIFICATION_SETTING_URL = "/user/notification-settings";
+  const PHOTO_SETTING_URL = "/user/photo-settings";
+  const DELET_PROFILE_URL = "/user/delete-profile";
 
-  static contextType = AuthContext;
-  constructor(props: IProps) {
-    super(props);
-    this.authService = new AuthService();
-  }
-  handleLinkClick = (url: string) => {
-    this.props.history.push(url);
+  const authContext = useContext(AuthContext);
+
+  const handleLinkClick = (url: string) => {
+    props.history.push(url);
   };
-  getActiveClassName = (pathName: string) => {
-    return pathName === this.props.history.location.pathname ? "active" : "";
+  const getActiveClassName = (pathName: string) => {
+    return pathName === props.history.location.pathname ? "active" : "";
   };
-  render() {
-    let avatarStyle = { width: "120px", height: "120px", fontSize: "36px" };
-    let userName = this.authService.getUserFullName(this.context);
-    return (
-      <div className="user-profile width-75">
-        <div className="user-profile-side-nav">
-          <div className="avatar">
-            <Avatar styles={avatarStyle} />
-            <strong className="mt-2 mb-2">{userName}</strong>
-          </div>
-          <div className="profile-links">
-            <ul>
-              <li
-                className={`menu-link ${this.getActiveClassName(
-                  this.PROFILE_SETTING_URL
-                )}`}
-                onClick={() => this.handleLinkClick(this.PROFILE_SETTING_URL)}
-              >
-                Profile
-              </li>
-              <li
-                className={`menu-link ${this.getActiveClassName(
-                  this.PHOTO_SETTING_URL
-                )}`}
-                onClick={() => this.handleLinkClick(this.PHOTO_SETTING_URL)}
-              >
-                Photo
-              </li>
-              <li
-                className={`menu-link ${this.getActiveClassName(
-                  this.ACCOUNT_SETTING_URL
-                )}`}
-                onClick={() => this.handleLinkClick(this.ACCOUNT_SETTING_URL)}
-              >
-                Account
-              </li>
-              <li
-                className={`menu-link ${this.getActiveClassName(
-                  this.NOTIFICATION_SETTING_URL
-                )}`}
-                onClick={() =>
-                  this.handleLinkClick(this.NOTIFICATION_SETTING_URL)
-                }
-              >
-                Notifications
-              </li>
-              <li
-                className={`menu-link ${this.getActiveClassName(
-                  this.DELET_PROFILE_URL
-                )}`}
-                onClick={() => this.handleLinkClick(this.DELET_PROFILE_URL)}
-              >
-                Delete Account
-              </li>
-            </ul>
-          </div>
+
+  let avatarStyle = { width: "120px", height: "120px", fontSize: "36px" };
+  let userName = authService.getUserFullName(authContext.currentUser);
+  return (
+    <div className="user-profile width-75">
+      <div className="user-profile-side-nav">
+        <div className="avatar">
+          <Avatar styles={avatarStyle} />
+          <strong className="mt-2 mb-2">{userName}</strong>
         </div>
-        {this.props.children}
+        <div className="profile-links">
+          <ul>
+            <li
+              className={getActiveClassName(PROFILE_SETTING_URL)}
+              onClick={() => handleLinkClick(PROFILE_SETTING_URL)}
+            >
+              <Link to={PROFILE_SETTING_URL} className="menu-link w-100">
+                Profile
+              </Link>
+            </li>
+            <li
+              className={getActiveClassName(PHOTO_SETTING_URL)}
+              onClick={() => handleLinkClick(PHOTO_SETTING_URL)}
+            >
+              <Link className="menu-link  w-100" to={PHOTO_SETTING_URL}>
+                Photo
+              </Link>
+            </li>
+            <li
+              className={getActiveClassName(ACCOUNT_SETTING_URL)}
+              onClick={() => handleLinkClick(ACCOUNT_SETTING_URL)}
+            >
+              <Link className="menu-link w-100" to={ACCOUNT_SETTING_URL}>
+                Account
+              </Link>
+            </li>
+            <li
+              className={getActiveClassName(NOTIFICATION_SETTING_URL)}
+              onClick={() => handleLinkClick(NOTIFICATION_SETTING_URL)}
+            >
+              <Link to={NOTIFICATION_SETTING_URL} className="menu-link w-100">
+                Notifications
+              </Link>
+            </li>
+            <li
+              className={getActiveClassName(DELET_PROFILE_URL)}
+              onClick={() => handleLinkClick(DELET_PROFILE_URL)}
+            >
+              <Link to={DELET_PROFILE_URL} className="menu-link w-100">
+                Delete Account
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
-    );
-  }
-}
+      {props.children}
+    </div>
+  );
+};
 export default withRouter(UserSettingContaner);

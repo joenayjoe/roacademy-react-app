@@ -113,15 +113,14 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
   const getLectureList = (ch: IChapter) => {
     return ch.lectures.map(lecture => {
       return (
-        <div
-          key={`${lecture.id}_${lecture.name}`}
-          className="lecture-list-item"
-        >
-          <span className="mr-3">
-            <FontAwesomeIcon icon={["fab", "youtube"]}></FontAwesomeIcon>
-          </span>
-          <span>{lecture.name}</span>
-        </div>
+        <Link key={`${lecture.id}_${lecture.name}`} to={"/"}>
+          <div className="lecture-list-item">
+            <span className="mr-3">
+              <FontAwesomeIcon icon={["fab", "youtube"]}></FontAwesomeIcon>
+            </span>
+            <span>{lecture.name}</span>
+          </div>
+        </Link>
       );
     });
   };

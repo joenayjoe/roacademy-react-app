@@ -10,6 +10,7 @@ import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
 
 import { withRouter, RouteComponentProps } from "react-router";
 import { BUILD_COURSE_URL } from "../../settings/Constants";
+import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {
   title: string;
@@ -61,25 +62,28 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
     if (courses.length) {
       return courses.map((course: ICourse) => {
         return (
-          <div
-            className="card slick-card"
+          <Link
             key={course.id}
-            onClick={() => handleCourseOnClick(course)}
+            to={BUILD_COURSE_URL(course.id)}
+            onClick={e => handleCourseOnClick(e, course)}
           >
-            <div className="card-body slick-card-title">
-              <h5 className="card-title">{course.name}</h5>
+            <div className="card slick-card">
+              <div className="card-body slick-card-title">
+                <h5 className="card-title">{course.name}</h5>
+              </div>
+              <div className="card-footer text-secondary">
+                {course.createdBy.firstName + " " + course.createdBy.lastName}
+              </div>
             </div>
-            <div className="card-footer text-secondary">
-              {course.createdBy.firstName + " " + course.createdBy.lastName}
-            </div>
-          </div>
+          </Link>
         );
       });
     }
     return <div className="alert alert-success">This has no courses yet</div>;
   };
 
-  const handleCourseOnClick = (course: ICourse) => {
+  const handleCourseOnClick = (e: React.MouseEvent, course: ICourse) => {
+    e.preventDefault();
     props.history.push(BUILD_COURSE_URL(course.id));
   };
 
