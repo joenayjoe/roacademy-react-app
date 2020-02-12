@@ -25,14 +25,14 @@
 }
 
 .icon-hoverable:hover {
-    background-color: #fff;
+    background-color: #f2f3f5;
     border-color: transparent;
 }
 
 .lecture-item {
     background-color: #fff;
     margin: .5rem 0;
-    padding: .5rem 2rem .5rem 1rem;
+    padding: .5rem 1rem .5rem 1rem;
     border: 1px solid #cacbcc;
     display: flex;
     flex-wrap: wrap;
@@ -49,6 +49,7 @@
     margin-top: -.5rem;
     margin-bottom: .5rem;
     padding-top: .25rem;
+    background-color: #fff;
 }
 
 .lecture-content-selector {
@@ -83,8 +84,23 @@
     width: 95%;
 }
 
-.lecture-item .icon-hoverable:hover {
-    background-color: #f2f3f5;
+.lecture-expand-btn {
+    color: #686f7a !important;
+}
+
+.lecture-expand-btn:hover {
+    color: #212529 !important;
+}
+
+.expanded-lecture {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #cacbcc;
+    border-top: none;
+    margin-top: -.5rem;
+    padding: .5rem .75rem .25rem .75rem;
 }
 
 .edit-chapter,

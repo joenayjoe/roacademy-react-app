@@ -14,7 +14,7 @@ import {
   IChapterPositinUpdateRequest,
   ILecturePositionUpdateRequest
 } from "../../../settings/DataTypes";
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { parseError } from "../../../utils/errorParser";
 import Alert from "../../../components/flash/Alert";
@@ -66,10 +66,6 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     setChapterForNewLecture
   ] = useState<IChapter | null>(null);
 
-  const [lectureArticle, setLectureArticle] = useState<EditorValue>(
-    RichTextEditor.createEmptyValue()
-  );
-
   const [addingContentTo, setAddingContentTo] = useState<ILecture | null>(null);
   const [
     addingContentType,
@@ -77,6 +73,8 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   ] = useState<LecuteContentType | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const [expandedLecture, setExpandedLecture] = useState<ILecture | null>(null);
 
   // editing lecture state
 
@@ -100,8 +98,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   }
   enum LecuteContentType {
     VIDEO = "video",
-    PDF = "pdf",
-    ARTICLE = "article"
+    PDF = "pdf"
   }
 
   useEffect(() => {
@@ -226,6 +223,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   };
 
   const handleLectureEditClick = (chapterId: number, lectureId: number) => {
+    resetLectureContent();
     chapters.forEach(ch => {
       if (ch.id === chapterId) {
         const lctrs = [...ch.lectures];
@@ -529,6 +527,69 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     }
   };
 
+  const handleLectureFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const resetLectureContent = () => {
+    setAddingContntType(null);
+    setSelectedFile(null);
+    setAddingContentTo(null);
+    setExpandedLecture(null);
+  };
+
+  const handleAddContentClick = (lecture: ILecture) => {
+    if (addingContentTo && addingContentTo.id === lecture.id) {
+      resetLectureContent();
+    } else {
+      resetLectureContent();
+      setAddingContentTo(lecture);
+    }
+  };
+
+  const handleLectureContentFormSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (selectedFile && addingContentTo) {
+      const formData = new FormData();
+      formData.append("file", selectedFile, selectedFile.name);
+      lectureService
+        .uploadLectureContent(addingContentTo.id, formData)
+        .then(resp => {
+          const chptrs = [...chapters];
+          let found = false;
+          for (let ch of chptrs) {
+            const lctrs = [...ch.lectures];
+            for (let l of lctrs) {
+              if (l.id === addingContentTo.id) {
+                l.lectureResource = resp.data;
+                found = true;
+                break;
+              }
+            }
+            if (found) {
+              ch.lectures = lctrs;
+              break;
+            }
+          }
+          setChapters(chptrs);
+          resetLectureContent();
+        })
+        .catch(err => {
+          alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        });
+    }
+  };
+
+  const handleLectureExpandClick = (lecture: ILecture) => {
+    resetLectureContent();
+
+    expandedLecture && expandedLecture.id === lecture.id
+      ? setExpandedLecture(null)
+      : setExpandedLecture(lecture);
+  };
+
   const editChapterErrorFlash = editChapterErrors.length ? (
     <Alert errors={editChapterErrors} variant={AlertVariant.DANGER} />
   ) : null;
@@ -545,6 +606,31 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     <Alert errors={editingLectureErrors} variant={AlertVariant.DANGER} />
   ) : null;
 
+  const getLectureDetailView = (lecture: ILecture) => {
+    if (
+      expandedLecture &&
+      expandedLecture.id === lecture.id &&
+      lecture.lectureResource
+    ) {
+      return (
+        <div className="expanded-lecture">
+          <FontAwesomeIcon icon="file-pdf" size="2x" className="mr-3" />
+          <Link to="/" className="mr-3">
+            {lecture.lectureResource.fileName}
+          </Link>
+          <button
+            className="btn icon-hoverable"
+            onClick={() => handleAddContentClick(lecture)}
+          >
+            <FontAwesomeIcon icon="edit" className="mr-2" />
+            <span>Edit Content</span>
+          </button>
+        </div>
+      );
+    }
+
+    return null;
+  };
   const getNewLectureForm = (chapterId: number) => {
     if (chapterForNewLecture && chapterForNewLecture.id === chapterId) {
       return (
@@ -676,105 +762,52 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     return null;
   };
 
-  const handleLectureFileSelect = (files: FileList | null) => {
-    if (files) {
-      setSelectedFile(files[0]);
-    }
-  };
-
-  const resetLectureContent = () => {
-    setAddingContntType(null);
-    setSelectedFile(null);
-    setAddingContentTo(null);
-    setLectureArticle(RichTextEditor.createEmptyValue());
-  };
-
-  const handleAddContentClick = (lecture: ILecture) => {
-    if (addingContentTo && addingContentTo.id === lecture.id) {
-      resetLectureContent();
-    } else {
-      resetLectureContent();
-      setAddingContentTo(lecture);
-    }
-  };
-
   const getContentForm = (lecture: ILecture) => {
-    if (
-      addingContentType === LecuteContentType.VIDEO ||
-      addingContentType === LecuteContentType.PDF
-    ) {
-      let acceptType =
-        ".mov,.mpeg4,.mp4, .avi, .wmv, .mpegps, .flv, 3gpp, .webm";
-      let choose = "Choose a video";
-      if (addingContentType === LecuteContentType.PDF) {
-        acceptType = ".pdf";
-        choose = "Choose a PDF file";
-      }
-
-      const fileName = selectedFile ? selectedFile.name : choose;
-      return (
-        <div className="lecture-file">
-          <form>
-            <div className="input-group mb-2">
-              <div className="custom-file">
-                <input
-                  type="file"
-                  title={fileName}
-                  className="custom-file-input"
-                  accept={acceptType}
-                  multiple={false}
-                  onChange={e => handleLectureFileSelect(e.target.files)}
-                />
-                <label className="custom-file-label">{fileName}</label>
-              </div>
-            </div>
-            <div className="action-btn-group">
-              <button
-                type="button"
-                className="btn btn-danger action-btn"
-                onClick={resetLectureContent}
-              >
-                <FontAwesomeIcon icon="times" className="mr-2" />
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-primary action-btn">
-                <FontAwesomeIcon icon="save" className="mr-2" />
-                Save
-              </button>
-            </div>
-          </form>
-        </div>
-      );
-    } else if (addingContentType === LecuteContentType.ARTICLE) {
-      return (
-        <div className="lecture-file article">
-          <form>
-            <RichTextEditor
-              className="rich-text-editor"
-              toolbarConfig={RTE_TOOLBAR_CONFIG}
-              value={lectureArticle}
-              onChange={val => setLectureArticle(val)}
-              placeholder="Write the article here ..."
-              autoFocus={true}
-            />
-            <div className="action-btn-group mt-2">
-              <button
-                type="button"
-                className="btn btn-danger action-btn"
-                onClick={resetLectureContent}
-              >
-                <FontAwesomeIcon icon="times" className="mr-2" />
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-primary action-btn">
-                <FontAwesomeIcon icon="save" className="mr-2" />
-                Save
-              </button>
-            </div>
-          </form>
-        </div>
-      );
+    if(addingContentType == null) {
+      return null;
     }
+
+    let acceptType = ".mov,.mpeg4,.mp4, .avi, .wmv, .mpegps, .flv, 3gpp, .webm";
+    let choose = "Choose a video";
+    if (addingContentType === LecuteContentType.PDF) {
+      acceptType = ".pdf";
+      choose = "Choose a PDF file";
+    }
+
+    const fileName = selectedFile ? selectedFile.name : choose;
+    return (
+      <div className="lecture-file">
+        <form onSubmit={e => handleLectureContentFormSubmit(e)}>
+          <div className="input-group mb-2">
+            <div className="custom-file">
+              <input
+                type="file"
+                title={fileName}
+                className="custom-file-input"
+                accept={acceptType}
+                multiple={false}
+                onChange={e => handleLectureFileSelect(e)}
+              />
+              <label className="custom-file-label">{fileName}</label>
+            </div>
+          </div>
+          <div className="action-btn-group">
+            <button
+              type="button"
+              className="btn btn-danger action-btn"
+              onClick={resetLectureContent}
+            >
+              <FontAwesomeIcon icon="times" className="mr-2" />
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary action-btn">
+              <FontAwesomeIcon icon="save" className="mr-2" />
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    );
   };
 
   const getContentTypeSelector = (lecture: ILecture) => {
@@ -800,19 +833,69 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
             <FontAwesomeIcon icon="file-pdf" size="2x" className="mb-2" />
             <span>PDF</span>
           </div>
-          <div
-            className={`lecture-type ${
-              addingContentType === LecuteContentType.ARTICLE ? "active" : ""
-            }`}
-            onClick={() => setAddingContntType(LecuteContentType.ARTICLE)}
-          >
-            <FontAwesomeIcon icon="keyboard" size="2x" className="mb-2" />
-            <span>Article</span>
-          </div>
         </div>
         {getContentForm(lecture)}
       </div>
     ) : null;
+  };
+
+  const getLectureActionButtons = (chapter: IChapter, lecture: ILecture) => {
+    return (
+      <div>
+        <button
+          className="btn mr-2 icon-hoverable"
+          onClick={() => handleLectureEditClick(chapter.id, lecture.id)}
+        >
+          <FontAwesomeIcon icon="edit" color="#686f7a" />
+        </button>
+        <button
+          className="btn icon-hoverable"
+          onClick={() => handleLectureDeleteClick(chapter.id, lecture.id)}
+        >
+          <FontAwesomeIcon icon="trash" color="#686f7a" />
+        </button>
+      </div>
+    );
+  };
+
+  const getAddContentButton = (lecture: ILecture) => {
+    if (!lecture.lectureResource) {
+      return (
+        <button
+          type="button"
+          className="btn btn-outline-info"
+          onClick={() => handleAddContentClick(lecture)}
+        >
+          <FontAwesomeIcon
+            icon={
+              addingContentTo && addingContentTo.id === lecture.id
+                ? "minus"
+                : "plus"
+            }
+            className="mr-2"
+          />
+          <span>Content</span>
+        </button>
+      );
+    }
+    return null;
+  };
+
+  const getExpandButton = (lecture: ILecture) => {
+    return (
+      <button
+        className="btn lecture-expand-btn ml-3"
+        onClick={() => handleLectureExpandClick(lecture)}
+      >
+        <FontAwesomeIcon
+          icon={
+            expandedLecture && expandedLecture.id === lecture.id
+              ? "angle-up"
+              : "angle-down"
+          }
+        />
+      </button>
+    );
   };
   const displayLectures = (chapter: IChapter) => {
     if (chapter.lectures) {
@@ -834,45 +917,17 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 >
                   <div className={`lecture-item ${klass}`}>
                     <span className="mr-3">{lecture.name}</span>
-                    <div>
-                      <button
-                        className="btn mr-2 icon-hoverable"
-                        onClick={() =>
-                          handleLectureEditClick(chapter.id, lecture.id)
-                        }
-                      >
-                        <FontAwesomeIcon icon="edit" color="#686f7a" />
-                      </button>
-                      <button
-                        className="btn icon-hoverable"
-                        onClick={() =>
-                          handleLectureDeleteClick(chapter.id, lecture.id)
-                        }
-                      >
-                        <FontAwesomeIcon icon="trash" color="#686f7a" />
-                      </button>
-                    </div>
+                    {getLectureActionButtons(chapter, lecture)}
                     <div className="flex-fill"></div>
-                    <button
-                      type="button"
-                      className="btn btn-outline-info"
-                      onClick={() => handleAddContentClick(lecture)}
-                    >
-                      <FontAwesomeIcon
-                        icon={
-                          addingContentTo && addingContentTo.id === lecture.id
-                            ? "minus"
-                            : "plus"
-                        }
-                        className="mr-2"
-                      />
-                      <span>Content</span>
-                    </button>
+
+                    {getAddContentButton(lecture)}
+                    {getExpandButton(lecture)}
                   </div>
                   {provided3.placeholder}
                 </div>
               )}
             </Draggable>
+            {getLectureDetailView(lecture)}
             {getContentTypeSelector(lecture)}
             {getEditingLectureForm(chapter.id, lecture.id)}
           </div>

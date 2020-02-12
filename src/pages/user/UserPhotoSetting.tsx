@@ -120,7 +120,6 @@ class UserPhotoSetting extends Component<null, IStates> {
   uploadProfilePhoto = () => {
     let { selectedFile, imgSrc } = this.state;
     if (selectedFile) {
-      console.log("uploading");
       let fileName = selectedFile.name;
       let photoFile = base64StringtoFile(imgSrc, fileName);
 

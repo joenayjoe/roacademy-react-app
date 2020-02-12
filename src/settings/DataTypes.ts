@@ -188,8 +188,12 @@ export interface ILecturePositionUpdateRequest {
   position: number;
 }
 
-export interface ILectureResource {
-  resource: any;
+export interface ILectureResource extends IAuditable {
+  id: number;
+  fileName: string;
+  contentType: string;
+  fileSize: number;
+  fileUrl: string;
 }
 
 export interface ITag {

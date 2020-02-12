@@ -6,7 +6,8 @@ import {
   ILecture,
   IEditLecture,
   HTTPStatus,
-  ILecturePositionUpdateRequest
+  ILecturePositionUpdateRequest,
+  ILectureResource
 } from "../settings/DataTypes";
 
 export class LectureService {
@@ -45,6 +46,17 @@ export class LectureService {
       ILecturePositionUpdateRequest[],
       HTTPStatus
     >(url, positions);
+  }
+
+  public async uploadLectureContent(
+    lectureId: number,
+    formData: FormData
+  ): Promise<AxiosResponse<ILectureResource>> {
+    const url = "/lectures/" + lectureId + "/upload_content";
+    return await this.apiRequest.post<FormData, ILectureResource>(
+      url,
+      formData
+    );
   }
 
   public async deleteLecture(

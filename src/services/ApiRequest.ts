@@ -5,7 +5,7 @@ class ApiRequest {
   private axiosInstance: AxiosInstance;
   private cookiesService: CookieService;
   constructor() {
-    const config = { baseURL: "http://192.168.1.130:8080/api" };
+    const config = { baseURL: "http://192.168.1.61:8080/api" };
     this.axiosInstance = axios.create(config);
     this.cookiesService = new CookieService();
   }
