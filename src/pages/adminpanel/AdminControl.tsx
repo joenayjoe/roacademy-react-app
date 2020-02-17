@@ -5,7 +5,8 @@ import {
   ADMIN_GRADES_URL,
   ADMIN_COURSES_URL,
   ADMIN_PANEL_URL,
-  ADMIN_USERS_URL
+  ADMIN_USERS_URL,
+  ADMIN_YOUTUBE_LINK
 } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {}
@@ -51,6 +52,13 @@ const AdminControl: React.FunctionComponent<IProps> = props => {
             onClick={() => handleLinkClick(ADMIN_USERS_URL)}
           >
             Users
+          </li>
+
+          <li
+            className={`menu-link ${getActiveClassName(ADMIN_YOUTUBE_LINK)}`}
+            onClick={() => handleLinkClick(ADMIN_YOUTUBE_LINK)}
+          >
+            YouTube Config
           </li>
         </ul>
       </div>

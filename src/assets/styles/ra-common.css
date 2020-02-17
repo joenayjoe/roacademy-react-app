@@ -27,6 +27,9 @@ input[type="search"]::-webkit-search-results-decoration {
 
 :root {
     --gutter: 20px;
+    --ra-primary-color: #007bff;
+    --ra-color-white: #fff;
+    --ra-link-color: #007791;
 }
 
 .flash-alert {
@@ -44,7 +47,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .rich-text-editor:focus {
-    border: 1px solid blue;
+    border: 1px solid var(--ra-primary-color);
 }
 
 .animate-top {
@@ -63,12 +66,12 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .span-as-link {
-    color: #007bff;
+    color: var(--ra-primary-color);
     cursor: pointer;
 }
 
 .span-as-link:hover {
-    color: #007bff;
+    color: var(--ra-primary-color);
     background-color: transparent;
 }
 
@@ -78,7 +81,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .link:focus,
 .link:hover {
-    color: #007791 !important;
+    color: var(--ra-link-color) !important;
 }
 
 .action-btn-group {
@@ -114,7 +117,7 @@ input[type="search"]::-webkit-search-results-decoration {
     align-items: center;
     background-color: rgb(104, 111, 122);
     border-radius: 50%;
-    color: #fff;
+    color: var(--ra-color-white);
 }
 
 .slick-arrow {
@@ -124,8 +127,8 @@ input[type="search"]::-webkit-search-results-decoration {
     position: absolute;
     top: 38%;
     z-index: 2;
-    background-color: #fff;
-    color: #007791;
+    background-color: var(--ra-color-white);
+    color: var(--ra-link-color);
     font-size: 24px;
     line-height: 1;
     padding: 11px 0;
@@ -162,7 +165,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .slick-card .slick-card-title {
     background-color: rgb(46, 57, 87);
-    color: #fff;
+    color: var(--ra-color-white);
     border-top-right-radius: inherit;
     border-top-left-radius: inherit;
     min-height: 80px;

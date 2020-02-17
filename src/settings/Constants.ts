@@ -52,6 +52,8 @@ export const ADMIN_USER_URL = ADMIN_USERS_URL + "/:user_id";
 export const BUILD_ADMIN_USER_URL = (user_id: number) =>
   ADMIN_USER_URL.replace(":user_id", user_id.toString());
 
+export const ADMIN_YOUTUBE_LINK = "/admin/youtube";
+
 // Login User URLs
 
 export const USER_DASHBOARD_URL = "/dashboard";
@@ -74,6 +76,19 @@ export const BUILD_GRADE_URL = (grade_id: number) =>
 export const COURSE_URL = "/courses/:course_id";
 export const BUILD_COURSE_URL = (course_id: number) =>
   COURSE_URL.replace(":course_id", course_id.toString());
+
+export const COURSE_WATCH_URL = "/watch";
+export const BUILD_COURSE_WATCH_URL = (
+  courseId: number,
+  chapterId?: number,
+  lectureId?: number
+) => {
+  let url = COURSE_WATCH_URL + "?course_id=" + courseId;
+  if (chapterId && lectureId) {
+    url += "&chapter_id=" + chapterId + "&lecture_id=" + lectureId;
+  }
+  return url;
+};
 
 export const SEARCH_URL = "/search";
 export const BUILD_SEARCH_WITH_QUERY_URL = (query: string) =>

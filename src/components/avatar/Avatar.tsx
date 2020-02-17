@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import AuthService from "../../services/AuthService";
+import { IUser } from "../../settings/DataTypes";
 
 interface IProps {
   styles: object;
+  user: IUser | null;
   avatarRef?: any;
 }
 const Avatar: React.FunctionComponent<IProps> = props => {
@@ -11,16 +13,15 @@ const Avatar: React.FunctionComponent<IProps> = props => {
   const authContext = useContext(AuthContext);
 
   let userAvatar;
-  let userName = authService.getUserFullName(authContext.currentUser);
-  let userInitials = authService.getUserNameInitials(authContext.currentUser);
+  let userName = authService.getUserFullName(props.user);
+  let userInitials = authService.getUserNameInitials(props.user);
   if (authContext.currentUser) {
-    const currentUser = authContext.currentUser;
-    if (currentUser.imageUrl) {
+    if (props.user && props.user.imageUrl) {
       userAvatar = (
         <img
           className={`user-avatar`}
           style={props.styles}
-          src={currentUser.imageUrl}
+          src={props.user.imageUrl}
           alt={userName}
           ref={props.avatarRef}
         />

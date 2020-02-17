@@ -366,7 +366,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
         <React.Fragment>
           <li className={`${openKlass}`} style={{ backgroundColor: "#f8f8f1" }}>
             <div className="menu-link" onClick={handleAvatarMenuClick}>
-              <Avatar styles={avatarStyle} />
+              <Avatar styles={avatarStyle} user={authContext.currentUser} />
               <span className="ml-2">
                 <span>{userName}</span> <br />
                 <small className="text-secondary">{userEmail}</small>

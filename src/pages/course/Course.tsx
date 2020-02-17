@@ -8,7 +8,11 @@ import Spinner from "../../components/spinner/Spinner";
 import CourseDetail from "./CourseDetail";
 import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
-import { BUILD_CATEGORY_URL, BUILD_GRADE_URL, DEFAULT_COURSE_STATUS } from "../../settings/Constants";
+import {
+  BUILD_CATEGORY_URL,
+  BUILD_GRADE_URL,
+  DEFAULT_COURSE_STATUS
+} from "../../settings/Constants";
 import ChapterService from "../../services/ChapterService";
 import { AlertContext } from "../../contexts/AlertContext";
 import { parseError } from "../../utils/errorParser";

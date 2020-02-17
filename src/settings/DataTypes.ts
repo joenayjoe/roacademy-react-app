@@ -148,7 +148,6 @@ export interface INewChapter {
 export interface IEditChapter {
   id: number;
   name: string;
-  courseId: number;
 }
 
 export interface IChapterPositinUpdateRequest {
@@ -245,6 +244,19 @@ export interface IToken {
   sub: string;
   exp: number;
   iat: number;
+}
+
+export interface IYoutubeCredentials {
+  refreshToken: string;
+  accessToken: string;
+  expiresInSeconds: number;
+  scopes: string[];
+  tokenType: string;
+}
+export interface IYoutubeCredentialUpdateRequest {
+  refreshToken: string;
+  accessToken: string;
+  expiresInSeconds: number;
 }
 
 export interface Page<T> {

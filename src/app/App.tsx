@@ -48,7 +48,9 @@ import {
   ADMIN_NEW_COURSE_URL,
   ADMIN_COURSE_URL,
   ADMIN_USER_URL,
-  ADMIN_EDIT_COURSE_URL
+  ADMIN_EDIT_COURSE_URL,
+  ADMIN_YOUTUBE_LINK,
+  COURSE_WATCH_URL
 } from "../settings/Constants";
 import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
@@ -62,6 +64,8 @@ import AdminUser from "../pages/adminpanel/user/AdminUser";
 import EditCourse from "../pages/adminpanel/course/EditCourse";
 import AlertContextProvider from "../contexts/AlertContext";
 import AlertSelector from "../components/flash/AlertSelector";
+import Youtube from "../pages/adminpanel/youtube/Youtube";
+import CoursePlayer from "../pages/player/CoursePlayer";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -99,6 +103,11 @@ const App = () => {
               <PublicRoute exact path={CATEGORY_URL} component={Category} />
               <PublicRoute exact path={SEARCH_URL} component={SearchResult} />
               <PublicRoute exact path={HOME_URL} component={Home} />
+              <PublicRoute
+                exact
+                path={COURSE_WATCH_URL}
+                component={CoursePlayer}
+              />
               <PrivateRoute
                 exact
                 path={USER_DASHBOARD_URL}
@@ -195,6 +204,12 @@ const App = () => {
                 exact
                 path={ADMIN_USER_URL}
                 component={AdminUser}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_YOUTUBE_LINK}
+                component={Youtube}
               />
               <PublicRoute component={PageNotFound} />
             </Switch>

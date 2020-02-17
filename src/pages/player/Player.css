@@ -1,0 +1,96 @@
+.course-player {
+    width: 95%;
+    float: right;
+    display: flex;
+}
+
+.course-player .primary {
+    width: 75%;
+}
+
+.primary .player {
+    height: 500px;
+    background-color: black;
+}
+
+.primary .description {
+    margin: 1rem 0;
+    border-bottom: 1px solid #dedfe0;
+}
+
+.primary .comment-section {
+    margin: 1rem 0;
+    border-bottom: 1px solid #dedfe0;
+}
+
+.comment-section .comment-top {
+    display: flex;
+}
+
+.comment-section .new-comment {
+    display: flex;
+}
+
+.new-comment .comment-form {
+    flex: 1;
+}
+
+.comment-list .comment {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.course-player .secondary {
+    width: 25%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 642px;
+}
+
+.chapter-view-item {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 1rem 1rem 1rem 0.5rem;
+    border-bottom: 1px solid #dedfe0;
+    color: #29303b;
+    font-weight: 600;
+    background-color: #f7f8fa;
+    cursor: pointer;
+}
+
+.lecture-view-list {
+    display: none;
+}
+
+.lecture-view-list.open {
+    display: block;
+}
+
+.lecture-view-item {
+    padding: .75rem .75rem .75rem 1.5rem;
+    cursor: pointer;
+}
+
+.lecture-view-item.playing {
+    background-color: #f3f3d9;
+}
+
+.chapter-view-item:hover,
+.lecture-view-item:hover {
+    background-color: #ffffee;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .course-player {
+        width: 100%;
+        flex-direction: column;
+    }
+    .course-player .primary,
+    .course-player .secondary {
+        width: 100%;
+        margin: 0 auto;
+    }
+}

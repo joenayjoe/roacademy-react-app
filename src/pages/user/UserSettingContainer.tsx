@@ -32,7 +32,7 @@ const UserSettingContaner: React.FunctionComponent<IProps> = props => {
     <div className="user-profile width-75">
       <div className="user-profile-side-nav">
         <div className="avatar">
-          <Avatar styles={avatarStyle} />
+          <Avatar styles={avatarStyle} user={authContext.currentUser} />
           <strong className="mt-2 mb-2">{userName}</strong>
         </div>
         <div className="profile-links">

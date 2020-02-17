@@ -62,8 +62,9 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
     props.history.push("/");
   };
 
-  let userName = authService.getUserFullName(authContext.currentUser);
-  let userEmail = authService.getUserEmail(authContext.currentUser);
+  const user = authContext.currentUser;
+  let userName = authService.getUserFullName(user);
+  let userEmail = authService.getUserEmail(user);
   let avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
 
   let openKlass = showDropDown ? "open" : "";
@@ -88,7 +89,7 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
       className={`nav-item drop-down drop-down-on-hover ${openKlass}`}
       onMouseEnter={() => setIsMenuLinkClicked(false)}
     >
-      <Avatar styles={avatarStyle} avatarRef={avatarNode} />
+      <Avatar styles={avatarStyle} avatarRef={avatarNode} user={user} />
 
       <ul
         className={`drop-down-list drop-down-list-arrow-right drop-down-right ${hideMenu}`}
@@ -99,7 +100,7 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
             onClick={e => handleMenuLinkClick(e, USER_PROFILE_SETTING_URL)}
           >
             <div className="menu-link">
-              <Avatar styles={avatarStyle} />
+              <Avatar styles={avatarStyle} user={user} />
               <span className="ml-2">
                 <span>{userName}</span> <br />
                 <small className="text-secondary">{userEmail}</small>

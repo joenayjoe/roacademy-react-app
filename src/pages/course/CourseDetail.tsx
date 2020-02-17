@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { ICourse, IChapter } from "../../settings/DataTypes";
 import { Link } from "react-router-dom";
-import { BUILD_ADMIN_USER_URL } from "../../settings/Constants";
+import {
+  BUILD_ADMIN_USER_URL,
+  BUILD_COURSE_WATCH_URL
+} from "../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Collapse from "../../components/collapse/Collapse";
 
@@ -200,7 +203,12 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
             </div>
             <div className="course-detail-sections pt-4">
               <h4>Course content</h4>
-              <div className="chapter-container">{chapterList}</div>
+              <div className="chapter-container">
+                <div className="float-right pb-2">
+                  <Link to={BUILD_COURSE_WATCH_URL(course.id)}>View All</Link>
+                </div>
+                <div style={{ clear: "right" }}>{chapterList}</div>
+              </div>
             </div>
             <div className="course-detail-requirements pt-3">
               <h4>Requirements</h4>

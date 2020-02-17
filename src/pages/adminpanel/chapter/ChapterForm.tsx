@@ -66,6 +66,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     setChapterForNewLecture
   ] = useState<IChapter | null>(null);
 
+  // states for uploading lecture content
   const [addingContentTo, setAddingContentTo] = useState<ILecture | null>(null);
   const [
     addingContentType,
@@ -75,6 +76,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [expandedLecture, setExpandedLecture] = useState<ILecture | null>(null);
+  const [lectureContentError, setLectureContentError] = useState<string[]>([]);
 
   // editing lecture state
 
@@ -134,11 +136,10 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     if (currentEditChapter && editChapterIndex !== null) {
       const edit_ch: IEditChapter = {
         id: currentEditChapter.id,
-        name: currentEditChapter.name,
-        courseId: currentEditChapter.primaryCourse.id
+        name: currentEditChapter.name
       };
       chapterService
-        .updateChapter(props.course.id, edit_ch.courseId, edit_ch)
+        .updateChapter(props.course.id, edit_ch.id, edit_ch)
         .then(resp => {
           const chptrs = [...chapters];
           chptrs[editChapterIndex] = resp.data;
@@ -538,6 +539,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     setSelectedFile(null);
     setAddingContentTo(null);
     setExpandedLecture(null);
+    setLectureContentError([]);
   };
 
   const handleAddContentClick = (lecture: ILecture) => {
@@ -577,7 +579,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
           resetLectureContent();
         })
         .catch(err => {
-          alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+          setLectureContentError(parseError(err));
         });
     }
   };
@@ -604,6 +606,10 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
 
   const editLectureErrorFlash = editingLectureErrors.length ? (
     <Alert errors={editingLectureErrors} variant={AlertVariant.DANGER} />
+  ) : null;
+
+  const lectureResourceFlashError = lectureContentError.length ? (
+    <Alert errors={lectureContentError} variant={AlertVariant.DANGER} />
   ) : null;
 
   const getLectureDetailView = (lecture: ILecture) => {
@@ -763,7 +769,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   };
 
   const getContentForm = (lecture: ILecture) => {
-    if(addingContentType == null) {
+    if (addingContentType == null) {
       return null;
     }
 
@@ -778,6 +784,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     return (
       <div className="lecture-file">
         <form onSubmit={e => handleLectureContentFormSubmit(e)}>
+          {lectureResourceFlashError}
           <div className="input-group mb-2">
             <div className="custom-file">
               <input
