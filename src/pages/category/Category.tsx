@@ -17,10 +17,6 @@ interface MatchParams {
 }
 interface IProps extends RouteComponentProps<MatchParams> {}
 
-interface IStates {
-  category: ICategory | null;
-}
-
 const Category: React.FunctionComponent<IProps> = props => {
   const categoryId: string = props.match.params.category_id;
   const categoryService = new CategoryService();
@@ -44,7 +40,7 @@ const Category: React.FunctionComponent<IProps> = props => {
       setIsLoaded(true);
     });
     // eslint-disable-next-line
-  }, []);
+  }, [categoryId]);
 
   let categoryContainer: JSX.Element = <Spinner size="3x" />;
   if (isLoaded && category) {

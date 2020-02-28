@@ -33,7 +33,7 @@ const PublicRoute: React.FunctionComponent<IProps> = props => {
           />
         ) : (
           <Component
-            key={`${props.location.pathname} ${props.location.search}`}
+            // key={`${props.location.pathname} ${props.location.search}`}
             {...props}
           />
         )

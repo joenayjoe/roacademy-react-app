@@ -6,7 +6,8 @@ import {
   ICourse,
   IChapter,
   AlertVariant,
-  ILecture
+  ILecture,
+  ILectureResource
 } from "../../settings/DataTypes";
 import {
   DEFAULT_COURSE_STATUS,
@@ -45,6 +46,14 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
   const [expandedChapterIds, setExpandedChapterIds] = useState<number[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [playingLecture, setPlayingLecture] = useState<ILecture | null>(null);
+
+  // const [nextChapter, setNextChapter] = useState<IChapter | null>(null);
+  // const [prevChapter, setPrevChapter] = useState<IChapter | null>(null);
+
+  // const [nextLecture, setNextLecture] = useState<ILecture | null>(null);
+  // const [prevLecture, setPrevLecture] = useState<ILecture | null>(null);
+
+  const [showPlayerControls, setShowPlayerControls] = useState<boolean>(false);
 
   const avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
 
@@ -95,7 +104,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
         });
     }
     // eslint-disable-next-line
-  }, []);
+  }, [courseId]);
 
   const handleChapterViewClick = (chapter: IChapter) => {
     let ids = [...expandedChapterIds];
@@ -110,6 +119,59 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
   const handleLectureViewClick = (ch: IChapter, lecture: ILecture) => {
     setPlayingLecture(lecture);
     props.history.push(BUILD_COURSE_WATCH_URL(courseId, ch.id, lecture.id));
+  };
+
+  const handlePrevClick = () => {
+    let found = false;
+    let pc = null;
+    let pl = null;
+    for (let ch of chapters) {
+      for (let l of ch.lectures) {
+        if (l.id === playingLecutureId) {
+          found = true;
+          break;
+        } else {
+          pc = ch;
+          pl = l;
+        }
+      }
+      if (found) {
+        break;
+      }
+    }
+    if (pc && pl) {
+      setPlayingLecture(pl);
+      setExpandedChapterIds([pc.id]);
+      props.history.push(BUILD_COURSE_WATCH_URL(courseId, pc.id, pl.id));
+    }
+  };
+  const handleNextClick = () => {
+    let found = false;
+    let terminate = false;
+    let nc = null;
+    let nl = null;
+    for (let ch of chapters) {
+      for (let l of ch.lectures) {
+        if (l.id === playingLecutureId) {
+          found = true;
+          continue;
+        }
+        if (found) {
+          terminate = true;
+          nc = ch;
+          nl = l;
+          break;
+        }
+      }
+      if (terminate) {
+        break;
+      }
+    }
+    if (nc && nl) {
+      setPlayingLecture(nl);
+      setExpandedChapterIds([nc.id]);
+      props.history.push(BUILD_COURSE_WATCH_URL(courseId, nc.id, nl.id));
+    }
   };
 
   const lectureList = (chapter: IChapter) => {
@@ -164,16 +226,73 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
     }
   };
 
+  const buildIframeSrc = (resource: ILectureResource) => {
+    if (resource.contentType.startsWith("video")) {
+      const params =
+        "?controls=1&enablejsapi=1&modestbranding=1&showinfo=0&iv_load_policy=3&html5=1&fs=1&rel=0&hl=en&cc_lang_pref=en&cc_load_policy=1&start=0&autoplay=1";
+      const url =
+        "https://www.youtube-nocookie.com/embed/" + resource.fileUrl + params;
+      return url;
+    } else {
+      const url =
+        "https://docs.google.com/viewer?url=" +
+        resource.fileUrl +
+        "&embedded=true";
+      return url;
+    }
+  };
+  const getIframeForPlayingLecture = () => {
+    if (playingLecture) {
+      if (playingLecture.lectureResource) {
+        return (
+          <iframe
+            style={{ width: "100%", height: "100%" }}
+            src={buildIframeSrc(playingLecture.lectureResource)}
+          ></iframe>
+        );
+      } else {
+        return (
+          <div className="empty-resource">
+            <h1>Content Not Found</h1>
+          </div>
+        );
+      }
+    }
+    return null;
+  };
+
   const getPlayerContent = () => {
     if (chapterError.length) {
       return <Alert errors={chapterError} variant={AlertVariant.DANGER} />;
     } else if (courseError.length) {
       return <Alert errors={courseError} variant={AlertVariant.DANGER} />;
     } else {
+      const controlKlass = showPlayerControls ? "d-block" : "d-none";
       return (
         <React.Fragment>
-          <div className="primary">
-            <div className="player"></div>
+          <div
+            className="player-container"
+            onMouseEnter={() => setShowPlayerControls(true)}
+            onMouseLeave={() => setShowPlayerControls(false)}
+          >
+            <div
+              className={`player-control player-prev-btn ${controlKlass}`}
+              onClick={handlePrevClick}
+            >
+              <FontAwesomeIcon icon="angle-left" size="2x" />
+            </div>
+            <div className="player">{getIframeForPlayingLecture()}</div>
+            <div
+              className={`player-control player-next-btn ${controlKlass}`}
+              onClick={handleNextClick}
+            >
+              <FontAwesomeIcon icon="angle-right" size="2x" />
+            </div>
+          </div>
+
+          <div className="player-menu">{chapterList}</div>
+
+          <div className="cp-bottom-container">
             <div className="description">
               <h4>{playingLecture && playingLecture.name}</h4>
               <div dangerouslySetInnerHTML={markupDescription()} />
@@ -257,7 +376,6 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
               </div>
             </div>
           </div>
-          <div className="secondary">{chapterList}</div>
         </React.Fragment>
       );
     }

@@ -32,7 +32,7 @@ const Grade: React.FunctionComponent<IProps> = props => {
         setGrade(response.data);
       });
     // eslint-disable-next-line
-  }, []);
+  }, [gradeId]);
 
   let gradeContainerItems: JSX.Element = <Spinner size="3x" />;
   if (grade) {
