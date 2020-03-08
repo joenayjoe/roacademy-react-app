@@ -6,7 +6,7 @@ interface IProp {
 const Breadcrumb: React.FunctionComponent<IProp> = props => {
   const classNames = props.className ? props.className : "";
   return (
-    <nav aria-label="breadcrumb">
+    <nav aria-label="breadcrumb" className="p-1">
       <ol className={`breadcrumb mb-0 ${classNames}`}>{props.children}</ol>
     </nav>
   );

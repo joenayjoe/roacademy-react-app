@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
-import TeacherRecruitBanner from "../../components/banner/TeacherRecruitBanner";
 import { AuthContext } from "../../contexts/AuthContext";
+import TeacherRecruitBanner from "../../components/banner/TeacherRecruitBanner";
 import { RoleType } from "../../settings/DataTypes";
 
-const Home: React.FunctionComponent = () => {
+interface IProps {}
+
+const UserDashboard: React.FunctionComponent<IProps> = () => {
   const authContext = useContext(AuthContext);
 
   const teacherBanner = () => {
@@ -16,18 +18,19 @@ const Home: React.FunctionComponent = () => {
     }
     return null;
   };
+
+  let greeting;
+  if (authContext.currentUser) {
+    greeting = <h1>Welcome {authContext.currentUser.firstName}</h1>;
+  }
   return (
     <React.Fragment>
       {teacherBanner()}
-      <div className="width-75">
-        <p>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dicta
-          voluptatum hic temporibus cupiditate quis quas non rerum distinctio
-          similique, doloribus nihil a dolorem doloremque quisquam incidunt
-          nulla illo asperiores quaerat?
-        </p>
+      <div className="dashboard width-75">
+        {greeting}
+        <p>User dashboard</p>
       </div>
     </React.Fragment>
   );
 };
-export default Home;
+export default UserDashboard;

@@ -96,6 +96,9 @@ export const BUILD_SEARCH_WITH_QUERY_URL = (query: string) =>
 
 export const DONATION_URL = "/donation";
 
+export const TEACHER_REQUEST_URL = "/teacher-request";
+
+// default value constants
 export const PAGE_SIZE = 5;
 export const DEFAULT_SORTING_FIELD = "id";
 export const DEFAULT_SORTING_ORDER = "desc";

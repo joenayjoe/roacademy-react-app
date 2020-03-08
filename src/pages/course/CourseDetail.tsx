@@ -116,7 +116,10 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
   const getLectureList = (ch: IChapter) => {
     return ch.lectures.map(lecture => {
       return (
-        <Link key={`${lecture.id}_${lecture.name}`} to={"/"}>
+        <Link
+          key={`${lecture.id}_${lecture.name}`}
+          to={BUILD_COURSE_WATCH_URL(course.id, ch.id, lecture.id)}
+        >
           <div className="lecture-list-item">
             <span className="mr-3">
               <FontAwesomeIcon icon={["fab", "youtube"]}></FontAwesomeIcon>

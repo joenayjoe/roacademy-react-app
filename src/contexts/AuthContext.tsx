@@ -10,7 +10,7 @@ export interface IAuthContext {
   login: (loginData: ILoginResponse) => void;
   logout: () => void;
   isAdmin: () => boolean;
-  hasRole: (role: RoleType | undefined) => boolean;
+  hasRole: (role: RoleType) => boolean;
 }
 
 let contextDefaultValue: IAuthContext = {
@@ -42,9 +42,7 @@ const AuthContextProvider: React.FunctionComponent<IProps> = props => {
     }
     return false;
   };
-  const hasRole = (role: RoleType | undefined) => {
-    if (role === undefined) return true;
-
+  const hasRole = (role: RoleType) => {
     if (currentUser && currentUser.roles.some(r => r.name === role)) {
       return true;
     }

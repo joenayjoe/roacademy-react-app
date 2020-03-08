@@ -14,7 +14,12 @@ const PrivateRoute: React.FunctionComponent<IProps> = props => {
   const authContext = useContext(AuthContext);
   const alertContext = useContext(AlertContext);
   const { component: Component, role, ...rest } = props;
-  const hasAccess = authContext.isAuthenticated && authContext.hasRole(role);
+
+  let hasAccess = authContext.isAuthenticated;
+
+  if (role && hasAccess) {
+    hasAccess = authContext.hasRole(role);
+  }
   if (!hasAccess) {
     let msg = role
       ? "Access denied"
