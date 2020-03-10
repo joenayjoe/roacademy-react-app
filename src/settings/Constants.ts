@@ -51,6 +51,9 @@ export const ADMIN_USERS_URL = "/admin/users";
 export const ADMIN_USER_URL = ADMIN_USERS_URL + "/:user_id";
 export const BUILD_ADMIN_USER_URL = (user_id: number) =>
   ADMIN_USER_URL.replace(":user_id", user_id.toString());
+export const ADMIN_USER_EDIT_URL = ADMIN_USER_URL + "/edit";
+export const BUILD_ADMIN_USER_EDIT_URL = (userId: number) =>
+  ADMIN_USER_EDIT_URL.replace(":user_id", userId.toString());
 
 export const ADMIN_YOUTUBE_LINK = "/admin/youtube";
 
@@ -99,7 +102,7 @@ export const DONATION_URL = "/donation";
 export const TEACHER_REQUEST_URL = "/teacher-request";
 
 // default value constants
-export const PAGE_SIZE = 5;
+export const PAGE_SIZE = 15;
 export const DEFAULT_SORTING_FIELD = "id";
 export const DEFAULT_SORTING_ORDER = "desc";
 export const DEFAULT_SORTING =

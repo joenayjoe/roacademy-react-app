@@ -135,7 +135,7 @@ const Youtube: React.FunctionComponent = () => {
         <h5>Youtube Credentials</h5>
         <div className="table-responsive">
           <table className="table">
-            <thead>
+            <thead className="thead-light text-nowrap">
               <tr>
                 <th>Refresh Token</th>
                 <th>Access Token</th>

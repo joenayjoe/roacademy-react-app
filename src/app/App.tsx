@@ -51,7 +51,8 @@ import {
   ADMIN_EDIT_COURSE_URL,
   ADMIN_YOUTUBE_LINK,
   COURSE_WATCH_URL,
-  TEACHER_REQUEST_URL
+  TEACHER_REQUEST_URL,
+  ADMIN_USER_EDIT_URL
 } from "../settings/Constants";
 import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
@@ -68,6 +69,7 @@ import AlertSelector from "../components/flash/AlertSelector";
 import Youtube from "../pages/adminpanel/youtube/Youtube";
 import CoursePlayer from "../pages/player/CoursePlayer";
 import TeacherRequest from "../pages/user/TeacherRequest";
+import AdminUserEdit from "../pages/adminpanel/user/AdminUserEdit";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -211,6 +213,12 @@ const App = () => {
                 exact
                 path={ADMIN_USER_URL}
                 component={AdminUser}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_USER_EDIT_URL}
+                component={AdminUserEdit}
               />
               <PrivateRoute
                 role={RoleType.ADMIN}

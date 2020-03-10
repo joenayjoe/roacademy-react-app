@@ -205,6 +205,10 @@ export interface IUser extends IPrimaryUser, IAuditable {
   roles: IRole[];
 }
 
+export interface IUserEditRequest extends IPrimaryUser {
+  roleIds: number[];
+}
+
 export interface IRole extends IAuditable {
   id: number;
   name: string;

@@ -148,7 +148,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
     return (
       <div className="table-responsive">
         <table className="table table-hover">
-          <thead className="thead-light">
+          <thead className="thead-light text-nowrap">
             <tr>{getThead()}</tr>
           </thead>
           <tbody>{getTbody()}</tbody>
