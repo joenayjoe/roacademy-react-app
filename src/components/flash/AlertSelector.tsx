@@ -11,9 +11,10 @@ const AlertSelector: React.FunctionComponent = () => {
         className="flash-alert sticky-top"
         variant={alertContext.type}
         title={alertContext.message}
+        errors={alertContext.errors}
         closeHandler={() => alertContext.close()}
         showIcon
-        dismissible
+        dismissible={alertContext.dismissable}
       />
     );
   }

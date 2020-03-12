@@ -10,6 +10,7 @@ import {
   cropAndConvertToBase64,
   base64StringtoFile
 } from "../../utils/imageUtil";
+import UserService from "../../services/UserService";
 
 interface IStates {
   selectedFile: File | null;
@@ -20,12 +21,14 @@ interface IStates {
 }
 class UserPhotoSetting extends Component<null, IStates> {
   private authService: AuthService;
+  private userService: UserService;
   static contextType = AuthContext;
   context!: ContextType<typeof AuthContext>;
 
   constructor(props: any) {
     super(props);
     this.authService = new AuthService();
+    this.userService = new UserService();
   }
 
   state: IStates = {
@@ -128,7 +131,7 @@ class UserPhotoSetting extends Component<null, IStates> {
       let userId =
         this.context && this.context.currentUser && this.context.currentUser.id;
       if (userId !== null) {
-        this.authService.uploadProfilePhoto(formData, userId).then(resp => {
+        this.userService.updateUserProfilePhoto(formData, userId).then(resp => {
           this.authService.setLoggedInUserCookie(resp.data);
           window.location.reload();
         });

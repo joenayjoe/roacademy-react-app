@@ -55,14 +55,6 @@ class AuthService {
     return await this.apiRequest.post<any, any>("/auth/signup", signupData);
   }
 
-  public async uploadProfilePhoto(
-    photo: FormData,
-    userId: number
-  ): Promise<AxiosResponse<IUser>> {
-    let url = "/users/" + userId + "/update_photo";
-    return await this.apiRequest.post<any, IUser>(url, photo);
-  }
-
   // helper methds
 
   public setAccessTokenCookie(token: string) {

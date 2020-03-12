@@ -64,9 +64,17 @@ const Alert: React.FunctionComponent<IProps> = props => {
 
   if (props.errors) {
     let errorMap = props.errors.map(error => {
-      return <li key={error}>{error}</li>;
+      return (
+        <li key={error} className="alert-error-item">
+          {error}
+        </li>
+      );
     });
-    errorList = <ul className="m-0 pl-1">{errorMap}</ul>;
+    errorList = (
+      <div className="alert-error-container">
+        <ul className="m-0 pl-1 alert-error-list">{errorMap}</ul>
+      </div>
+    );
   }
 
   if (props.closeHandler) {
@@ -83,6 +91,12 @@ const Alert: React.FunctionComponent<IProps> = props => {
     );
   }
 
+  const alertTitle =
+    props.errors && props.errors.length ? (
+      <h4 className="alert-title">{props.title}</h4>
+    ) : (
+      <span>{props.title}</span>
+    );
   const klass = props.className ? props.className : "";
 
   errorFlash = (
@@ -90,9 +104,11 @@ const Alert: React.FunctionComponent<IProps> = props => {
       className={`d-flex justify-content-between align-items-center ${props.variant} ${klass}`}
       role="alert"
     >
-      <div className="d-flex align-items-center">
-        {alertIcon}
-        <span>{props.title}</span>
+      <div>
+        <div className="d-flex justify-content-center align-items-center">
+          {alertIcon}
+          {alertTitle}
+        </div>
         {errorList}
       </div>
       {dismissBtn}

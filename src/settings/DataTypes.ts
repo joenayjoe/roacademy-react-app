@@ -209,6 +209,21 @@ export interface IUserEditRequest extends IPrimaryUser {
   roleIds: number[];
 }
 
+export interface IUserProfileUpdateRequest {
+  firstName: string;
+  lastName: string;
+}
+
+export interface IEmailUpdateRequest {
+  email: string;
+}
+
+export interface IPasswordResetRequest {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export interface IRole extends IAuditable {
   id: number;
   name: string;

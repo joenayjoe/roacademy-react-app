@@ -107,6 +107,15 @@ const TeacherRequest: React.FunctionComponent<IProps> = props => {
           </div>
 
           <div className="form-group">
+            <label>Tell us something about yourself</label>
+            <textarea
+              className="form-control"
+              value={about}
+              onChange={e => setAbout(e.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="form-group">
             <label>
               Give us your contact details so that we can contact you
             </label>
@@ -139,24 +148,15 @@ const TeacherRequest: React.FunctionComponent<IProps> = props => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Tell us something about yourself</label>
-            <textarea
-              className="form-control"
-              value={about}
-              onChange={e => setAbout(e.target.value)}
-            ></textarea>
-          </div>
-
-          <div className="form-group">
+          <div className="form-group action-btn-group">
             <button
               type="button"
-              className="btn btn-danger mr-2"
+              className="btn btn-danger action-btn"
               onClick={() => props.history.push(HOME_URL)}
             >
               CANCEL
             </button>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary action-btn">
               SEND
             </button>
           </div>
