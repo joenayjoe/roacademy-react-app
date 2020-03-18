@@ -37,12 +37,14 @@ export class CourseService {
   }
 
   public async getCoursesByCategoryId(
-    categoryId: string,
+    categoryId: number,
+    page: number,
+    size: number,
     status = DEFAULT_COURSE_STATUS,
     order = DEFAULT_SORTING
-  ): Promise<AxiosResponse<ICourse[]>> {
-    const url = `/courses?category_id=${categoryId}&status=${status}&order=${order}`;
-    return await this.apiRequest.get<ICourse[]>(url);
+  ): Promise<AxiosResponse<Page<ICourse>>> {
+    const url = `/courses?category_id=${categoryId}&page=${page}&size=${size}&status=${status}&order=${order}`;
+    return await this.apiRequest.get<Page<ICourse>>(url);
   }
 
   public async getCoursesByGradeId(

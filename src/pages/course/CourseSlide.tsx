@@ -9,7 +9,7 @@ import SliderNextArrow from "../../components/slider/SliderNextArrow";
 import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
 
 import { withRouter, RouteComponentProps } from "react-router";
-import { BUILD_COURSE_URL } from "../../settings/Constants";
+import { BUILD_COURSE_URL, PAGE_SIZE } from "../../settings/Constants";
 import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {
@@ -21,9 +21,7 @@ interface IProps extends RouteComponentProps {
 
 const CourseSlide: React.FunctionComponent<IProps> = props => {
   const courseService = new CourseService();
-  const [courses, setCourses] = useState<ICourse[]>(
-    props.courses ? props.courses : []
-  );
+  const [courses, setCourses] = useState<ICourse[]>([]);
 
   const settings: Settings = {
     arrows: true,
@@ -48,11 +46,14 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
   };
 
   useEffect(() => {
-    if (!courses.length && props.categoryId) {
+    console.log("Courses in course slide = ", props.courses);
+    if (props.courses && props.courses.length) {
+      setCourses(props.courses);
+    } else if (props.categoryId) {
       courseService
-        .getCoursesByCategoryId(props.categoryId.toString())
+        .getCoursesByCategoryId(props.categoryId, 0, PAGE_SIZE)
         .then(resp => {
-          setCourses(resp.data);
+          setCourses(resp.data.content);
         });
     }
     // eslint-disable-next-line

@@ -24,18 +24,21 @@ const Grade: React.FunctionComponent<IProps> = props => {
   const gradeService = new GradeService();
 
   const [grade, setGrade] = useState<IGrade | null>(null);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsLoaded(false);
     gradeService
       .getGradeWithCourses(gradeId, DEFAULT_COURSE_STATUS)
       .then(response => {
         setGrade(response.data);
+        setIsLoaded(true);
       });
     // eslint-disable-next-line
   }, [gradeId]);
 
   let gradeContainerItems: JSX.Element = <Spinner size="3x" />;
-  if (grade) {
+  if (grade && isLoaded) {
     gradeContainerItems = (
       <React.Fragment>
         <Breadcrumb className="bg-transparent">
