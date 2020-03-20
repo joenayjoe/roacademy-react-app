@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface IProps {
@@ -6,17 +6,16 @@ interface IProps {
   style?: any;
   className?: any;
 }
-class SliderPrevArrow extends Component<IProps> {
-  render() {
-    return (
-      <button
-        className={`btn btn-secondary ${this.props.className}`}
-        style={this.props.style}
-        onClick={this.props.onClick}
-      >
-        <FontAwesomeIcon icon="angle-left" />
-      </button>
-    );
-  }
-}
+
+const SliderPrevArrow: React.FunctionComponent<IProps> = props => {
+  return (
+    <button
+      className={`btn btn-secondary ${props.className}`}
+      style={props.style}
+      onClick={props.onClick}
+    >
+      <FontAwesomeIcon icon="angle-left" />
+    </button>
+  );
+};
 export default SliderPrevArrow;

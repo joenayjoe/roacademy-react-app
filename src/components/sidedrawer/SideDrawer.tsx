@@ -127,7 +127,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     });
   };
   const getCoursesForGrade = (grade: IGrade) => {
-    courseService.getCoursesByGradeId(grade.id).then(resp => {
+    courseService.getAllCoursesByGradeId(grade.id).then(resp => {
       let categoryList = categories.map(cat => {
         if (cat.id === grade.primaryCategory.id) {
           cat.grades.map(grd => {

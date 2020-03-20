@@ -5,13 +5,16 @@ import {
   ISearchRequest,
   INewCourse,
   HTTPStatus,
-  CourseStatus,
   Page,
   IEditCourse,
   ICourseStatusUpdateRequest
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
-import { DEFAULT_SORTING, DEFAULT_COURSE_STATUS } from "../settings/Constants";
+import {
+  DEFAULT_SORTING,
+  DEFAULT_COURSE_STATUS,
+  PAGE_SIZE
+} from "../settings/Constants";
 
 export class CourseService {
   private apiRequest = new ApiRequest();
@@ -19,7 +22,7 @@ export class CourseService {
 
   public async getCourses(
     page: number,
-    size: number,
+    size = PAGE_SIZE,
     status = DEFAULT_COURSE_STATUS,
     order = DEFAULT_SORTING
   ): Promise<AxiosResponse<Page<ICourse>>> {
@@ -39,7 +42,7 @@ export class CourseService {
   public async getCoursesByCategoryId(
     categoryId: number,
     page: number,
-    size: number,
+    size = PAGE_SIZE,
     status = DEFAULT_COURSE_STATUS,
     order = DEFAULT_SORTING
   ): Promise<AxiosResponse<Page<ICourse>>> {
@@ -49,11 +52,22 @@ export class CourseService {
 
   public async getCoursesByGradeId(
     gradeId: number,
-    status?: CourseStatus[],
+    page: number,
+    size = PAGE_SIZE,
+    status = DEFAULT_COURSE_STATUS,
+    order = DEFAULT_SORTING
+  ): Promise<AxiosResponse<Page<ICourse>>> {
+    const url = `/courses?grade_id=${gradeId}&page=${page}&size=${size}&status=${status}&order=${order}`;
+    return await this.apiRequest.get<Page<ICourse>>(url);
+  }
+
+  public async getAllCoursesByGradeId(
+    gradeId: number,
+
+    status = DEFAULT_COURSE_STATUS,
     order = DEFAULT_SORTING
   ): Promise<AxiosResponse<ICourse[]>> {
-    const st = status ? status : CourseStatus.PUBLISHED;
-    const url = `/courses?grade_id=${gradeId}&status=${st}&order=${order}`;
+    const url = `/courses?grade_id=${gradeId}&status=${status}&order=${order}&pagination=false`;
     return await this.apiRequest.get<ICourse[]>(url);
   }
 

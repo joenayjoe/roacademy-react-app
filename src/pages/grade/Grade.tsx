@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import "./Grade.css";
 import { RouteComponentProps } from "react-router";
-import { IGrade } from "../../settings/DataTypes";
+import { IGrade, ResourceType } from "../../settings/DataTypes";
 import { GradeService } from "../../services/GradeService";
 import Spinner from "../../components/spinner/Spinner";
 import CourseSlide from "../course/CourseSlide";
@@ -50,14 +50,18 @@ const Grade: React.FunctionComponent<IProps> = props => {
         <div className="course-list">
           <CourseSlide
             title={`Popular Courses in ${grade.name}`}
-            courses={grade.courses}
+            sourceId={grade.id}
+            sourceType={ResourceType.GRADE}
+            // courses={grade.courses}
           />
         </div>
 
         <div className="course-list">
           <CourseSlide
             title={`All Courses in ${grade.name}`}
-            courses={grade.courses}
+            sourceId={grade.id}
+            sourceType={ResourceType.GRADE}
+            // courses={grade.courses}
           />
         </div>
       </React.Fragment>

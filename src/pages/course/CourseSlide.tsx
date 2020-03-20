@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ICourse } from "../../settings/DataTypes";
+import { ICourse, ResourceType, Page } from "../../settings/DataTypes";
 import { CourseService } from "../../services/CourseService";
 import { Settings } from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -9,59 +9,71 @@ import SliderNextArrow from "../../components/slider/SliderNextArrow";
 import SliderPrevArrow from "../../components/slider/SliderPrevArrow";
 
 import { withRouter, RouteComponentProps } from "react-router";
-import { BUILD_COURSE_URL, PAGE_SIZE } from "../../settings/Constants";
+import { BUILD_COURSE_URL } from "../../settings/Constants";
 import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {
-  title: string;
-  categoryId?: number;
-  courses?: ICourse[];
+  sourceId: number;
+  sourceType: ResourceType;
+  title?: string;
   href?: string;
 }
 
 const CourseSlide: React.FunctionComponent<IProps> = props => {
   const courseService = new CourseService();
-  const [courses, setCourses] = useState<ICourse[]>([]);
+  const [coursePage, setCoursePage] = useState<Page<ICourse> | null>(null);
 
-  const settings: Settings = {
-    arrows: true,
-    infinite: false,
-    speed: 300,
-    initialSlide: courses.length ? 5 : 1,
-    slidesToShow: courses.length ? 5 : 1,
-    slidesToScroll: courses.length ? 5 : 1,
-    nextArrow: <SliderNextArrow />,
-    prevArrow: <SliderPrevArrow />,
-    responsive: [
-      {
-        breakpoint: 769,
-        settings: {
-          slidesToShow: courses.length ? 3 : 1,
-          slidesToScroll: courses.length ? 3 : 1,
-          initialSlide: courses.length ? 3 : 1,
-          swipeToSlide: true
-        }
-      }
-    ]
-  };
+  const [lastSlideChange, setLastSlideChange] = useState<number>(0);
 
   useEffect(() => {
-    console.log("Courses in course slide = ", props.courses);
-    if (props.courses && props.courses.length) {
-      setCourses(props.courses);
-    } else if (props.categoryId) {
-      courseService
-        .getCoursesByCategoryId(props.categoryId, 0, PAGE_SIZE)
-        .then(resp => {
-          setCourses(resp.data.content);
-        });
+    if (props.sourceType === ResourceType.CATEGORY) {
+      courseService.getCoursesByCategoryId(props.sourceId, 0, 10).then(resp => {
+        setCoursePage(resp.data);
+      });
+    } else if (props.sourceType === ResourceType.GRADE) {
+      courseService.getCoursesByGradeId(props.sourceId, 0, 10).then(resp => {
+        setCoursePage(resp.data);
+      });
     }
     // eslint-disable-next-line
   }, []);
 
+  const handleSlideChange = (current: number) => {
+    if (coursePage === null) {
+      return;
+    }
+
+    if (lastSlideChange < current && current % 5 === 0) {
+      if (props.sourceType === ResourceType.CATEGORY) {
+        courseService
+          .getCoursesByCategoryId(props.sourceId, coursePage.number + 1, 10)
+          .then(resp => {
+            let newPage: Page<ICourse> = {
+              ...coursePage,
+              number: coursePage.number + 1,
+              content: coursePage.content.concat(resp.data.content)
+            };
+            setCoursePage(newPage);
+          });
+      } else if (props.sourceType === ResourceType.GRADE) {
+        courseService
+          .getCoursesByGradeId(props.sourceId, coursePage.number + 1, 10)
+          .then(resp => {
+            let newPage: Page<ICourse> = {
+              ...coursePage,
+              number: coursePage.number + 1,
+              content: coursePage.content.concat(resp.data.content)
+            };
+            setCoursePage(newPage);
+          });
+      }
+      setLastSlideChange(current);
+    }
+  };
+
   const getCourses = () => {
-    if (courses.length) {
-      return courses.map((course: ICourse) => {
+    if (coursePage && coursePage.content.length) {
+      return coursePage.content.map((course: ICourse) => {
         return (
           <Link
             key={course.id}
@@ -94,6 +106,30 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
       <div className="horizontal-scroll-body">{getCourses()}</div>
     </div>
   );
+
+  const settings: Settings = {
+    arrows: true,
+    infinite: false,
+    speed: 300,
+    initialSlide: 0,
+    slidesToShow: coursePage && coursePage.content.length ? 5 : 1,
+    slidesToScroll: coursePage && coursePage.content.length ? 5 : 1,
+    nextArrow: <SliderNextArrow />,
+    prevArrow: <SliderPrevArrow />,
+    afterChange: current => handleSlideChange(current),
+    responsive: [
+      {
+        breakpoint: 769,
+        settings: {
+          initialSlide: 0,
+          slidesToShow: coursePage && coursePage.content.length ? 3 : 1,
+          slidesToScroll: coursePage && coursePage.content.length ? 3 : 1,
+          swipeToSlide: true
+        }
+      }
+    ]
+  };
+
   const getCourseSlide = (
     <React.Fragment>
       <SlickSlider

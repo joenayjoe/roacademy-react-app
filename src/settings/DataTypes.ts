@@ -31,6 +31,12 @@ export enum CourseStatus {
 }
 
 export type MenuItemType = ICategory | IGrade | ICourse;
+
+export enum ResourceType {
+  CATEGORY = "Category",
+  GRADE = "Grade",
+  COURSE = "Course"
+}
 export enum AlertVariant {
   PRIMARY = "alert alert-primary",
   SECONDARY = "alert alert-secondary",

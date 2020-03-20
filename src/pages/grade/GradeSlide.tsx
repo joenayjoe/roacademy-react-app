@@ -23,6 +23,9 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
     props.grades ? props.grades : []
   );
 
+  const handleNextClick = () => {
+    console.log("Grade Slide Next clicked");
+  };
   const settings: Settings = {
     arrows: true,
     infinite: false,
@@ -31,7 +34,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
     slidesToShow: grades.length ? 5 : 1,
     slidesToScroll: grades.length ? 5 : 1,
     rows: grades.length >= 10 ? 2 : 1,
-    nextArrow: <SliderNextArrow />,
+    nextArrow: <SliderNextArrow onClick={handleNextClick} />,
     prevArrow: <SliderPrevArrow />,
     responsive: [
       {

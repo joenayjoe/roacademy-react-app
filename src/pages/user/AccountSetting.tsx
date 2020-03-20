@@ -3,7 +3,6 @@ import UserSettingContainer from "./UserSettingContainer";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
 import {
-  IUser,
   AlertVariant,
   IPasswordResetRequest,
   HTTPStatus,

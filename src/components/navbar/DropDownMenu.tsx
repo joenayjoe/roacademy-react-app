@@ -17,8 +17,7 @@ import Spinner from "../spinner/Spinner";
 import {
   BUILD_GRADE_URL,
   BUILD_COURSE_URL,
-  BUILD_CATEGORY_URL,
-  DEFAULT_COURSE_STATUS
+  BUILD_CATEGORY_URL
 } from "../../settings/Constants";
 import { CourseService } from "../../services/CourseService";
 import { Link } from "react-router-dom";
@@ -142,23 +141,21 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
   };
   const fetchCoursesForGrade = (grade: IGrade) => {
     setIsLoadingCourse(true);
-    courseService
-      .getCoursesByGradeId(grade.id, DEFAULT_COURSE_STATUS)
-      .then(resp => {
-        let updated_cats = categories.map(cat => {
-          if (cat.id === grade.primaryCategory.id) {
-            cat.grades.map(grd => {
-              if (grd.id === grade.id) {
-                grd.courses = resp.data;
-              }
-              return grd;
-            });
-          }
-          return cat;
-        });
-        setCategories(updated_cats);
-        setIsLoadingCourse(false);
+    courseService.getAllCoursesByGradeId(grade.id).then(resp => {
+      let updated_cats = categories.map(cat => {
+        if (cat.id === grade.primaryCategory.id) {
+          cat.grades.map(grd => {
+            if (grd.id === grade.id) {
+              grd.courses = resp.data;
+            }
+            return grd;
+          });
+        }
+        return cat;
       });
+      setCategories(updated_cats);
+      setIsLoadingCourse(false);
+    });
   };
 
   const handleDropDownMouseEnter = () => {

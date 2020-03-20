@@ -1,5 +1,5 @@
 import React from "react";
-import { ICategory, ICourse } from "../../settings/DataTypes";
+import { ICategory, ICourse, ResourceType } from "../../settings/DataTypes";
 import CourseSlide from "../course/CourseSlide";
 import GradeSlide from "../grade/GradeSlide";
 
@@ -14,7 +14,9 @@ const CategoryDisplay: React.FunctionComponent<IProps> = props => {
       <div className="popular-courses">
         <CourseSlide
           title={`Popular Courses in ${props.category.name}`}
-          courses={props.courses}
+          sourceId={props.category.id}
+          sourceType={ResourceType.CATEGORY}
+          // courses={props.courses}
         />
       </div>
 
@@ -28,7 +30,9 @@ const CategoryDisplay: React.FunctionComponent<IProps> = props => {
       <div className="course-list">
         <CourseSlide
           title={`All Courses in ${props.category.name}`}
-          courses={props.courses}
+          sourceId={props.category.id}
+          sourceType={ResourceType.CATEGORY}
+          // courses={props.courses}
         />
       </div>
     </div>

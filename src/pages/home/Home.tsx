@@ -1,13 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import TeacherRecruitBanner from "../../components/banner/TeacherRecruitBanner";
 import { AuthContext } from "../../contexts/AuthContext";
-import { RoleType, ICategory, ICourse } from "../../settings/DataTypes";
+import { RoleType, ICategory, ResourceType } from "../../settings/DataTypes";
 import { CategoryService } from "../../services/CategoryService";
-import CategoryDisplay from "../category/CategoryDisplay";
-import { CourseService } from "../../services/CourseService";
-import { PAGE_SIZE } from "../../settings/Constants";
+
 import CourseSlide from "../course/CourseSlide";
-import Spinner from "../../components/spinner/Spinner";
 
 const Home: React.FunctionComponent = () => {
   // context
@@ -15,36 +12,15 @@ const Home: React.FunctionComponent = () => {
 
   // services
   const categoryService = new CategoryService();
-  const courseService = new CourseService();
 
   // states
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [isCourseLoaded, setIsCourseLoaded] = useState<boolean>(true);
-  const [courses, setCourses] = useState<ICourse[]>([]);
-
   const [activeCatPill, setActiveCatPill] = useState<number>(0);
 
-  const fetchCoursesFor = (categoryId: number) => {
-    setIsCourseLoaded(false);
-    courseService
-      .getCoursesByCategoryId(categoryId, 0, PAGE_SIZE)
-      .then(resp => {
-        setCourses(resp.data.content);
-        setActiveCatPill(categoryId);
-        setIsCourseLoaded(true);
-      });
-  };
-  const fetchData = () => {
+  useEffect(() => {
     categoryService.getCategories("name_asc").then(resp => {
       setCategories(resp.data);
-      if (resp.data.length) {
-        fetchCoursesFor(resp.data[0].id);
-      }
     });
-  };
-
-  useEffect(() => {
-    fetchData();
     // eslint-disable-next-line
   }, []);
 
@@ -56,7 +32,9 @@ const Home: React.FunctionComponent = () => {
   };
 
   const handleCategoryPillClick = (categoryId: number) => {
-    fetchCoursesFor(categoryId);
+    if (activeCatPill !== categoryId) {
+      setActiveCatPill(categoryId);
+    }
   };
 
   const categoryPill = () => {
@@ -74,19 +52,18 @@ const Home: React.FunctionComponent = () => {
     });
   };
 
-  const categoryPillContent = isCourseLoaded ? (
-    <div>
-      <CourseSlide title="" courses={courses} />
-    </div>
-  ) : (
-    <Spinner size="2x" />
-  );
-
   const categoryContainer = () => {
     return (
       <div className="category-container">
         <ul className="nav nav-pills">{categoryPill()}</ul>
-        {categoryPillContent}
+
+        <div className="category-pill-content-container">
+          <CourseSlide
+            key={activeCatPill}
+            sourceId={activeCatPill}
+            sourceType={ResourceType.CATEGORY}
+          />
+        </div>
       </div>
     );
   };
@@ -94,7 +71,7 @@ const Home: React.FunctionComponent = () => {
   return (
     <React.Fragment>
       {teacherBanner()}
-      <div className="width-75">
+      <div className="width-75 mt-2">
         <div className="category-courses">{categoryContainer()}</div>
         <div className="trending-courses"></div>
         <div className="popular-topics"></div>
