@@ -39,12 +39,12 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
   const [gradeErrorMessages, setGradeErrorMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    gradeService.getGrade(gradeId).then(resp => {
+    gradeService.getGrade(+gradeId).then(resp => {
       setGrade(resp.data);
       setIsLoaded(true);
     });
     // eslint-disable-next-line
-  }, []);
+  }, [gradeId]);
 
   const handleModalClose = () => {
     setShowConfirmModal(false);
@@ -72,7 +72,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
   const handleDeleteGrade = () => {
     setShowConfirmModal(false);
     gradeService
-      .deleteGrade(gradeId)
+      .deleteGrade(+gradeId)
       .then(resp => {
         if (resp.status === HTTPStatus.OK) {
           alertContext.show("Grade successfully deleted.");

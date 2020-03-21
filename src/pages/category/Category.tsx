@@ -2,18 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 
 import "./Category.css";
 import { RouteComponentProps, withRouter } from "react-router";
-import {
-  ICategory,
-  ICourse,
-  AlertVariant,
-  Page
-} from "../../settings/DataTypes";
+import { ICategory, AlertVariant } from "../../settings/DataTypes";
 import { CategoryService } from "../../services/CategoryService";
 import Spinner from "../../components/spinner/Spinner";
-import { CourseService } from "../../services/CourseService";
 import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
-import { CATEGORIES_URL, PAGE_SIZE } from "../../settings/Constants";
+import { CATEGORIES_URL } from "../../settings/Constants";
 import { AlertContext } from "../../contexts/AlertContext";
 import { parseError } from "../../utils/errorParser";
 import CategoryDisplay from "./CategoryDisplay";
@@ -27,14 +21,12 @@ const Category: React.FunctionComponent<IProps> = props => {
   const categoryId: string = props.match.params.category_id;
   // services
   const categoryService = new CategoryService();
-  const courseService = new CourseService();
 
   // context
   const alertContext = useContext(AlertContext);
 
   // states
   const [category, setCategory] = useState<ICategory | null>(null);
-  const [coursePage, setCoursePage] = useState<Page<ICourse> | null>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -43,19 +35,12 @@ const Category: React.FunctionComponent<IProps> = props => {
       .getCategoryWithGrades(categoryId)
       .then(response => {
         setCategory(response.data);
+        setIsLoaded(true);
       })
       .catch(error => {
         alertContext.show("Errors :", AlertVariant.DANGER, parseError(error));
       });
-    courseService
-      .getCoursesByCategoryId(+categoryId, 0, PAGE_SIZE)
-      .then(resp => {
-        setCoursePage(resp.data);
-        setIsLoaded(true);
-      })
-      .catch(err => {
-        alertContext.show("Errors :", AlertVariant.DANGER, parseError(err));
-      });
+
     // eslint-disable-next-line
   }, [categoryId]);
 
@@ -67,10 +52,7 @@ const Category: React.FunctionComponent<IProps> = props => {
           <BreadcrumbItem href={CATEGORIES_URL}>Categories</BreadcrumbItem>
           <BreadcrumbItem active>{category.name}</BreadcrumbItem>
         </Breadcrumb>
-        <CategoryDisplay
-          category={category}
-          courses={coursePage ? coursePage.content : []}
-        />
+        <CategoryDisplay category={category} />
       </React.Fragment>
     );
   }

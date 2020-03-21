@@ -63,7 +63,6 @@ export class CourseService {
 
   public async getAllCoursesByGradeId(
     gradeId: number,
-
     status = DEFAULT_COURSE_STATUS,
     order = DEFAULT_SORTING
   ): Promise<AxiosResponse<ICourse[]>> {

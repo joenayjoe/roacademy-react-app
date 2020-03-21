@@ -1,13 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import TeacherRecruitBanner from "../../components/banner/TeacherRecruitBanner";
 import { AuthContext } from "../../contexts/AuthContext";
-import { RoleType, ICategory, ResourceType } from "../../settings/DataTypes";
+import { RoleType, ICategory, ICourse } from "../../settings/DataTypes";
 import { CategoryService } from "../../services/CategoryService";
 
 import CourseSlide from "../course/CourseSlide";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Collapse from "../../components/collapse/Collapse";
 import { isMobile } from "react-device-detect";
+import { CourseService } from "../../services/CourseService";
 
 const Home: React.FunctionComponent = () => {
   // context
@@ -15,10 +16,40 @@ const Home: React.FunctionComponent = () => {
 
   // services
   const categoryService = new CategoryService();
+  const courseService = new CourseService();
 
   // states
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+  const [categoryCourses, setCategoryCourses] = useState<ICourse[]>([]);
+  const [categoryCoursesPageNumber, setCategoryCoursesPageNumber] = useState<
+    number
+  >(0);
+  const [hasMoreCategoryCourses, setHasMoreCategoryCourses] = useState<boolean>(
+    false
+  );
+  const [
+    lastCategoryCourseSlideIndex,
+    setLastCategoryCourseSlideIndex
+  ] = useState<number>(0);
+
+  const loadCategoryCourses = (categoryId: number, page: number, size = 10) => {
+    courseService.getCoursesByCategoryId(categoryId, page, size).then(resp => {
+      setCategoryCourses(categoryCourses.concat(resp.data.content));
+      if (resp.data.last) {
+        setHasMoreCategoryCourses(false);
+      } else {
+        setHasMoreCategoryCourses(true);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (selectedCategoryId > 0) {
+      loadCategoryCourses(selectedCategoryId, 0);
+    }
+    // eslint-disable-next-line
+  }, [selectedCategoryId]);
 
   useEffect(() => {
     categoryService.getCategories("name_asc").then(resp => {
@@ -30,6 +61,23 @@ const Home: React.FunctionComponent = () => {
     // eslint-disable-next-line
   }, []);
 
+  const loadNextCategoryCoursePage = () => {
+    const nextPageNumber = categoryCoursesPageNumber + 1;
+    loadCategoryCourses(selectedCategoryId, nextPageNumber);
+    setCategoryCoursesPageNumber(nextPageNumber);
+  };
+
+  const handleSlideAfterChangeEvent = (current: number) => {
+    if (
+      lastCategoryCourseSlideIndex < current &&
+      categoryCourses.length - current <= 5 &&
+      hasMoreCategoryCourses
+    ) {
+      loadNextCategoryCoursePage();
+      setLastCategoryCourseSlideIndex(current);
+    }
+  };
+
   const teacherBanner = () => {
     if (authContext.hasRole(RoleType.TEACHER) || authContext.isAdmin()) {
       return null;
@@ -40,17 +88,25 @@ const Home: React.FunctionComponent = () => {
   const handleCategoryClick = (categoryId: number) => {
     if (selectedCategoryId !== categoryId) {
       setSelectedCategoryId(categoryId);
+      setCategoryCourses([]);
+      setCategoryCoursesPageNumber(0);
+      setHasMoreCategoryCourses(false);
+      setLastCategoryCourseSlideIndex(0);
     }
   };
 
-  const getCollagsibleCourses = (category: ICategory) => {
+  const getCollapsibleCourses = (category: ICategory) => {
     if (selectedCategoryId === category.id) {
       return (
         <Collapse isOpen={selectedCategoryId === category.id}>
           <CourseSlide
             key={category.name}
-            sourceId={category.id}
-            sourceType={ResourceType.CATEGORY}
+            courses={categoryCourses}
+            hasMore={hasMoreCategoryCourses}
+            slideAfterChangeHandler={currentSlide =>
+              handleSlideAfterChangeEvent(currentSlide)
+            }
+            loadNextPage={loadNextCategoryCoursePage}
           />
         </Collapse>
       );
@@ -66,8 +122,12 @@ const Home: React.FunctionComponent = () => {
         <div className="category-pill-content-container">
           <CourseSlide
             key={selectedCategoryId}
-            sourceId={selectedCategoryId}
-            sourceType={ResourceType.CATEGORY}
+            courses={categoryCourses}
+            hasMore={hasMoreCategoryCourses}
+            slideAfterChangeHandler={currentSlide =>
+              handleSlideAfterChangeEvent(currentSlide)
+            }
+            loadNextPage={loadNextCategoryCoursePage}
           />
         </div>
       </React.Fragment>
@@ -90,7 +150,7 @@ const Home: React.FunctionComponent = () => {
               />
             </span>
           </div>
-          {getCollagsibleCourses(category)}
+          {getCollapsibleCourses(category)}
         </div>
       );
     });

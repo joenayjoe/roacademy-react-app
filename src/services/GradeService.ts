@@ -29,13 +29,13 @@ export class GradeService {
 
     return await this.apiRequest.get<IGrade[]>(url);
   }
-  public async getGrade(gradeId: string): Promise<AxiosResponse<IGrade>> {
+  public async getGrade(gradeId: number): Promise<AxiosResponse<IGrade>> {
     const url = `/grades/${gradeId}`;
     return await this.apiRequest.get<IGrade>(url);
   }
 
   public async getGradeWithCourses(
-    gradeId: string,
+    gradeId: number,
     status = DEFAULT_COURSE_STATUS
   ): Promise<AxiosResponse<IGrade>> {
     const url = `/grades/${gradeId}?withCourse=true&status=${status}`;
@@ -56,7 +56,7 @@ export class GradeService {
   }
 
   public async deleteGrade(
-    gradeId: string
+    gradeId: number
   ): Promise<AxiosResponse<HTTPStatus>> {
     const url = "/grades/" + gradeId;
     return await this.apiRequest.delete(url);

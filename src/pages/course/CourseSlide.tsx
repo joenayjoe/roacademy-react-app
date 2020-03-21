@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ICourse, ResourceType } from "../../settings/DataTypes";
-import { CourseService } from "../../services/CourseService";
+import React, { useRef, useCallback } from "react";
+import { ICourse } from "../../settings/DataTypes";
 import { Settings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -13,41 +12,26 @@ import { BUILD_COURSE_URL } from "../../settings/Constants";
 import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {
-  sourceId: number;
-  sourceType: ResourceType;
+  courses: ICourse[];
+  slideAfterChangeHandler: (currentSlide: number) => void;
+  loadNextPage: () => void;
+  hasMore: boolean;
   title?: string;
   href?: string;
 }
 
 const CourseSlide: React.FunctionComponent<IProps> = props => {
-  // services
-  const courseService = new CourseService();
-
-  // states
-  const [courses, setCourses] = useState<ICourse[]>([]);
-  const [pageNumber, setPageNumber] = useState<number>(0);
-
-  const [lastSlideChange, setLastSlideChange] = useState<number>(0);
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [hasMore, setHasMore] = useState<boolean>(false);
-
   // refs
   const observer = useRef<IntersectionObserver>();
 
   const lastCourseCardElementRef = useCallback(
     node => {
-      if (isLoading) {
-        return;
-      }
-
       if (observer.current) {
         observer.current.disconnect();
       }
       observer.current = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting && hasMore) {
-          setPageNumber(pageNumber => pageNumber + 1);
-          loadMore();
+        if (entries[0].isIntersecting && props.hasMore) {
+          props.loadNextPage();
         }
       });
       if (node) {
@@ -55,83 +39,13 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
       }
     },
     // eslint-disable-next-line
-    [isLoading, hasMore]
+    [props.hasMore]
   );
 
-  useEffect(() => {
-    setIsLoading(true);
-    setPageNumber(0);
-    setHasMore(false);
-    setLastSlideChange(0);
-
-    if (props.sourceType === ResourceType.CATEGORY) {
-      courseService
-        .getCoursesByCategoryId(props.sourceId, pageNumber, 10)
-        .then(resp => {
-          setCourses(resp.data.content);
-          if (resp.data.last) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-          setIsLoading(false);
-        });
-    } else if (props.sourceType === ResourceType.GRADE) {
-      courseService
-        .getCoursesByGradeId(props.sourceId, pageNumber, 10)
-        .then(resp => {
-          setCourses(resp.data.content);
-          if (resp.data.last) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-          setIsLoading(false);
-        });
-    }
-    // eslint-disable-next-line
-  }, [props.sourceId, props.sourceType]);
-
-  const loadMore = () => {
-    setIsLoading(true);
-    if (props.sourceType === ResourceType.CATEGORY) {
-      courseService
-        .getCoursesByCategoryId(props.sourceId, pageNumber + 1, 10)
-        .then(resp => {
-          setCourses([...courses].concat(resp.data.content));
-          if (resp.data.last) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-          setIsLoading(false);
-        });
-    } else if (props.sourceType === ResourceType.GRADE) {
-      courseService
-        .getCoursesByGradeId(props.sourceId, pageNumber + 1, 10)
-        .then(resp => {
-          setCourses([...courses].concat(resp.data.content));
-          if (resp.data.last) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-          setIsLoading(false);
-        });
-    }
-  };
-  const handleSlideChange = (current: number) => {
-    if (lastSlideChange < current && courses.length - current <= 5 && hasMore) {
-      loadMore();
-      setLastSlideChange(current);
-      setPageNumber(pageNumber => pageNumber + 1);
-    }
-  };
-
   const getCourses = () => {
-    if (courses.length) {
-      return courses.map((course: ICourse, index: number) => {
-        if (courses.length === index + 1) {
+    if (props.courses.length) {
+      return props.courses.map((course: ICourse, index: number) => {
+        if (props.courses.length === index + 1) {
           return (
             <Link
               key={course.id}
@@ -189,18 +103,18 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
     infinite: false,
     speed: 300,
     initialSlide: 0,
-    slidesToShow: courses.length ? 5 : 1,
-    slidesToScroll: courses.length ? 5 : 1,
+    slidesToShow: props.courses.length ? 5 : 1,
+    slidesToScroll: props.courses.length ? 5 : 1,
     nextArrow: <SliderNextArrow />,
     prevArrow: <SliderPrevArrow />,
-    afterChange: current => handleSlideChange(current),
+    afterChange: current => props.slideAfterChangeHandler(current),
     responsive: [
       {
         breakpoint: 769,
         settings: {
           initialSlide: 0,
-          slidesToShow: courses.length ? 3 : 1,
-          slidesToScroll: courses.length ? 3 : 1,
+          slidesToShow: props.courses.length ? 3 : 1,
+          slidesToScroll: props.courses.length ? 3 : 1,
           swipeToSlide: true
         }
       }
