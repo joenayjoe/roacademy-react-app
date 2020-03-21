@@ -135,15 +135,18 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
     const icon =
       collapsedChapter && collapsedChapter.id === ch.id ? "minus" : "plus";
     return (
-      <div key={`${ch.id}_${ch.name}`} className="chapter-list-item">
+      <div
+        key={`${ch.id}_${ch.name}`}
+        className="chapter-list-item collapse-menu-item"
+      >
         <div
-          className="chapter-list-header"
+          className="chapter-list-header collapse-item-header"
           onClick={() => handleChalpetClick(ch)}
         >
-          <span className="mr-2">
+          <span>{ch.name}</span>
+          <span>
             <FontAwesomeIcon icon={icon} size="sm" color="#003845" />
           </span>
-          <span>{ch.name}</span>
         </div>
         <Collapse
           isOpen={
@@ -210,7 +213,9 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
                 <div className="float-right pb-2">
                   <Link to={BUILD_COURSE_WATCH_URL(course.id)}>View All</Link>
                 </div>
-                <div style={{ clear: "right" }}>{chapterList}</div>
+                <div style={{ clear: "right" }} className="collapse-menu">
+                  {chapterList}
+                </div>
               </div>
             </div>
             <div className="course-detail-requirements pt-3">

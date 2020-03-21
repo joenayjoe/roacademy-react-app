@@ -7,6 +7,7 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import "./assets/styles/ra-common.css";
 import "./assets/styles/ra-drop-down.css";
+import "./assets/styles/ra-collapsible.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {

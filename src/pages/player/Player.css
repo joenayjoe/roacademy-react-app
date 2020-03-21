@@ -61,14 +61,6 @@
     font-weight: 600;
 }
 
-.lecture-view-list {
-    display: none;
-}
-
-.lecture-view-list.open {
-    display: block;
-}
-
 .lecture-view-item {
     padding: .75rem .75rem .75rem 1.5rem;
     cursor: pointer;
@@ -76,18 +68,6 @@
 
 .lecture-view-item.playing {
     background-color: #f3f3d9;
-}
-
-.chapter-view-item {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 1rem 1rem 1rem 0.5rem;
-    border-bottom: 1px solid #dedfe0;
-    color: #29303b;
-    font-weight: 600;
-    background-color: #f7f8fa;
-    cursor: pointer;
 }
 
 .cp-bottom-container {

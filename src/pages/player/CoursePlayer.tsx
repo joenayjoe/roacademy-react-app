@@ -22,6 +22,7 @@ import "./Player.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Avatar from "../../components/avatar/Avatar";
 import { AuthContext } from "../../contexts/AuthContext";
+import Collapse from "../../components/collapse/Collapse";
 
 interface IProps extends RouteComponentProps {}
 
@@ -195,9 +196,9 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
   };
   const chapterList = chapters.map(ch => {
     return (
-      <div key={`${ch.id}_${ch.name}`}>
+      <div key={`${ch.id}_${ch.name}`} className="collapse-menu-item">
         <div
-          className="chapter-view-item"
+          className="collapse-item-header chapter-view-item"
           onClick={() => handleChapterViewClick(ch)}
         >
           <span>{ch.name}</span>
@@ -205,15 +206,9 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
             <FontAwesomeIcon icon={getExapndIcon(ch)} />
           </span>
         </div>
-        <div
-          className={`${
-            expandedChapterIds.includes(ch.id)
-              ? "lecture-view-list open"
-              : "lecture-view-list"
-          }`}
-        >
+        <Collapse isOpen={expandedChapterIds.includes(ch.id)}>
           {lectureList(ch)}
-        </div>
+        </Collapse>
       </div>
     );
   });
@@ -290,7 +285,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
             </div>
           </div>
 
-          <div className="player-menu">{chapterList}</div>
+          <div className="player-menu collapse-menu">{chapterList}</div>
 
           <div className="cp-bottom-container">
             <div className="description">
