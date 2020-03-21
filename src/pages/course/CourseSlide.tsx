@@ -60,6 +60,10 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
 
   useEffect(() => {
     setIsLoading(true);
+    setPageNumber(0);
+    setHasMore(false);
+    setLastSlideChange(0);
+
     if (props.sourceType === ResourceType.CATEGORY) {
       courseService
         .getCoursesByCategoryId(props.sourceId, pageNumber, 10)
@@ -117,7 +121,7 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
     }
   };
   const handleSlideChange = (current: number) => {
-    if (lastSlideChange < current && hasMore) {
+    if (lastSlideChange < current && courses.length - current <= 5 && hasMore) {
       loadMore();
       setLastSlideChange(current);
       setPageNumber(pageNumber => pageNumber + 1);
