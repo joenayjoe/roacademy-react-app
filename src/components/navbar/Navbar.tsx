@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Autocomplete from "../../components/autocomplete/Autocomplete";
 
@@ -24,14 +24,18 @@ import { BUILD_SEARCH_WITH_QUERY_URL } from "../../settings/Constants";
 import Login from "../../pages/user/Login";
 import Signup from "../../pages/user/Signup";
 import Modal from "../modal/Modal";
+import { isMobileOnly, isMobile } from "react-device-detect";
+import DropDown from "../dropdown/DropDown";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
 }
 
 const Navbar: React.FunctionComponent<IProbs> = props => {
+  // service
   const courseService = new CourseService();
 
+  // states
   const [suggestions, setSuggestions] = useState<ISearchResponse[]>([]);
   const [showBrandName, setShowBrandName] = useState<boolean>(true);
   const [showMobileSearch, setShowMobileSearch] = useState<boolean>(false);
@@ -39,8 +43,43 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalBody, setModalBody] = useState<JSX.Element>(<div></div>);
+  const [showAuthLinksDropDown, setShowAuthLinksDropDown] = useState<boolean>(
+    false
+  );
 
+  // context
   const authContext = useContext(AuthContext);
+
+  // refs
+  let authLinkDrpDwnRef = useRef<HTMLButtonElement>(null);
+  let authLinkListRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", e => handleOnClick(e), false);
+
+    return () => {
+      document.removeEventListener("mousedown", e => handleOnClick(e), false);
+    };
+    // eslint-disable-next-line
+  }, []);
+
+  const handleOnClick = (e: MouseEvent) => {
+    if (
+      authLinkDrpDwnRef &&
+      authLinkDrpDwnRef.current &&
+      authLinkDrpDwnRef.current.contains(e.target as HTMLElement)
+    ) {
+      setShowAuthLinksDropDown(showAuthLinksDropDown => !showAuthLinksDropDown);
+    } else if (
+      !(
+        authLinkListRef &&
+        authLinkListRef.current &&
+        authLinkListRef.current.contains(e.target as HTMLElement)
+      )
+    ) {
+      setShowAuthLinksDropDown(false);
+    }
+  };
 
   const handleAutoCompleteOnChange = (query: string) => {
     if (query.length < 2) {
@@ -84,6 +123,7 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
     }
   };
   const showLoginModal = () => {
+    setShowAuthLinksDropDown(false);
     setShowModal(true);
     setModalTitle("Login to Your Account");
     setModalBody(
@@ -95,6 +135,7 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
   };
 
   const showSignupModal = () => {
+    setShowAuthLinksDropDown(false);
     setShowModal(true);
     setModalTitle("Signup and Start Learning!");
     setModalBody(
@@ -111,7 +152,7 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
 
   let hideForMobileSearch = showMobileSearch ? "d-none" : "";
 
-  let mobileAutoComplete;
+  let mobileAutoComplete: JSX.Element;
   if (showMobileSearch) {
     mobileAutoComplete = (
       <div className={`autocomplete-mobile`}>
@@ -130,21 +171,56 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
     );
   }
 
-  let authLinks;
-  if (authContext.isAuthenticated) {
-    authLinks = <UserDropDown />;
-  } else {
-    authLinks = (
-      <React.Fragment>
-        <div className="login nav-link" onClick={showLoginModal}>
-          <button className="btn btn-outline-primary nav-btn">Log In</button>
+  const getAuthLinks = () => {
+    if (authContext.isAuthenticated) {
+      return <UserDropDown />;
+    } else if (isMobile) {
+      return (
+        <div className="nav-link">
+          <DropDown
+            icon="bars"
+            showDropDown={showAuthLinksDropDown}
+            classNames="drop-down-on-hover"
+            dropDownBtnRef={authLinkDrpDwnRef}
+          >
+            <ul
+              className="drop-down-list drop-down-list-arrow-right drop-down-right"
+              ref={authLinkListRef}
+            >
+              <li className="drop-down-list-item">
+                <div className="menu-link" onClick={showLoginModal}>
+                  <div>
+                    <FontAwesomeIcon icon="sign-in-alt" />
+                    <span className="ml-2">Login</span>
+                  </div>
+                </div>
+              </li>
+              <li className="dropdown-divider"></li>
+              <li className="drop-down-list-item">
+                <div className="menu-link" onClick={showSignupModal}>
+                  <div>
+                    <FontAwesomeIcon icon="user-plus" />
+                    <span className="ml-2">Sign Up</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </DropDown>
         </div>
-        <div className="signup nav-link" onClick={showSignupModal}>
-          <button className="btn btn-outline-primary nav-btn">Sign Up </button>
-        </div>
-      </React.Fragment>
-    );
-  }
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <div className="login nav-link" onClick={showLoginModal}>
+            <button className="btn btn-outline-primary nav-btn">Log In</button>
+          </div>
+          <div className="signup nav-link" onClick={showSignupModal}>
+            <button className="btn btn-outline-primary nav-btn">Sign Up</button>
+          </div>
+        </React.Fragment>
+      );
+    }
+  };
 
   const modalDialog = (
     <Modal
@@ -154,25 +230,50 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
       onCloseHandler={() => setShowModal(false)}
     />
   );
+
+  const getContentForMobileDevice = () => {
+    if (isMobileOnly) {
+      return (
+        <React.Fragment>
+          <ToggleBar
+            classNames={hideForMobileSearch}
+            onClikHandler={props.drawerToggleHandler}
+          />
+
+          <div
+            className={`mobile-search-icon pl-3 ${hideForMobileSearch}`}
+            onClick={showMobileAutocomplete}
+          >
+            <FontAwesomeIcon icon="search" />
+          </div>
+          {mobileAutoComplete}
+          <div className="mobile-spacer" />
+        </React.Fragment>
+      );
+    }
+    return null;
+  };
+  const getNavRightContents = () => {
+    return (
+      <React.Fragment>
+        <div className="donate nav-link">
+          <NavLink to="/donation">
+            <button className="btn btn-outline-success d-flex">
+              <FontAwesomeIcon icon="donate" className="ra-icon" size="lg" />
+              <span> Donate</span>
+            </button>
+          </NavLink>
+        </div>
+        {getAuthLinks()}
+      </React.Fragment>
+    );
+  };
+
   return (
     <header className="bg-white rounded top-header">
       {modalDialog}
       <nav className="navbar navbar-expand-md navbar-light nav-container">
-        <ToggleBar
-          classNames={hideForMobileSearch}
-          id="side-drawer-toggler"
-          onClikHandler={props.drawerToggleHandler}
-        />
-
-        <div
-          className={`mobile-search-icon pl-3 ${hideForMobileSearch}`}
-          onClick={showMobileAutocomplete}
-        >
-          <FontAwesomeIcon icon="search" />
-        </div>
-        {mobileAutoComplete}
-        <div className="mobile-spacer" />
-
+        {getContentForMobileDevice()}
         <div className={`${hideForMobileSearch}`}>
           <Link to="/" className={`navbar-brand d-flex`}>
             <img
@@ -206,21 +307,7 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
             </li>
           </ul>
 
-          <div className="nav-right">
-            <div className="donate nav-link">
-              <NavLink to="/donation">
-                <button className="btn btn-outline-success">
-                  <FontAwesomeIcon
-                    icon="donate"
-                    className="ra-icon"
-                    size="lg"
-                  />
-                  Donate
-                </button>
-              </NavLink>
-            </div>
-            {authLinks}
-          </div>
+          <div className="nav-right">{getNavRightContents()}</div>
         </div>
       </nav>
     </header>

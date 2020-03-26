@@ -23,10 +23,10 @@
      flex: 1;
      padding-right: 10px;
  }
- 
+ /*  
  #side-drawer-toggler {
      display: none;
- }
+ } */
  
  .autocomplete-mobile {
      display: none;

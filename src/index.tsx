@@ -49,7 +49,8 @@ import {
   faMinus,
   faFilePdf,
   faFileVideo,
-  faKeyboard
+  faKeyboard,
+  faUserPlus
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -78,6 +79,7 @@ library.add(
   faEnvelope,
   faLock,
   faUser,
+  faUserPlus,
   faTimes,
   faTimesCircle,
   faCircleNotch,

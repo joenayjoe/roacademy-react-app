@@ -70,6 +70,7 @@ import Youtube from "../pages/adminpanel/youtube/Youtube";
 import CoursePlayer from "../pages/player/CoursePlayer";
 import TeacherRequest from "../pages/user/TeacherRequest";
 import AdminUserEdit from "../pages/adminpanel/user/AdminUserEdit";
+import { isMobileOnly } from "react-device-detect";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -87,12 +88,12 @@ const App = () => {
       <AlertContextProvider>
         <BrowserRouter>
           <Navbar drawerToggleHandler={handleDrawerToggle} />
-
-          <SideDrawer
-            isOpen={isSideDrawerOpen}
-            backdropClickHandler={backdropClickHandler}
-          />
-
+          {isMobileOnly ? (
+            <SideDrawer
+              isOpen={isSideDrawerOpen}
+              backdropClickHandler={backdropClickHandler}
+            />
+          ) : null}
           <div className="content-wrapper">
             <AlertSelector />
             <Switch>

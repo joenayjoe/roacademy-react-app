@@ -3,8 +3,8 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface iProps {
-  name: string;
   showDropDown?: boolean;
+  name?: string;
   id?: string;
   classNames?: string;
   icon?: IconProp;
@@ -22,7 +22,7 @@ class DropDown extends Component<iProps, {}> {
         onMouseEnter={this.props.handleMouseEnter}
       >
         <button
-          className="btn btn-primary-outline drop-down-btn"
+          className="btn btn-primary-outline drop-down-btn d-flex"
           ref={this.props.dropDownBtnRef}
         >
           {this.props.icon ? (
@@ -30,7 +30,7 @@ class DropDown extends Component<iProps, {}> {
               <FontAwesomeIcon icon={this.props.icon} />
             </span>
           ) : null}
-          {this.props.name}
+          {this.props.name ? <span>{this.props.name}</span> : null}
         </button>
         {this.props.children}
       </div>
