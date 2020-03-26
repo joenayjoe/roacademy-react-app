@@ -1,7 +1,6 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import TeacherRecruitBanner from "../../components/banner/TeacherRecruitBanner";
-import { AuthContext } from "../../contexts/AuthContext";
-import { RoleType, ICategory, ICourse } from "../../settings/DataTypes";
+import { ICategory, ICourse, IGrade } from "../../settings/DataTypes";
 import { CategoryService } from "../../services/CategoryService";
 
 import CourseSlide from "../course/CourseSlide";
@@ -9,13 +8,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Collapse from "../../components/collapse/Collapse";
 import { isMobile } from "react-device-detect";
 import { CourseService } from "../../services/CourseService";
+import { DEFAULT_COURSE_STATUS } from "../../settings/Constants";
+import GradeSlide from "../grade/GradeSlide";
+import { GradeService } from "../../services/GradeService";
+import DonationBanner from "../../components/banner/DonationBanner";
 
 const Home: React.FunctionComponent = () => {
-  // context
-  const authContext = useContext(AuthContext);
-
   // services
   const categoryService = new CategoryService();
+  const gradeService = new GradeService();
   const courseService = new CourseService();
 
   // states
@@ -33,6 +34,47 @@ const Home: React.FunctionComponent = () => {
     setLastCategoryCourseSlideIndex
   ] = useState<number>(0);
 
+  // trending course states
+  const [trendingCourses, setTrendingCourses] = useState<ICourse[]>([]);
+  const [hasMoreTrendingCourse, setHasMoreTrendingCourse] = useState<boolean>(
+    false
+  );
+  const [trendingCoursePageNumber, setTrendingCoursePageNumber] = useState<
+    number
+  >(0);
+  const [
+    lastTrendingCourseSlideIndex,
+    setLastTrendingCourseSlideIndex
+  ] = useState<number>(0);
+
+  // new courses states
+  const [newCourses, setNewCourses] = useState<ICourse[]>([]);
+  const [hasMoreNewCourse, setHasMoreNewCourse] = useState<boolean>(false);
+  const [newCoursePageNumber, setNewCoursePageNumber] = useState<number>(0);
+  const [lastNewCourseSlideIndex, setLastNewCourseSlideIndex] = useState<
+    number
+  >(0);
+
+  // popular topic states
+  const [popularTopics, setPopularTopics] = useState<IGrade[]>([]);
+  const [hasMorePopularTopics, setHasMorePopularTopics] = useState<boolean>(
+    false
+  );
+  const [popularTopicPageNumber, setPopularTopicPageNumber] = useState<number>(
+    0
+  );
+  const [lastPopularTopicSlideIndex, setLastPopularTopicSlideIndex] = useState<
+    number
+  >(0);
+
+  const loadCategories = () => {
+    categoryService.getCategories("name_asc").then(resp => {
+      setCategories(resp.data);
+      if (resp.data.length) {
+        setSelectedCategoryId(resp.data[0].id);
+      }
+    });
+  };
   const loadCategoryCourses = (categoryId: number, page: number, size = 10) => {
     courseService.getCoursesByCategoryId(categoryId, page, size).then(resp => {
       setCategoryCourses(categoryCourses.concat(resp.data.content));
@@ -40,6 +82,43 @@ const Home: React.FunctionComponent = () => {
         setHasMoreCategoryCourses(false);
       } else {
         setHasMoreCategoryCourses(true);
+      }
+    });
+  };
+
+  const loadTrendingCourses = (page: number, size = 10) => {
+    courseService
+      .getCourses(page, size, DEFAULT_COURSE_STATUS, "hits_desc")
+      .then(resp => {
+        setTrendingCourses(trendingCourses.concat(resp.data.content));
+        if (resp.data.last) {
+          setHasMoreTrendingCourse(false);
+        } else {
+          setHasMoreTrendingCourse(true);
+        }
+      });
+  };
+
+  const loadNewCourses = (page: number, size = 10) => {
+    courseService
+      .getCourses(page, size, DEFAULT_COURSE_STATUS, "createdAt_desc")
+      .then(resp => {
+        setNewCourses(newCourses.concat(resp.data.content));
+        if (resp.data.last) {
+          setHasMoreNewCourse(false);
+        } else {
+          setHasMoreNewCourse(true);
+        }
+      });
+  };
+
+  const loadPopularTopics = (page: number, size = 15) => {
+    gradeService.getGrades(page, size, "name_asc").then(resp => {
+      setPopularTopics(popularTopics.concat(resp.data.content));
+      if (resp.data.last) {
+        setHasMorePopularTopics(false);
+      } else {
+        setHasMorePopularTopics(true);
       }
     });
   };
@@ -52,12 +131,10 @@ const Home: React.FunctionComponent = () => {
   }, [selectedCategoryId]);
 
   useEffect(() => {
-    categoryService.getCategories("name_asc").then(resp => {
-      setCategories(resp.data);
-      if (resp.data.length) {
-        setSelectedCategoryId(resp.data[0].id);
-      }
-    });
+    loadCategories();
+    loadTrendingCourses(0);
+    loadNewCourses(0);
+    loadPopularTopics(0);
     // eslint-disable-next-line
   }, []);
 
@@ -67,7 +144,25 @@ const Home: React.FunctionComponent = () => {
     setCategoryCoursesPageNumber(nextPageNumber);
   };
 
-  const handleSlideAfterChangeEvent = (current: number) => {
+  const loadNextTrendingCoursePage = () => {
+    const nextPage = trendingCoursePageNumber + 1;
+    loadTrendingCourses(nextPage);
+    setTrendingCoursePageNumber(nextPage);
+  };
+
+  const loadNextNewCoursePage = () => {
+    const nextPage = newCoursePageNumber + 1;
+    loadNewCourses(nextPage);
+    setNewCoursePageNumber(nextPage);
+  };
+
+  const loadNextPopulatTopicPage = () => {
+    const nextPage = popularTopicPageNumber + 1;
+    loadPopularTopics(nextPage);
+    setPopularTopicPageNumber(nextPage);
+  };
+
+  const handleCategoryCourseSlideAfterChangeEvent = (current: number) => {
     if (
       lastCategoryCourseSlideIndex < current &&
       categoryCourses.length - current <= 5 &&
@@ -78,11 +173,37 @@ const Home: React.FunctionComponent = () => {
     }
   };
 
-  const teacherBanner = () => {
-    if (authContext.hasRole(RoleType.TEACHER) || authContext.isAdmin()) {
-      return null;
+  const handleTrendingCourseSlideAfterChangeEvent = (current: number) => {
+    if (
+      lastTrendingCourseSlideIndex < current &&
+      trendingCourses.length - current <= 5 &&
+      hasMoreTrendingCourse
+    ) {
+      loadNextTrendingCoursePage();
+      setLastTrendingCourseSlideIndex(current);
     }
-    return <TeacherRecruitBanner />;
+  };
+
+  const handleNewCourseSlideAfterChangeEvent = (current: number) => {
+    if (
+      lastNewCourseSlideIndex < current &&
+      newCourses.length - current <= 5 &&
+      hasMoreNewCourse
+    ) {
+      loadNextNewCoursePage();
+      setLastNewCourseSlideIndex(current);
+    }
+  };
+
+  const handlePopulatTopicSlideAfterChangeEvent = (current: number) => {
+    if (
+      lastPopularTopicSlideIndex < current &&
+      popularTopics.length - current * 2 <= 5 &&
+      hasMorePopularTopics
+    ) {
+      loadNextPopulatTopicPage();
+      setLastPopularTopicSlideIndex(current);
+    }
   };
 
   const handleCategoryClick = (categoryId: number) => {
@@ -104,7 +225,7 @@ const Home: React.FunctionComponent = () => {
             courses={categoryCourses}
             hasMore={hasMoreCategoryCourses}
             slideAfterChangeHandler={currentSlide =>
-              handleSlideAfterChangeEvent(currentSlide)
+              handleCategoryCourseSlideAfterChangeEvent(currentSlide)
             }
             loadNextPage={loadNextCategoryCoursePage}
           />
@@ -119,13 +240,13 @@ const Home: React.FunctionComponent = () => {
       <React.Fragment>
         <ul className="nav nav-pills">{categoryPill()}</ul>
 
-        <div className="category-pill-content-container">
+        <div className="category-pill-content-container mt-2">
           <CourseSlide
             key={selectedCategoryId}
             courses={categoryCourses}
             hasMore={hasMoreCategoryCourses}
             slideAfterChangeHandler={currentSlide =>
-              handleSlideAfterChangeEvent(currentSlide)
+              handleCategoryCourseSlideAfterChangeEvent(currentSlide)
             }
             loadNextPage={loadNextCategoryCoursePage}
           />
@@ -179,14 +300,56 @@ const Home: React.FunctionComponent = () => {
     return getDesktopCategoryCourseView();
   };
 
+  const getTrendingCourses = () => {
+    return (
+      <CourseSlide
+        title="Trending Courses"
+        courses={trendingCourses}
+        hasMore={hasMoreTrendingCourse}
+        slideAfterChangeHandler={current => {
+          handleTrendingCourseSlideAfterChangeEvent(current);
+        }}
+        loadNextPage={loadNextTrendingCoursePage}
+      />
+    );
+  };
+
+  const getNewCourses = () => {
+    return (
+      <CourseSlide
+        title="New Courses"
+        courses={newCourses}
+        hasMore={hasMoreNewCourse}
+        slideAfterChangeHandler={current =>
+          handleNewCourseSlideAfterChangeEvent(current)
+        }
+        loadNextPage={loadNextNewCoursePage}
+      />
+    );
+  };
+
+  const getPoplarTopics = () => {
+    return (
+      <GradeSlide
+        title="Popular Topics"
+        grades={popularTopics}
+        hasMore={hasMorePopularTopics}
+        slideAfterChangeHandler={current =>
+          handlePopulatTopicSlideAfterChangeEvent(current)
+        }
+        loadNextPage={loadNextPopulatTopicPage}
+      />
+    );
+  };
+
   return (
     <React.Fragment>
-      {teacherBanner()}
-      <div className="width-75 mt-2">
-        <div className="category-courses">{getCategoryCourses()}</div>
-        <div className="trending-courses"></div>
-        <div className="popular-topics"></div>
-      </div>
+      <TeacherRecruitBanner />;
+      <div className="width-75 category-courses">{getCategoryCourses()}</div>
+      <div className="width-75 trending-courses">{getTrendingCourses()}</div>
+      <div className="width-75 new-courses">{getNewCourses()}</div>
+      <div className="width-75 popular-topics">{getPoplarTopics()}</div>
+      <DonationBanner />
     </React.Fragment>
   );
 };

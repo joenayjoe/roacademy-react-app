@@ -25,6 +25,9 @@ const CategoryList = () => {
         <div className="category-slide" key={cat.id}>
           <GradeSlide
             grades={cat.grades}
+            hasMore={false}
+            slideAfterChangeHandler={() => {}}
+            loadNextPage={() => {}}
             title={cat.name}
             href={"/categories/" + cat.id}
           />

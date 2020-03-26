@@ -15,11 +15,7 @@ const SlickSlider: React.FunctionComponent<IProps> = props => {
   if (props.title) {
     title = <h5>{props.title}</h5>;
     if (props.href) {
-      title = (
-        <Link to={props.href}>
-          <h5>{props.title}</h5>
-        </Link>
-      );
+      title = <Link to={props.href}>{title}</Link>;
     }
   }
   return (

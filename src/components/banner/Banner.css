@@ -1,0 +1,26 @@
+.banner {
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    color: #fff;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin-bottom: 1rem;
+}
+
+.banner.teacher-recruitment-banner {
+    background-color: #505763;
+    background: linear-gradient(#29303B, #29303B, #29303B);
+}
+
+.banner.donation-banner {
+    background-color: #505763;
+    background: linear-gradient(#29303B, #29303B, #29303B);
+}
+
+.banner .banner-header {
+    font-size: 2.5rem;
+}
+
+.banner .banner-subheader {
+    color: #e6eaeb;
+}

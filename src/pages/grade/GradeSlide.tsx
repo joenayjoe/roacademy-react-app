@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useCallback } from "react";
 import { IGrade } from "../../settings/DataTypes";
 import SlickSlider from "../../components/slider/SlickSlider";
 import SliderNextArrow from "../../components/slider/SliderNextArrow";
@@ -7,57 +7,37 @@ import { Settings } from "react-slick";
 import { withRouter, RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { BUILD_GRADE_URL } from "../../settings/Constants";
-import { GradeService } from "../../services/GradeService";
 
 interface IProps extends RouteComponentProps {
-  title: string;
-  categoryId?: number;
-  grades?: IGrade[];
+  grades: IGrade[];
+  hasMore: boolean;
+  loadNextPage: () => void;
+  slideAfterChangeHandler: (current: number) => void;
+  title?: string;
   href?: string;
 }
 
 const GradeSlide: React.FunctionComponent<IProps> = props => {
-  const gradeService = new GradeService();
+  // refs
+  const observer = useRef<IntersectionObserver>();
 
-  const [grades, setGrade] = useState<IGrade[]>(
-    props.grades ? props.grades : []
-  );
-
-  const handleNextClick = () => {
-    console.log("Grade Slide Next clicked");
-  };
-  const settings: Settings = {
-    arrows: true,
-    infinite: false,
-    speed: 300,
-    initialSlide: grades.length ? 5 : 1,
-    slidesToShow: grades.length ? 5 : 1,
-    slidesToScroll: grades.length ? 5 : 1,
-    rows: grades.length >= 10 ? 2 : 1,
-    nextArrow: <SliderNextArrow onClick={handleNextClick} />,
-    prevArrow: <SliderPrevArrow />,
-    responsive: [
-      {
-        breakpoint: 769,
-        settings: {
-          slidesToShow: grades.length ? 3 : 1,
-          slidesToScroll: grades.length ? 3 : 1,
-          initialSlide: grades.length ? 3 : 1,
-          swipeToSlide: true,
-          rows: grades.length >= 6 ? 2 : 1
-        }
+  const lastGradeCardElementRef = useCallback(
+    node => {
+      if (observer.current) {
+        observer.current.disconnect();
       }
-    ]
-  };
-
-  useEffect(() => {
-    if (!props.grades && props.categoryId) {
-      gradeService.getGradesByCategoryId(props.categoryId).then(resp => {
-        setGrade(resp.data);
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && props.hasMore) {
+          props.loadNextPage();
+        }
       });
-    }
+      if (node) {
+        observer.current.observe(node);
+      }
+    },
     // eslint-disable-next-line
-  }, []);
+    [props.hasMore]
+  );
 
   const handleGradeOnClick = (e: React.MouseEvent, grade: IGrade) => {
     e.preventDefault();
@@ -66,26 +46,41 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
   };
 
   const getGradeItemForSlide = () => {
-    if (grades.length) {
-      return grades.map(grade => {
-        return (
-          <Link
-            key={grade.id}
-            to={BUILD_GRADE_URL(grade.id)}
-            onClick={e => handleGradeOnClick(e, grade)}
-          >
-            <div className="card slick-card">
-              <div className="card-body">{grade.name}</div>
-            </div>
-          </Link>
-        );
+    if (props.grades.length) {
+      return props.grades.map((grade, index) => {
+        if (props.grades.length === index + 1) {
+          return (
+            <Link
+              key={grade.id}
+              to={BUILD_GRADE_URL(grade.id)}
+              onClick={e => handleGradeOnClick(e, grade)}
+              ref={lastGradeCardElementRef}
+            >
+              <div className="card slick-card">
+                <div className="card-body">{grade.name}</div>
+              </div>
+            </Link>
+          );
+        } else {
+          return (
+            <Link
+              key={grade.id}
+              to={BUILD_GRADE_URL(grade.id)}
+              onClick={e => handleGradeOnClick(e, grade)}
+            >
+              <div className="card slick-card">
+                <div className="card-body">{grade.name}</div>
+              </div>
+            </Link>
+          );
+        }
       });
     } else {
       return <div className="alert alert-success">This has no topics yet</div>;
     }
   };
 
-  let gradeScrollClass = grades.length > 6 ? "grade-scroll" : "";
+  let gradeScrollClass = props.grades.length > 6 ? "grade-scroll" : "";
 
   const gradeItemsMobile: JSX.Element = (
     <div className={`horizontal-scroll-body ${gradeScrollClass}`}>
@@ -104,6 +99,31 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
       {gradeItemsMobile}
     </div>
   );
+
+  const settings: Settings = {
+    arrows: true,
+    infinite: false,
+    speed: 300,
+    initialSlide: 0,
+    slidesToShow: props.grades.length ? 5 : 1,
+    slidesToScroll: props.grades.length ? 5 : 1,
+    rows: props.grades.length >= 10 ? 2 : 1,
+    nextArrow: <SliderNextArrow />,
+    prevArrow: <SliderPrevArrow />,
+    afterChange: current => props.slideAfterChangeHandler(current),
+    responsive: [
+      {
+        breakpoint: 769,
+        settings: {
+          slidesToShow: props.grades.length ? 3 : 1,
+          slidesToScroll: props.grades.length ? 3 : 1,
+          initialSlide: props.grades.length ? 3 : 1,
+          swipeToSlide: true,
+          rows: props.grades.length >= 6 ? 2 : 1
+        }
+      }
+    ]
+  };
 
   const gradeSlide = (
     <React.Fragment>

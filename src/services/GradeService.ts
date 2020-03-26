@@ -29,6 +29,7 @@ export class GradeService {
 
     return await this.apiRequest.get<IGrade[]>(url);
   }
+
   public async getGrade(gradeId: number): Promise<AxiosResponse<IGrade>> {
     const url = `/grades/${gradeId}`;
     return await this.apiRequest.get<IGrade>(url);

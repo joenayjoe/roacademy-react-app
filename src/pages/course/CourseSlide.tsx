@@ -91,9 +91,14 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
     props.history.push(BUILD_COURSE_URL(course.id));
   };
 
+  let title = <h5 className="horizonta-scroll-header">{props.title}</h5>;
+  if (props.href) {
+    title = <Link to={props.href}>{title}</Link>;
+  }
+
   const mobileSlider = (
     <div className="horizontal-scroll slider-xm">
-      {props.title}
+      {title}
       <div className="horizontal-scroll-body">{getCourses()}</div>
     </div>
   );

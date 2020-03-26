@@ -71,6 +71,9 @@ const CategoryDisplay: React.FunctionComponent<IProps> = props => {
         <GradeSlide
           grades={props.category.grades}
           title={`Topics in ${props.category.name}`}
+          hasMore={false}
+          slideAfterChangeHandler={() => {}}
+          loadNextPage={() => {}}
         />
       </div>
 
