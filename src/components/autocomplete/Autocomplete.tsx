@@ -90,15 +90,15 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
     this.autocompleInputRef.blur();
+    if (this.props.onCloseHandler) {
+      this.props.onCloseHandler();
+    }
     if (this.state.selectedSuggestion) {
       this.props.history.push(
         BUILD_COURSE_URL(this.state.selectedSuggestion.id)
       );
       this.setState({ selectedSuggestion: null });
     } else {
-      if (this.props.onCloseHandler) {
-        this.props.onCloseHandler();
-      }
       this.props.onSubmitHandler(this.state.query);
     }
   };
