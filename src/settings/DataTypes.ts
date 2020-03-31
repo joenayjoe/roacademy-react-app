@@ -257,14 +257,6 @@ export interface ILoginResponse {
   accessToken: string;
 }
 
-export interface ISearchRequest {
-  query: string;
-}
-export interface ISearchResponse {
-  id: number;
-  name: string;
-}
-
 export interface IToken {
   sub: string;
   exp: number;
@@ -282,6 +274,13 @@ export interface IYoutubeCredentialUpdateRequest {
   refreshToken: string;
   accessToken: string;
   expiresInSeconds: number;
+}
+
+export interface ISearchResponse {
+  id: number;
+  name: string;
+  type: string;
+  url: string;
 }
 
 export interface Page<T> {

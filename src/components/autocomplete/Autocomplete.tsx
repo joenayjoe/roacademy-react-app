@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Autocomplete.css";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { ISearchResponse } from "../../settings/DataTypes";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { BUILD_COURSE_URL } from "../../settings/Constants";
 
-interface AutocompleteProps {
+interface AutocompleteProps extends RouteComponentProps {
   query: string;
   suggestions: ISearchResponse[];
   placeholder: string;
@@ -22,6 +24,7 @@ interface AutocompleteState {
   query: string;
   typedQuery: string;
   selectedQueryIndex: number;
+  selectedSuggestion: ISearchResponse | null;
 }
 
 class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
@@ -29,7 +32,8 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     isFocus: false,
     query: this.props.query,
     typedQuery: this.props.query,
-    selectedQueryIndex: -1
+    selectedQueryIndex: -1,
+    selectedSuggestion: null
   };
 
   autocompleInputRef: any = createRef();
@@ -48,26 +52,36 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
       if (selectedQueryIndex === -1) {
         this.setState({
           query: this.props.suggestions[this.props.suggestions.length - 1].name,
-          selectedQueryIndex: this.props.suggestions.length - 1
+          selectedQueryIndex: this.props.suggestions.length - 1,
+          selectedSuggestion: this.props.suggestions[
+            this.props.suggestions.length - 1
+          ]
         });
       } else if (selectedQueryIndex === 0) {
-        this.setState({ query: typedQuery, selectedQueryIndex: -1 });
+        this.setState({
+          query: typedQuery,
+          selectedQueryIndex: -1,
+          selectedSuggestion: null
+        });
       } else {
         this.setState({
           query: this.props.suggestions[selectedQueryIndex - 1].name,
-          selectedQueryIndex: selectedQueryIndex - 1
+          selectedQueryIndex: selectedQueryIndex - 1,
+          selectedSuggestion: this.props.suggestions[selectedQueryIndex - 1]
         });
       }
     } else if (e.keyCode === 40) {
       if (selectedQueryIndex === this.props.suggestions.length - 1) {
         this.setState({
           query: typedQuery,
-          selectedQueryIndex: -1
+          selectedQueryIndex: -1,
+          selectedSuggestion: null
         });
       } else {
         this.setState({
           query: this.props.suggestions[selectedQueryIndex + 1].name,
-          selectedQueryIndex: selectedQueryIndex + 1
+          selectedQueryIndex: selectedQueryIndex + 1,
+          selectedSuggestion: this.props.suggestions[selectedQueryIndex + 1]
         });
       }
     }
@@ -76,15 +90,27 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
     this.autocompleInputRef.blur();
-    if (this.props.onCloseHandler) {
-      this.props.onCloseHandler();
+    if (this.state.selectedSuggestion) {
+      this.props.history.push(
+        BUILD_COURSE_URL(this.state.selectedSuggestion.id)
+      );
+      this.setState({ selectedSuggestion: null });
+    } else {
+      if (this.props.onCloseHandler) {
+        this.props.onCloseHandler();
+      }
+      this.props.onSubmitHandler(this.state.query);
     }
-    this.props.onSubmitHandler(this.state.query);
   };
 
   handleOnSelect = (suggestion: ISearchResponse) => {
     this.setState({ query: suggestion.name });
-    this.props.onSubmitHandler(suggestion.name);
+
+    if (suggestion.type === "Course") {
+      this.props.history.push(BUILD_COURSE_URL(suggestion.id));
+    } else {
+      this.props.onSubmitHandler(suggestion.name);
+    }
   };
 
   toogleOnFocus = () => {
@@ -226,4 +252,4 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   }
 }
 
-export default Autocomplete;
+export default withRouter(Autocomplete);

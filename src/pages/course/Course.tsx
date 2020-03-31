@@ -52,7 +52,7 @@ const Course: React.FunctionComponent<IProps> = props => {
         alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
-  }, []);
+  }, [courseId]);
 
   const courseContainerItems: JSX.Element = course ? (
     <React.Fragment>

@@ -13,7 +13,6 @@ import {
 } from "react-router-dom";
 import {
   ModalIdentifier,
-  ISearchRequest,
   ISearchResponse
 } from "../../settings/DataTypes";
 import ToggleBar from "../../components/togglebar/ToggleBar";
@@ -87,9 +86,9 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
       setSearchQuery(query);
       return;
     }
-    let payload: ISearchRequest = { query };
-    courseService.getAutoSuggestForCourse(payload).then(response => {
-      setSuggestions(response.data);
+
+    courseService.getAutoSuggestForCourse(query, 0, 10).then(response => {
+      setSuggestions(response.data.content);
     });
   };
 

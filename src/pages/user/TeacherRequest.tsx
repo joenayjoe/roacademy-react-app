@@ -34,7 +34,7 @@ const TeacherRequest: React.FunctionComponent<IProps> = props => {
     <div className="width-75">
       <div className="teacher-request-form">
         <div className="mt-2 mb-2">
-          <h3>Instructor Recruit Form</h3>
+          <h3>Instructor Recruitment Form</h3>
         </div>
         <form onSubmit={submitForm}>
           <div className="form-group">

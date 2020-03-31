@@ -2,12 +2,12 @@ import { AxiosResponse } from "axios";
 
 import {
   ICourse,
-  ISearchRequest,
   INewCourse,
   HTTPStatus,
   Page,
   IEditCourse,
-  ICourseStatusUpdateRequest
+  ICourseStatusUpdateRequest,
+  ISearchResponse
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 import {
@@ -79,10 +79,14 @@ export class CourseService {
   }
 
   public async getAutoSuggestForCourse(
-    query: ISearchRequest
-  ): Promise<AxiosResponse<ICourse[]>> {
-    const url = "/search";
-    return await this.apiRequest.post<ISearchRequest, ICourse[]>(url, query);
+    query: string,
+    page: number,
+    size: number,
+    order = DEFAULT_SORTING,
+    status = DEFAULT_COURSE_STATUS
+  ): Promise<AxiosResponse<Page<ISearchResponse>>> {
+    const url = `/search?query=${query}&page=${page}&size=${size}&order=${order}&status=${status}`;
+    return await this.apiRequest.get<Page<ISearchResponse>>(url);
   }
 
   public async createCourse(data: INewCourse): Promise<AxiosResponse<ICourse>> {
