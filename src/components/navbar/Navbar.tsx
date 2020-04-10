@@ -9,12 +9,9 @@ import {
   NavLink,
   Link,
   RouteComponentProps,
-  withRouter
+  withRouter,
 } from "react-router-dom";
-import {
-  ModalIdentifier,
-  ISearchResponse
-} from "../../settings/DataTypes";
+import { ModalIdentifier, ISearchResponse } from "../../settings/DataTypes";
 import ToggleBar from "../../components/togglebar/ToggleBar";
 import { CourseService } from "../../services/CourseService";
 import UserDropDown from "../avatar/UserDropDown";
@@ -30,7 +27,7 @@ interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
 }
 
-const Navbar: React.FunctionComponent<IProbs> = props => {
+const Navbar: React.FunctionComponent<IProbs> = (props) => {
   // service
   const courseService = new CourseService();
 
@@ -54,10 +51,10 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
   let authLinkListRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    document.addEventListener("mousedown", e => handleOnClick(e), false);
+    document.addEventListener("mousedown", (e) => handleOnClick(e), false);
 
     return () => {
-      document.removeEventListener("mousedown", e => handleOnClick(e), false);
+      document.removeEventListener("mousedown", (e) => handleOnClick(e), false);
     };
     // eslint-disable-next-line
   }, []);
@@ -68,7 +65,9 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
       authLinkDrpDwnRef.current &&
       authLinkDrpDwnRef.current.contains(e.target as HTMLElement)
     ) {
-      setShowAuthLinksDropDown(showAuthLinksDropDown => !showAuthLinksDropDown);
+      setShowAuthLinksDropDown(
+        (showAuthLinksDropDown) => !showAuthLinksDropDown
+      );
     } else if (
       !(
         authLinkListRef &&
@@ -87,9 +86,14 @@ const Navbar: React.FunctionComponent<IProbs> = props => {
       return;
     }
 
-    courseService.getAutoSuggestForCourse(query, 0, 10).then(response => {
-      setSuggestions(response.data.content);
-    });
+    courseService
+      .getAutoSuggestForCourse(query, 0, 10)
+      .then((response) => {
+        setSuggestions(response.data.content);
+      })
+      .catch((err) => {
+        console.log("Error:", err);
+      });
   };
 
   const handleAutocompleteOnClose = () => {

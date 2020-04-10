@@ -3,7 +3,7 @@ import React, {
   ChangeEvent,
   useEffect,
   FormEvent,
-  useContext
+  useContext,
 } from "react";
 import RichTextEditor, { EditorValue } from "react-rte";
 import {
@@ -15,7 +15,7 @@ import {
   IEditCourse,
   ICourse,
   ICourseStatusUpdateRequest,
-  HTTPStatus
+  HTTPStatus,
 } from "../../../settings/DataTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GradeService } from "../../../services/GradeService";
@@ -28,7 +28,7 @@ import { AlertContext } from "../../../contexts/AlertContext";
 import { CourseService } from "../../../services/CourseService";
 import {
   ADMIN_COURSES_URL,
-  BUILD_ADMIN_EDIT_COURSE_URL
+  BUILD_ADMIN_EDIT_COURSE_URL,
 } from "../../../settings/Constants";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { parseError } from "../../../utils/errorParser";
@@ -39,7 +39,7 @@ interface IProp extends RouteComponentProps {
   course?: ICourse;
 }
 
-const CourseForm: React.FunctionComponent<IProp> = props => {
+const CourseForm: React.FunctionComponent<IProp> = (props) => {
   const alertContext = useContext(AlertContext);
 
   const categoryService = new CategoryService();
@@ -67,12 +67,12 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
   enum PillEnum {
     COURSE,
     CHAPTER,
-    PUBLISH
+    PUBLISH,
   }
   const [activePill, setActivePill] = useState<PillEnum>(PillEnum.COURSE);
 
   useEffect(() => {
-    categoryService.getCategories().then(resp => {
+    categoryService.getCategories().then((resp) => {
       setCategories(resp.data);
     });
 
@@ -93,7 +93,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
 
       gradeService
         .getGradesByCategoryId(course.primaryCategory.id, "id_asc")
-        .then(resp => {
+        .then((resp) => {
           setGrades(resp.data);
         });
     }
@@ -104,12 +104,13 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
     const categoryId = parseInt(e.target.value, 10);
     setCategoryId(categoryId);
     setGradeId(0);
-    gradeService.getGradesByCategoryId(categoryId, "id_asc").then(resp => {
+    gradeService.getGradesByCategoryId(categoryId, "id_asc").then((resp) => {
       setGrades(resp.data);
     });
   };
 
   const handleCourseFormSubmit = (e: FormEvent) => {
+    console.log("Submitedv ");
     e.preventDefault();
     if (gradeId > 0 && categoryId > 0) {
       let courseData;
@@ -118,35 +119,35 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
         headline: headline,
         description: description.toString("html"),
         level: level,
-        objectives: objectives.filter(el => el.trim()),
-        requirements: requirements.filter(el => el.trim()),
+        objectives: objectives.filter((el) => el.trim()),
+        requirements: requirements.filter((el) => el.trim()),
         status: status,
         gradeId: gradeId,
-        categoryId: categoryId
+        categoryId: categoryId,
       };
 
       if (props.course) {
         courseData = { ...newCourseData, id: props.course.id };
         courseService
           .updateCourse(courseData as IEditCourse)
-          .then(resp => {
+          .then((resp) => {
             setCourseErrors([]);
             props.history.push(BUILD_ADMIN_EDIT_COURSE_URL(resp.data.id));
             alertContext.show("Course updated successfully");
           })
-          .catch(err => {
+          .catch((err) => {
             setCourseErrors(parseError(err));
           });
       } else {
         courseData = { ...newCourseData };
         courseService
           .createCourse(courseData as INewCourse)
-          .then(resp => {
+          .then((resp) => {
             setCourseErrors([]);
             props.history.push(BUILD_ADMIN_EDIT_COURSE_URL(resp.data.id));
             alertContext.show("Course created successfully");
           })
-          .catch(err => {
+          .catch((err) => {
             setCourseErrors(parseError(err));
           });
       }
@@ -195,7 +196,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
     setRequirements(reqs);
   };
 
-  const categoryOptions = categories.map(cat => {
+  const categoryOptions = categories.map((cat) => {
     return (
       <option key={cat.id} value={cat.id}>
         {cat.name}
@@ -203,7 +204,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
     );
   });
 
-  const subCategoryOptions = grades.map(grad => {
+  const subCategoryOptions = grades.map((grad) => {
     return (
       <option key={grad.id} value={grad.id}>
         {grad.name}
@@ -221,12 +222,13 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
               type="text"
               value={obj}
               placeholder="Example: Algebra"
-              onChange={e => changeObjective(e.target.value, idx)}
+              onChange={(e) => changeObjective(e.target.value, idx)}
             ></input>
             <div className="input-group-append">
               <button
+                type="button"
                 className="btn btn-outline-danger"
-                onClick={e => removeObjective(e, idx)}
+                onClick={(e) => removeObjective(e, idx)}
               >
                 <FontAwesomeIcon icon="trash" />
               </button>
@@ -249,12 +251,13 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
               type="text"
               value={req}
               placeholder="Example: Basic English"
-              onChange={e => changeRequirement(e.target.value, idx)}
+              onChange={(e) => changeRequirement(e.target.value, idx)}
             ></input>
             <div className="input-group-append">
               <button
+                type="button"
                 className="btn btn-outline-danger"
-                onClick={e => removeRequirement(e, idx)}
+                onClick={(e) => removeRequirement(e, idx)}
               >
                 <FontAwesomeIcon icon="trash" />
               </button>
@@ -271,11 +274,11 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
     if (props.course) {
       const payload: ICourseStatusUpdateRequest = {
         id: props.course.id,
-        status: CourseStatus.PUBLISHED
+        status: CourseStatus.PUBLISHED,
       };
       courseService
         .publishCourse(props.course.id, payload)
-        .then(resp => {
+        .then((resp) => {
           if (resp.status === HTTPStatus.OK) {
             alertContext.show("Course successfully published");
             setActivePill(PillEnum.COURSE);
@@ -283,7 +286,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
             alertContext.show("Course published failed.", AlertVariant.DANGER);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
         });
     } else {
@@ -306,7 +309,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
           placeholder="Course Name"
           value={name}
           required
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
         ></input>
       </div>
 
@@ -316,7 +319,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
           className="form-control"
           value={headline}
           placeholder="A brief headline"
-          onChange={e => setHeadline(e.target.value)}
+          onChange={(e) => setHeadline(e.target.value)}
           required
         />
       </div>
@@ -326,7 +329,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
           className="rich-text-editor"
           toolbarConfig={RTE_TOOLBAR_CONFIG}
           value={description}
-          onChange={val => setDescription(val)}
+          onChange={(val) => setDescription(val)}
           placeholder="Enter a description"
         />
       </div>
@@ -338,7 +341,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
           value={level}
           required
           className="form-control"
-          onChange={e => setLevel(e.target.value)}
+          onChange={(e) => setLevel(e.target.value)}
         >
           <option value="" disabled>
             Choose Level
@@ -371,7 +374,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
           id="category-select-input"
           value={gradeId}
           className="form-control"
-          onChange={e => setGradeId(parseInt(e.target.value, 10))}
+          onChange={(e) => setGradeId(parseInt(e.target.value, 10))}
           required
         >
           <option key={0} value="0" disabled>
@@ -405,6 +408,7 @@ const CourseForm: React.FunctionComponent<IProp> = props => {
       </div>
       <div className="form-group action-btn-group">
         <button
+          type="button"
           className="btn btn-danger action-btn"
           onClick={() => props.history.push(ADMIN_COURSES_URL)}
         >

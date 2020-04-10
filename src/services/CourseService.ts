@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import Axios, { AxiosResponse, CancelTokenSource } from "axios";
 
 import {
   ICourse,
@@ -7,18 +7,19 @@ import {
   Page,
   IEditCourse,
   ICourseStatusUpdateRequest,
-  ISearchResponse
+  ISearchResponse,
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 import {
   DEFAULT_SORTING,
   DEFAULT_COURSE_STATUS,
-  PAGE_SIZE
+  PAGE_SIZE,
 } from "../settings/Constants";
 
 export class CourseService {
   private apiRequest = new ApiRequest();
   private baseUrl = "/courses";
+  private source: CancelTokenSource | null = null;
 
   public async getCourses(
     page: number,
@@ -85,8 +86,24 @@ export class CourseService {
     order = DEFAULT_SORTING,
     status = DEFAULT_COURSE_STATUS
   ): Promise<AxiosResponse<Page<ISearchResponse>>> {
+    if (this.source) {
+      this.source.cancel("Only one request at a time");
+    }
+
+    this.source = Axios.CancelToken.source();
     const url = `/search?query=${query}&page=${page}&size=${size}&order=${order}&status=${status}`;
-    return await this.apiRequest.get<Page<ISearchResponse>>(url);
+    return await this.apiRequest.get<Page<ISearchResponse>>(url, this.source);
+  }
+
+  public async searchCoursesByKeyword(
+    kw: string,
+    page: number,
+    size: number,
+    order = DEFAULT_SORTING,
+    status = DEFAULT_COURSE_STATUS
+  ): Promise<AxiosResponse<Page<ICourse>>> {
+    const url = `/courses/search?kw=${kw}&page=${page}&size=${size}&order=${order}&status=${status}`;
+    return await this.apiRequest.get<Page<ICourse>>(url);
   }
 
   public async createCourse(data: INewCourse): Promise<AxiosResponse<ICourse>> {

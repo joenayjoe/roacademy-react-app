@@ -1,0 +1,13 @@
+.search-container {
+    padding-top: 1rem;
+}
+
+.search-item {
+    color: #29303b;
+    padding: 5px;
+    border-top: 1px solid #dedfe0;
+}
+
+.search-item:hover {
+    background-color: #E9ECEF;
+}

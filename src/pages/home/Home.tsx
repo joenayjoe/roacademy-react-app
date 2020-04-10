@@ -31,7 +31,7 @@ const Home: React.FunctionComponent = () => {
   );
   const [
     lastCategoryCourseSlideIndex,
-    setLastCategoryCourseSlideIndex
+    setLastCategoryCourseSlideIndex,
   ] = useState<number>(0);
 
   // trending course states
@@ -44,7 +44,7 @@ const Home: React.FunctionComponent = () => {
   >(0);
   const [
     lastTrendingCourseSlideIndex,
-    setLastTrendingCourseSlideIndex
+    setLastTrendingCourseSlideIndex,
   ] = useState<number>(0);
 
   // new courses states
@@ -68,7 +68,7 @@ const Home: React.FunctionComponent = () => {
   >(0);
 
   const loadCategories = () => {
-    categoryService.getCategories("name_asc").then(resp => {
+    categoryService.getCategories("name_asc").then((resp) => {
       setCategories(resp.data);
       if (resp.data.length) {
         setSelectedCategoryId(resp.data[0].id);
@@ -76,20 +76,22 @@ const Home: React.FunctionComponent = () => {
     });
   };
   const loadCategoryCourses = (categoryId: number, page: number, size = 10) => {
-    courseService.getCoursesByCategoryId(categoryId, page, size).then(resp => {
-      setCategoryCourses(categoryCourses.concat(resp.data.content));
-      if (resp.data.last) {
-        setHasMoreCategoryCourses(false);
-      } else {
-        setHasMoreCategoryCourses(true);
-      }
-    });
+    courseService
+      .getCoursesByCategoryId(categoryId, page, size)
+      .then((resp) => {
+        setCategoryCourses(categoryCourses.concat(resp.data.content));
+        if (resp.data.last) {
+          setHasMoreCategoryCourses(false);
+        } else {
+          setHasMoreCategoryCourses(true);
+        }
+      });
   };
 
   const loadTrendingCourses = (page: number, size = 10) => {
     courseService
       .getCourses(page, size, DEFAULT_COURSE_STATUS, "hits_desc")
-      .then(resp => {
+      .then((resp) => {
         setTrendingCourses(trendingCourses.concat(resp.data.content));
         if (resp.data.last) {
           setHasMoreTrendingCourse(false);
@@ -102,7 +104,7 @@ const Home: React.FunctionComponent = () => {
   const loadNewCourses = (page: number, size = 10) => {
     courseService
       .getCourses(page, size, DEFAULT_COURSE_STATUS, "createdAt_desc")
-      .then(resp => {
+      .then((resp) => {
         setNewCourses(newCourses.concat(resp.data.content));
         if (resp.data.last) {
           setHasMoreNewCourse(false);
@@ -113,7 +115,7 @@ const Home: React.FunctionComponent = () => {
   };
 
   const loadPopularTopics = (page: number, size = 15) => {
-    gradeService.getGrades(page, size, "name_asc").then(resp => {
+    gradeService.getGrades(page, size, "name_asc").then((resp) => {
       setPopularTopics(popularTopics.concat(resp.data.content));
       if (resp.data.last) {
         setHasMorePopularTopics(false);
@@ -224,7 +226,7 @@ const Home: React.FunctionComponent = () => {
             key={category.name}
             courses={categoryCourses}
             hasMore={hasMoreCategoryCourses}
-            slideAfterChangeHandler={currentSlide =>
+            slideAfterChangeHandler={(currentSlide) =>
               handleCategoryCourseSlideAfterChangeEvent(currentSlide)
             }
             loadNextPage={loadNextCategoryCoursePage}
@@ -245,7 +247,7 @@ const Home: React.FunctionComponent = () => {
             key={selectedCategoryId}
             courses={categoryCourses}
             hasMore={hasMoreCategoryCourses}
-            slideAfterChangeHandler={currentSlide =>
+            slideAfterChangeHandler={(currentSlide) =>
               handleCategoryCourseSlideAfterChangeEvent(currentSlide)
             }
             loadNextPage={loadNextCategoryCoursePage}
@@ -255,7 +257,7 @@ const Home: React.FunctionComponent = () => {
     );
   };
   const getMobileCategoryCourseView = () => {
-    return categories.map(category => {
+    return categories.map((category) => {
       return (
         <div key={category.name} className="collapse-menu-item">
           <div
@@ -277,7 +279,7 @@ const Home: React.FunctionComponent = () => {
     });
   };
   const categoryPill = () => {
-    return categories.map(cat => {
+    return categories.map((cat) => {
       const className = selectedCategoryId === cat.id ? "active" : "";
       return (
         <li
@@ -306,7 +308,7 @@ const Home: React.FunctionComponent = () => {
         title="Trending Courses"
         courses={trendingCourses}
         hasMore={hasMoreTrendingCourse}
-        slideAfterChangeHandler={current => {
+        slideAfterChangeHandler={(current) => {
           handleTrendingCourseSlideAfterChangeEvent(current);
         }}
         loadNextPage={loadNextTrendingCoursePage}
@@ -320,7 +322,7 @@ const Home: React.FunctionComponent = () => {
         title="New Courses"
         courses={newCourses}
         hasMore={hasMoreNewCourse}
-        slideAfterChangeHandler={current =>
+        slideAfterChangeHandler={(current) =>
           handleNewCourseSlideAfterChangeEvent(current)
         }
         loadNextPage={loadNextNewCoursePage}
@@ -334,7 +336,7 @@ const Home: React.FunctionComponent = () => {
         title="Popular Topics"
         grades={popularTopics}
         hasMore={hasMorePopularTopics}
-        slideAfterChangeHandler={current =>
+        slideAfterChangeHandler={(current) =>
           handlePopulatTopicSlideAfterChangeEvent(current)
         }
         loadNextPage={loadNextPopulatTopicPage}

@@ -98,7 +98,6 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .content-wrapper {
-    /* padding-top: 5px; */
     flex: 1 0 auto;
 }
 
