@@ -20,16 +20,16 @@ interface IProps extends RouteComponentProps {
   href?: string;
 }
 
-const CourseSlide: React.FunctionComponent<IProps> = props => {
+const CourseSlide: React.FunctionComponent<IProps> = (props) => {
   // refs
   const observer = useRef<IntersectionObserver>();
 
   const lastCourseCardElementRef = useCallback(
-    node => {
+    (node) => {
       if (observer.current) {
         observer.current.disconnect();
       }
-      observer.current = new IntersectionObserver(entries => {
+      observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && props.hasMore) {
           props.loadNextPage();
         }
@@ -50,7 +50,7 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
             <Link
               key={course.id}
               to={BUILD_COURSE_URL(course.id)}
-              onClick={e => handleCourseOnClick(e, course)}
+              onClick={(e) => handleCourseOnClick(e, course)}
               ref={lastCourseCardElementRef}
             >
               <div className="card slick-card">
@@ -68,7 +68,7 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
             <Link
               key={course.id}
               to={BUILD_COURSE_URL(course.id)}
-              onClick={e => handleCourseOnClick(e, course)}
+              onClick={(e) => handleCourseOnClick(e, course)}
             >
               <div className="card slick-card">
                 <div className="card-body slick-card-title">
@@ -112,7 +112,7 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
     slidesToScroll: props.courses.length ? 5 : 1,
     nextArrow: <SliderNextArrow />,
     prevArrow: <SliderPrevArrow />,
-    afterChange: current => props.slideAfterChangeHandler(current),
+    afterChange: (current) => props.slideAfterChangeHandler(current),
     responsive: [
       {
         breakpoint: 769,
@@ -120,10 +120,10 @@ const CourseSlide: React.FunctionComponent<IProps> = props => {
           initialSlide: 0,
           slidesToShow: props.courses.length ? 3 : 1,
           slidesToScroll: props.courses.length ? 3 : 1,
-          swipeToSlide: true
-        }
-      }
-    ]
+          swipeToSlide: true,
+        },
+      },
+    ],
   };
 
   const getCourseSlide = (
