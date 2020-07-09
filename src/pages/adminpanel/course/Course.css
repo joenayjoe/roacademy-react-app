@@ -94,8 +94,8 @@
 
 .expanded-lecture {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
-    align-items: center;
     background-color: #fff;
     border: 1px solid #cacbcc;
     border-top: none;

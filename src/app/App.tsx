@@ -52,7 +52,9 @@ import {
   ADMIN_YOUTUBE_LINK,
   COURSE_WATCH_URL,
   TEACHER_REQUEST_URL,
-  ADMIN_USER_EDIT_URL
+  ADMIN_USER_EDIT_URL,
+  ADMIN_BOX_LINK,
+  ADMIN_IMGUR_LINK,
 } from "../settings/Constants";
 import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
@@ -71,6 +73,8 @@ import CoursePlayer from "../pages/player/CoursePlayer";
 import TeacherRequest from "../pages/user/TeacherRequest";
 import AdminUserEdit from "../pages/adminpanel/user/AdminUserEdit";
 import { isMobileOnly } from "react-device-detect";
+import Box from "../pages/adminpanel/box/Box";
+import Imgur from "../pages/adminpanel/imgur/Imgur";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -226,6 +230,18 @@ const App = () => {
                 exact
                 path={ADMIN_YOUTUBE_LINK}
                 component={Youtube}
+              />
+              <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_BOX_LINK}
+                component={Box}
+              />
+                            <PrivateRoute
+                role={RoleType.ADMIN}
+                exact
+                path={ADMIN_IMGUR_LINK}
+                component={Imgur}
               />
               <PublicRoute component={PageNotFound} />
             </Switch>

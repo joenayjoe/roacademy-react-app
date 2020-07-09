@@ -110,7 +110,6 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
   };
 
   const handleCourseFormSubmit = (e: FormEvent) => {
-    console.log("Submitedv ");
     e.preventDefault();
     if (gradeId > 0 && categoryId > 0) {
       let courseData;

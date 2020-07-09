@@ -13,7 +13,7 @@ const AlertSelector: React.FunctionComponent = () => {
         title={alertContext.message}
         errors={alertContext.errors}
         closeHandler={() => alertContext.close()}
-        showIcon
+        showIcon={true}
         dismissible={alertContext.dismissable}
       />
     );

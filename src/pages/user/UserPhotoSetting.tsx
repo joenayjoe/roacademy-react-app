@@ -1,4 +1,4 @@
-import React, { Component, ContextType } from "react";
+import React, {useContext, useState } from "react";
 import UserSettingContainer from "./UserSettingContainer";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -11,87 +11,71 @@ import {
   base64StringtoFile
 } from "../../utils/imageUtil";
 import UserService from "../../services/UserService";
+import { parseError } from "../../utils/errorParser";
+import { AlertContext } from "../../contexts/AlertContext";
+import { AlertVariant } from "../../settings/DataTypes";
+import Spinner from "../../components/spinner/Spinner";
 
-interface IStates {
-  selectedFile: File | null;
-  imgSrc: any;
-  crop: Crop;
-  image: HTMLImageElement | null;
-  isCropped: boolean;
-}
-class UserPhotoSetting extends Component<null, IStates> {
-  private authService: AuthService;
-  private userService: UserService;
-  static contextType = AuthContext;
-  context!: ContextType<typeof AuthContext>;
+const UserPhotoSetting: React.FunctionComponent = () => {
 
-  constructor(props: any) {
-    super(props);
-    this.authService = new AuthService();
-    this.userService = new UserService();
-  }
+  const authContext = useContext(AuthContext);
+  const alertContext = useContext(AlertContext);
+  const userService = new UserService();
+  const authService = new AuthService();
 
-  state: IStates = {
-    selectedFile: null,
-    imgSrc: null,
-    crop: {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imgSrc, setImgSrc] = useState<any>(null);
+  const [crop, setCrop] = useState<Crop>({unit: "%", x: 10, y: 10, width: 80, height: 80});
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [isCropped, setIsCropped] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  const setStateAfterPhotoChange = (file: File, imgSrc: any) => {
+    setSelectedFile(file);
+    setImgSrc(imgSrc);
+    setCrop( {
       unit: "%",
       x: 10,
       y: 10,
       width: 80,
       height: 80
-    },
-    image: null,
-    isCropped: false
-  };
-
-  setStateAfterPhotoChange = (file: File, imgSrc: any) => {
-    this.setState({
-      selectedFile: file,
-      imgSrc: imgSrc,
-      crop: {
-        unit: "%",
-        x: 10,
-        y: 10,
-        width: 80,
-        height: 80
-      },
-      image: null,
-      isCropped: false
     });
+    setImage(null);
+    setIsCropped(false);
   };
-  handleProfilePhotoInputOnChange = (files: FileList | null) => {
+  const handleProfilePhotoInputOnChange = (files: FileList | null) => {
     if (files) {
       const reader = new FileReader();
       reader.addEventListener(
         "load",
-        () => this.setStateAfterPhotoChange(files[0], reader.result),
+        () => setStateAfterPhotoChange(files[0], reader.result),
         false
       );
       reader.readAsDataURL(files[0]);
     }
   };
 
-  handleCropOnChange = (crop: Crop) => {
-    this.setState({ crop: crop });
+  const handleCropOnChange = (crop: Crop) => {
+    setCrop(crop);
   };
 
-  handleCropOnImageLoaded = (image: HTMLImageElement) => {
-    this.setState({ image: image });
+  const handleCropOnImageLoaded = (image: HTMLImageElement) => {
+   setImage(image);
   };
 
-  handleCropBtnClick = () => {
-    let imgSrc = cropAndConvertToBase64(this.state.crop, this.state.image);
-    this.setState({ imgSrc: imgSrc, isCropped: true });
+  const handleCropBtnClick = () => {
+    let imgSrc = cropAndConvertToBase64(crop, image);
+    setImgSrc(imgSrc);
+    setIsCropped(true);
   };
 
-  getImageUploadInput = () => {
+  const getImageUploadInput = () => {
     let imageInput;
-    if (this.state.selectedFile == null || this.state.isCropped) {
+    if (selectedFile == null || isCropped) {
       let fileLabel =
-        this.state.selectedFile == null
+        selectedFile == null
           ? "Choose a photo"
-          : this.state.selectedFile.name;
+          : selectedFile.name;
       imageInput = (
         <div className="input-group mb-3">
           <div className="custom-file">
@@ -103,7 +87,7 @@ class UserPhotoSetting extends Component<null, IStates> {
               accept=".jpeg,.jpg,.png, .gif"
               multiple={false}
               onChange={e =>
-                this.handleProfilePhotoInputOnChange(e.target.files)
+                handleProfilePhotoInputOnChange(e.target.files)
               }
             />
             <label className="custom-file-label">{fileLabel}</label>
@@ -112,7 +96,7 @@ class UserPhotoSetting extends Component<null, IStates> {
       );
     } else {
       imageInput = (
-        <button className="btn btn-danger" onClick={this.handleCropBtnClick}>
+        <button className="btn btn-danger" onClick={handleCropBtnClick}>
           Crop
         </button>
       );
@@ -120,53 +104,55 @@ class UserPhotoSetting extends Component<null, IStates> {
     return imageInput;
   };
 
-  uploadProfilePhoto = () => {
-    let { selectedFile, imgSrc } = this.state;
+  const uploadProfilePhoto = () => {
     if (selectedFile) {
       let fileName = selectedFile.name;
       let photoFile = base64StringtoFile(imgSrc, fileName);
 
       let formData = new FormData();
       formData.append("file", photoFile);
-      let userId =
-        this.context && this.context.currentUser && this.context.currentUser.id;
+      let userId = authContext.currentUser && authContext.currentUser.id;
       if (userId !== null) {
-        this.userService.updateUserProfilePhoto(formData, userId).then(resp => {
-          this.authService.setLoggedInUserCookie(resp.data);
+        setIsUploading(true);
+        userService.updateUserProfilePhoto(formData, userId).then(resp => {
+          authService.setLoggedInUserCookie(resp.data);
           window.location.reload();
+        }).catch(e => {
+          setIsUploading(false);
+          const errorMessages: string[] = parseError(e);
+          alertContext.show("Following errors prevents image from uploading", AlertVariant.DANGER, errorMessages, false)
         });
       }
     }
   };
 
-  render() {
-    let imagePreview = (
+  let imagePreview = (
       <FontAwesomeIcon icon="user" size="9x" color="rgb(104, 111, 122)" />
     );
 
-    if (this.state.selectedFile !== null && !this.state.isCropped) {
+    if (selectedFile !== null && !isCropped) {
       imagePreview = (
         <ReactCrop
-          src={this.state.imgSrc}
-          crop={this.state.crop}
-          onChange={this.handleCropOnChange}
-          onImageLoaded={this.handleCropOnImageLoaded}
+          src={imgSrc}
+          crop={crop}
+          onChange={handleCropOnChange}
+          onImageLoaded={handleCropOnImageLoaded}
         />
       );
-    } else if (this.state.isCropped) {
-      let imageUrl = this.state.imgSrc;
+    } else if (isCropped) {
+      let imageUrl = imgSrc;
       imagePreview = <img src={imageUrl} alt="Preview" />;
     } else if (
-      this.context &&
-      this.context.currentUser &&
-      this.context.currentUser.imageUrl
+    authContext.currentUser &&
+      authContext.currentUser.imageUrl
     ) {
-      let imageUrl = this.context.currentUser.imageUrl;
+      let imageUrl = authContext.currentUser.imageUrl;
       imagePreview = <img src={imageUrl} alt="Preview" />;
     }
     return (
       <UserSettingContainer>
         <div className="user-profile-form-wrapper">
+          {isUploading && <Spinner size="3x" />}
           <div className="user-profile-header">
             <h3>Photo</h3>
             <p className="text-secondary">Add a nice profile photo</p>
@@ -177,14 +163,14 @@ class UserPhotoSetting extends Component<null, IStates> {
               <div className="photo-preview">{imagePreview}</div>
               <div className="photo-upload-btn">
                 <h6>Add / Change Image</h6>
-                {this.getImageUploadInput()}
+                {getImageUploadInput()}
               </div>
             </div>
           </div>
           <div className="user-profile-footer">
             <button
               className="btn btn-primary mt-2"
-              onClick={this.uploadProfilePhoto}
+              onClick={uploadProfilePhoto}
             >
               Save
             </button>
@@ -192,7 +178,6 @@ class UserPhotoSetting extends Component<null, IStates> {
         </div>
       </UserSettingContainer>
     );
-  }
 }
 
 export default UserPhotoSetting;

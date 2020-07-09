@@ -3,17 +3,18 @@ import { ICourse, IChapter } from "../../settings/DataTypes";
 import { Link } from "react-router-dom";
 import {
   BUILD_ADMIN_USER_URL,
-  BUILD_COURSE_WATCH_URL
+  BUILD_COURSE_WATCH_URL,
 } from "../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Collapse from "../../components/collapse/Collapse";
+import ShowMoreText from "../../components/showmoretext/ShowMoreText";
 
 interface IProp {
   course: ICourse;
   chapters: IChapter[];
   className?: string;
 }
-const CourseDetail: React.FunctionComponent<IProp> = props => {
+const CourseDetail: React.FunctionComponent<IProp> = (props) => {
   const [collapsedChapter, setCollapsedChapter] = useState<IChapter | null>(
     null
   );
@@ -26,7 +27,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
       : setCollapsedChapter(ch);
   };
 
-  const courseObjectives = course.objectives.map(obj => {
+  const courseObjectives = course.objectives.map((obj) => {
     return (
       <li key={obj} className="course-objective-item">
         <FontAwesomeIcon icon="check" className="course-objective-icon" />
@@ -34,7 +35,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
       </li>
     );
   });
-  const courseRequirements = course.requirements.map(req => {
+  const courseRequirements = course.requirements.map((req) => {
     return (
       <li key={req} className="course-requirement-item">
         <FontAwesomeIcon
@@ -114,7 +115,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
   );
 
   const getLectureList = (ch: IChapter) => {
-    return ch.lectures.map(lecture => {
+    return ch.lectures.map((lecture) => {
       return (
         <Link
           key={`${lecture.id}_${lecture.name}`}
@@ -131,7 +132,7 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
     });
   };
 
-  const chapterList = props.chapters.map(ch => {
+  const chapterList = props.chapters.map((ch) => {
     const icon =
       collapsedChapter && collapsedChapter.id === ch.id ? "minus" : "plus";
     return (
@@ -224,7 +225,9 @@ const CourseDetail: React.FunctionComponent<IProp> = props => {
             </div>
             <div className="course-detail-description pt-3">
               <h4>Description</h4>
-              <div dangerouslySetInnerHTML={markupDescription()} />
+              <ShowMoreText height={200}>
+                <div dangerouslySetInnerHTML={markupDescription()} />
+              </ShowMoreText>
             </div>
           </div>
         </div>

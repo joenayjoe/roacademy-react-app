@@ -6,11 +6,13 @@ import {
   ADMIN_COURSES_URL,
   ADMIN_PANEL_URL,
   ADMIN_USERS_URL,
-  ADMIN_YOUTUBE_LINK
+  ADMIN_YOUTUBE_LINK,
+  ADMIN_BOX_LINK,
+  ADMIN_IMGUR_LINK,
 } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {}
-const AdminControl: React.FunctionComponent<IProps> = props => {
+const AdminControl: React.FunctionComponent<IProps> = (props) => {
   const handleLinkClick = (url: string) => {
     props.history.push(url);
   };
@@ -59,6 +61,20 @@ const AdminControl: React.FunctionComponent<IProps> = props => {
             onClick={() => handleLinkClick(ADMIN_YOUTUBE_LINK)}
           >
             YouTube Config
+          </li>
+
+          <li
+            className={`menu-link ${getActiveClassName(ADMIN_BOX_LINK)}`}
+            onClick={() => handleLinkClick(ADMIN_BOX_LINK)}
+          >
+            Box Config
+          </li>
+
+          <li
+            className={`menu-link ${getActiveClassName(ADMIN_IMGUR_LINK)}`}
+            onClick={() => handleLinkClick(ADMIN_IMGUR_LINK)}
+          >
+            Imgur Config
           </li>
         </ul>
       </div>

@@ -12,7 +12,8 @@ import {
   ILecture,
   IEditLecture,
   IChapterPositinUpdateRequest,
-  ILecturePositionUpdateRequest
+  ILecturePositionUpdateRequest,
+  ILectureResource,
 } from "../../../settings/DataTypes";
 import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,13 +28,15 @@ import {
   DragDropContext,
   DropResult,
   Droppable,
-  Draggable
+  Draggable,
 } from "react-beautiful-dnd";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import Spinner from "../../../components/spinner/Spinner";
 
 interface IProp extends RouteComponentProps {
   course: ICourse;
 }
-const ChapterForm: React.FunctionComponent<IProp> = props => {
+const ChapterForm: React.FunctionComponent<IProp> = (props) => {
   const alertContext = useContext(AlertContext);
   const chapterService = new ChapterService();
   const lectureService = new LectureService();
@@ -63,20 +66,23 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   const [newLectureErrors, setNewLectureErrors] = useState<string[]>([]);
   const [
     chapterForNewLecture,
-    setChapterForNewLecture
+    setChapterForNewLecture,
   ] = useState<IChapter | null>(null);
 
   // states for uploading lecture content
   const [addingContentTo, setAddingContentTo] = useState<ILecture | null>(null);
   const [
     addingContentType,
-    setAddingContntType
-  ] = useState<LecuteContentType | null>(null);
+    setAddingContntType,
+  ] = useState<LectureContentType | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [expandedLecture, setExpandedLecture] = useState<ILecture | null>(null);
   const [lectureContentError, setLectureContentError] = useState<string[]>([]);
+  const [isUploadingLectureResource, setIsUploadingLectureResource] = useState<
+    boolean
+  >(false);
 
   // editing lecture state
 
@@ -89,22 +95,22 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   );
   const [
     editingLectureChapter,
-    setEditingLectureChapter
+    setEditingLectureChapter,
   ] = useState<IChapter | null>(null);
 
   // constants and enums and type
 
   enum DROPABLE_TYPE {
     CHAPTER = "chapter",
-    LECTURE = "lecture"
+    LECTURE = "lecture",
   }
-  enum LecuteContentType {
+  enum LectureContentType {
     VIDEO = "video",
-    PDF = "pdf"
+    PDF = "pdf",
   }
 
   useEffect(() => {
-    chapterService.getChaptersByCourseId(props.course.id).then(resp => {
+    chapterService.getChaptersByCourseId(props.course.id).then((resp) => {
       setChapters(resp.data);
     });
     // eslint-disable-next-line
@@ -115,18 +121,18 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     const newChapter: INewChapter = {
       name: newChapterName,
       courseId: props.course.id,
-      position: chapters.length
+      position: chapters.length,
     };
 
     chapterService
       .createChapter(props.course.id, newChapter)
-      .then(resp => {
+      .then((resp) => {
         const chptrs = [...chapters];
         chptrs.push(resp.data);
         setChapters(chptrs);
         resetNewChapter();
       })
-      .catch(err => {
+      .catch((err) => {
         setNewChapterErrors(parseError(err));
       });
   };
@@ -136,17 +142,17 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     if (currentEditChapter && editChapterIndex !== null) {
       const edit_ch: IEditChapter = {
         id: currentEditChapter.id,
-        name: currentEditChapter.name
+        name: currentEditChapter.name,
       };
       chapterService
         .updateChapter(props.course.id, edit_ch.id, edit_ch)
-        .then(resp => {
+        .then((resp) => {
           const chptrs = [...chapters];
           chptrs[editChapterIndex] = resp.data;
           setChapters(chptrs);
           resetEditChapter();
         })
-        .catch(err => {
+        .catch((err) => {
           setEditChapterErrors(parseError(err));
         });
     } else {
@@ -188,7 +194,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     chapterId: number,
     index: number
   ) => {
-    chapterService.deleteChapter(courseId, chapterId).then(resp => {
+    chapterService.deleteChapter(courseId, chapterId).then((resp) => {
       if (resp.status === HTTPStatus.OK) {
         const chptrs = [...chapters];
         chptrs.splice(index, 1);
@@ -225,7 +231,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
 
   const handleLectureEditClick = (chapterId: number, lectureId: number) => {
     resetLectureContent();
-    chapters.forEach(ch => {
+    chapters.forEach((ch) => {
       if (ch.id === chapterId) {
         const lctrs = [...ch.lectures];
         lctrs.forEach((l, i) => {
@@ -244,7 +250,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   const handleLectureDeleteClick = (chapterId: number, lectureId: number) => {
     lectureService
       .deleteLecture(props.course.id, chapterId, lectureId)
-      .then(resp => {
+      .then((resp) => {
         const chptrs = [...chapters];
         chptrs.forEach((ch, chIdx) => {
           if (ch.id === chapterId) {
@@ -258,7 +264,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         setChapters(chptrs);
         alertContext.show("Lecture succesfully deleted");
       })
-      .catch(err => {
+      .catch((err) => {
         alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
       });
   };
@@ -267,14 +273,14 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     const trim_t = text.trim();
     if (isNewLecture) {
       const tags = [...newLectureTags];
-      const found = tags.some(x => x === trim_t);
+      const found = tags.some((x) => x === trim_t);
       if (!found && trim_t.length > 0) {
         tags.push(trim_t);
         setNewLectureTags(tags);
       }
     } else if (editingLecture) {
       const tags = [...editingLecture.tags];
-      const found = tags.some(x => x === trim_t);
+      const found = tags.some((x) => x === trim_t);
       if (!found && trim_t.length > 0) {
         tags.push(trim_t);
         editingLecture.tags = tags;
@@ -306,10 +312,10 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     if (val.trim().length > 1) {
       tagService
         .search(val)
-        .then(resp => {
-          setTagSuggestions(resp.data.map(t => t.name));
+        .then((resp) => {
+          setTagSuggestions(resp.data.map((t) => t.name));
         })
-        .catch(err => {
+        .catch((err) => {
           setTagSuggestions([]);
         });
     } else {
@@ -325,11 +331,11 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         description: newLectureDescription.toString("html"),
         tags: newLectureTags,
         chapterId: chapterForNewLecture.id,
-        position: chapterForNewLecture.lectures.length
+        position: chapterForNewLecture.lectures.length,
       };
       lectureService
         .createLecture(props.course.id, chapterForNewLecture.id, lecutreData)
-        .then(resp => {
+        .then((resp) => {
           const chptrs = [...chapters];
           for (let ch of chptrs) {
             if (ch.id === chapterForNewLecture.id) {
@@ -341,7 +347,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
           resetNewLecture();
           alertContext.show("Lecture added successfully");
         })
-        .catch(err => {
+        .catch((err) => {
           setNewLectureErrors(parseError(err));
         });
     }
@@ -355,7 +361,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         name: editingLecture.name,
         description: editingLectureDesctiption.toString("html"),
         tags: editingLecture.tags,
-        chapterId: editingLectureChapter.id
+        chapterId: editingLectureChapter.id,
       };
       lectureService
         .updateLecture(
@@ -364,7 +370,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
           editingLecture.id,
           formData
         )
-        .then(resp => {
+        .then((resp) => {
           const chptrs = [...chapters];
           let updated = false;
           for (let i = 0; i < chptrs.length; i++) {
@@ -386,7 +392,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           setEditingLectureErrors(parseError(err));
         });
     }
@@ -424,13 +430,13 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
       chptrs.forEach((ch, idx) => {
         const p: IChapterPositinUpdateRequest = {
           chapterId: ch.id,
-          position: idx
+          position: idx,
         };
         positionsToUpdate.push(p);
       });
       chapterService
         .updatePositions(props.course.id, positionsToUpdate)
-        .then(resp => {
+        .then((resp) => {
           if (resp.status === HTTPStatus.OK) {
             setChapters(chptrs as IChapter[]);
           }
@@ -459,7 +465,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
           destIndex
         );
         let lecturePositions: ILecturePositionUpdateRequest[] = [];
-        newChapters = newChapters.map(ch => {
+        newChapters = newChapters.map((ch) => {
           if (ch.id === sourceParentId) {
             const lectures: ILecture[] = reorderedLectures as ILecture[];
             ch.lectures = lectures;
@@ -467,7 +473,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
               lecturePositions.push({
                 chapterId: ch.id,
                 lectureId: l.id,
-                position: i
+                position: i,
               });
             });
           }
@@ -475,12 +481,12 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         });
         lectureService
           .updateLecturePositions(lecturePositions)
-          .then(resp => {
+          .then((resp) => {
             if (resp.status === HTTPStatus.OK) {
               setChapters(newChapters);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             alertContext.show("Something went wrong.", AlertVariant.DANGER);
           });
       } else {
@@ -491,14 +497,14 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
 
         let lecturePositions: ILecturePositionUpdateRequest[] = [];
 
-        newChapters = newChapters.map(ch => {
+        newChapters = newChapters.map((ch) => {
           if (ch.id === sourceParentId) {
             ch.lectures = newSourceLectures;
             newSourceLectures.forEach((l: ILecture, i: number) => {
               lecturePositions.push({
                 chapterId: ch.id,
                 lectureId: l.id,
-                position: i
+                position: i,
               });
             });
           } else if (ch.id === destParentId) {
@@ -507,7 +513,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
               lecturePositions.push({
                 chapterId: ch.id,
                 lectureId: l.id,
-                position: i
+                position: i,
               });
             });
           }
@@ -516,12 +522,12 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
 
         lectureService
           .updateLecturePositions(lecturePositions)
-          .then(resp => {
+          .then((resp) => {
             if (resp.status === HTTPStatus.OK) {
               setChapters(newChapters);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             alertContext.show("Something went wrong.", AlertVariant.DANGER);
           });
       }
@@ -551,34 +557,70 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     }
   };
 
-  const handleLectureContentFormSubmit = (e: FormEvent) => {
+  const deleteLectureResource = (
+    lecture: ILecture,
+    resource: ILectureResource
+  ) => {
+    lectureService
+      .deleteLectureResource(lecture.id, resource.id)
+      .then((resp) => {
+        alertContext.show("Lecture resource Successfully deleted.");
+        let idx = lecture.lectureResources.indexOf(resource);
+        lecture.lectureResources.splice(idx, 1);
+        setExpandedLecture(lecture);
+        let chptrs = [...chapters];
+        let found = false;
+        for (let ch of chptrs) {
+          for (let l of ch.lectures) {
+            if (l.id === lecture.id) {
+              l = lecture;
+              found = true;
+              break;
+            }
+          }
+          if (found) {
+            break;
+          }
+        }
+        setChapters(chptrs);
+        alertContext.show("Lecture Resource deleted successfully");
+      })
+      .catch((err) => {
+        let errors = parseError(err);
+        setLectureContentError(errors);
+      });
+  };
+
+  const handleLectureContentFormSubmit = (e: FormEvent, lecture: ILecture) => {
     e.preventDefault();
-    if (selectedFile && addingContentTo) {
+    if (selectedFile && addingContentTo && addingContentTo.id === lecture.id) {
+      setIsUploadingLectureResource(true);
       const formData = new FormData();
       formData.append("file", selectedFile, selectedFile.name);
       lectureService
-        .uploadLectureContent(addingContentTo.id, formData)
-        .then(resp => {
-          const chptrs = [...chapters];
+        .uploadLectureResource(lecture.id, formData)
+        .then((resp) => {
+          let chptrs = [...chapters];
           let found = false;
           for (let ch of chptrs) {
-            const lctrs = [...ch.lectures];
-            for (let l of lctrs) {
+            for (let l of ch.lectures) {
               if (l.id === addingContentTo.id) {
-                l.lectureResource = resp.data;
+                l.lectureResources = resp.data.lectureResources;
                 found = true;
                 break;
               }
             }
             if (found) {
-              ch.lectures = lctrs;
               break;
             }
           }
           setChapters(chptrs);
           resetLectureContent();
+          setIsUploadingLectureResource(false);
+          alertContext.show("Lecture Resource added successfully");
         })
-        .catch(err => {
+        .catch((err) => {
+          setIsUploadingLectureResource(false);
           setLectureContentError(parseError(err));
         });
     }
@@ -608,30 +650,49 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     <Alert errors={editingLectureErrors} variant={AlertVariant.DANGER} />
   ) : null;
 
-  const lectureResourceFlashError = lectureContentError.length ? (
+  const lectureResourceErrorFlash = lectureContentError.length ? (
     <Alert errors={lectureContentError} variant={AlertVariant.DANGER} />
   ) : null;
+
+  const getLectureContentView = (lecture: ILecture) => {
+    let contents: JSX.Element[] = [];
+
+    for (let lectureResource of lecture.lectureResources) {
+      let icon: IconProp = lectureResource.contentType.startsWith("video")
+        ? "file-video"
+        : "file-pdf";
+      let a = (
+        <div key={lectureResource.id} className="d-flex flex-wrap align-items-center">
+          <FontAwesomeIcon icon={icon} size="2x" className="mr-3" />
+          <Link
+            to={{ pathname: lectureResource.fileUrl }}
+            target="_blank"
+            className="mr-3"
+          >
+            {lectureResource.fileName}
+          </Link>
+
+          <button
+            className="btn icon-hoverable"
+            onClick={() => deleteLectureResource(lecture, lectureResource)}
+          >
+            <FontAwesomeIcon icon="trash" color="#686f7a" />
+          </button>
+        </div>
+      );
+      contents.push(a);
+    }
+    return contents;
+  };
 
   const getLectureDetailView = (lecture: ILecture) => {
     if (
       expandedLecture &&
       expandedLecture.id === lecture.id &&
-      lecture.lectureResource
+      lecture.lectureResources.length > 0
     ) {
       return (
-        <div className="expanded-lecture">
-          <FontAwesomeIcon icon="file-pdf" size="2x" className="mr-3" />
-          <Link to="/" className="mr-3">
-            {lecture.lectureResource.fileName}
-          </Link>
-          <button
-            className="btn icon-hoverable"
-            onClick={() => handleAddContentClick(lecture)}
-          >
-            <FontAwesomeIcon icon="edit" className="mr-2" />
-            <span>Edit Content</span>
-          </button>
-        </div>
+        <div className="expanded-lecture">{getLectureContentView(lecture)}</div>
       );
     }
 
@@ -641,7 +702,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     if (chapterForNewLecture && chapterForNewLecture.id === chapterId) {
       return (
         <div className="new-lecture">
-          <form onSubmit={e => handleNewLectureFormSubmit(e)}>
+          <form onSubmit={(e) => handleNewLectureFormSubmit(e)}>
             {newLectureErrorFlash}
             <div className="form-group">
               <label>Lecture name</label>
@@ -650,7 +711,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 type="text"
                 value={newLectureName}
                 placeholder="Lecture name"
-                onChange={e => setNewLectureName(e.target.value)}
+                onChange={(e) => setNewLectureName(e.target.value)}
               />
             </div>
 
@@ -660,7 +721,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 className="rich-text-editor"
                 toolbarConfig={RTE_TOOLBAR_CONFIG}
                 value={newLectureDescription}
-                onChange={val => setNewLectureDescription(val)}
+                onChange={(val) => setNewLectureDescription(val)}
                 placeholder="Enter a lecture description"
               />
             </div>
@@ -670,9 +731,9 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 tags={newLectureTags}
                 suggestions={tagSuggestions}
                 delimeters={[13, 188]}
-                onAddHandler={val => addTag(val)}
-                onDeleteHandler={idx => removeTag(idx)}
-                onChangeHandler={val => handleTagChange(val)}
+                onAddHandler={(val) => addTag(val)}
+                onDeleteHandler={(idx) => removeTag(idx)}
+                onChangeHandler={(val) => handleTagChange(val)}
               />
             </div>
             <div className="form-group action-btn-group">
@@ -709,7 +770,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     ) {
       return (
         <div className="edit-lecture">
-          <form onSubmit={e => handleEditLectureFormSubmit(e)}>
+          <form onSubmit={(e) => handleEditLectureFormSubmit(e)}>
             {editLectureErrorFlash}
             <div className="form-group">
               <label>Lecture name</label>
@@ -717,7 +778,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 className="form-control"
                 type="text"
                 value={editingLecture.name}
-                onChange={e =>
+                onChange={(e) =>
                   setEditingLecture({ ...editingLecture, name: e.target.value })
                 }
               />
@@ -728,7 +789,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 className="rich-text-editor"
                 toolbarConfig={RTE_TOOLBAR_CONFIG}
                 value={editingLectureDesctiption}
-                onChange={val => setEditingLectureDescription(val)}
+                onChange={(val) => setEditingLectureDescription(val)}
                 placeholder="Enter a lecture description"
               />
             </div>
@@ -738,9 +799,9 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 tags={editingLecture.tags}
                 suggestions={tagSuggestions}
                 delimeters={[13, 188]}
-                onAddHandler={val => addTag(val, false)}
-                onDeleteHandler={idx => removeTag(idx, false)}
-                onChangeHandler={val => handleTagChange(val)}
+                onAddHandler={(val) => addTag(val, false)}
+                onDeleteHandler={(idx) => removeTag(idx, false)}
+                onChangeHandler={(val) => handleTagChange(val)}
               />
             </div>
             <div className="form-group action-btn-group">
@@ -775,7 +836,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
 
     let acceptType = ".mov,.mpeg4,.mp4, .avi, .wmv, .mpegps, .flv, 3gpp, .webm";
     let choose = "Choose a video";
-    if (addingContentType === LecuteContentType.PDF) {
+    if (addingContentType === LectureContentType.PDF) {
       acceptType = ".pdf";
       choose = "Choose a PDF file";
     }
@@ -783,8 +844,9 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     const fileName = selectedFile ? selectedFile.name : choose;
     return (
       <div className="lecture-file">
-        <form onSubmit={e => handleLectureContentFormSubmit(e)}>
-          {lectureResourceFlashError}
+        {isUploadingLectureResource ? <Spinner size="3x" /> : null}
+        <form onSubmit={(e) => handleLectureContentFormSubmit(e, lecture)}>
+          {lectureResourceErrorFlash}
           <div className="input-group mb-2">
             <div className="custom-file">
               <input
@@ -793,7 +855,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 className="custom-file-input"
                 accept={acceptType}
                 multiple={false}
-                onChange={e => handleLectureFileSelect(e)}
+                onChange={(e) => handleLectureFileSelect(e)}
               />
               <label className="custom-file-label">{fileName}</label>
             </div>
@@ -824,18 +886,18 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
         <div className="lecture-content-selector">
           <div
             className={`lecture-type ${
-              addingContentType === LecuteContentType.VIDEO ? "active" : ""
+              addingContentType === LectureContentType.VIDEO ? "active" : ""
             }`}
-            onClick={() => setAddingContntType(LecuteContentType.VIDEO)}
+            onClick={() => setAddingContntType(LectureContentType.VIDEO)}
           >
             <FontAwesomeIcon icon="file-video" size="2x" className="mb-2" />
             <span>Video</span>
           </div>
           <div
             className={`lecture-type ${
-              addingContentType === LecuteContentType.PDF ? "active" : ""
+              addingContentType === LectureContentType.PDF ? "active" : ""
             }`}
-            onClick={() => setAddingContntType(LecuteContentType.PDF)}
+            onClick={() => setAddingContntType(LectureContentType.PDF)}
           >
             <FontAwesomeIcon icon="file-pdf" size="2x" className="mb-2" />
             <span>PDF</span>
@@ -866,26 +928,23 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
   };
 
   const getAddContentButton = (lecture: ILecture) => {
-    if (!lecture.lectureResource) {
-      return (
-        <button
-          type="button"
-          className="btn btn-outline-info"
-          onClick={() => handleAddContentClick(lecture)}
-        >
-          <FontAwesomeIcon
-            icon={
-              addingContentTo && addingContentTo.id === lecture.id
-                ? "minus"
-                : "plus"
-            }
-            className="mr-2"
-          />
-          <span>Content</span>
-        </button>
-      );
-    }
-    return null;
+    return (
+      <button
+        type="button"
+        className="btn btn-outline-info"
+        onClick={() => handleAddContentClick(lecture)}
+      >
+        <FontAwesomeIcon
+          icon={
+            addingContentTo && addingContentTo.id === lecture.id
+              ? "minus"
+              : "plus"
+          }
+          className="mr-2"
+        />
+        <span>Content</span>
+      </button>
+    );
   };
 
   const getExpandButton = (lecture: ILecture) => {
@@ -948,7 +1007,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
     if (currentEditChapter && currentEditChapter.id === chapterId) {
       return (
         <div className="edit-chapter">
-          <form onSubmit={e => submitChapterEdit(e)}>
+          <form onSubmit={(e) => submitChapterEdit(e)}>
             {editChapterErrorFlash}
             <div className="form-group">
               <label>Chapter name</label>
@@ -957,7 +1016,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
                 type="text"
                 value={currentEditChapter.name}
                 placeholder="Enter a section name"
-                onChange={e => handleChapterNameChange(e.target.value)}
+                onChange={(e) => handleChapterNameChange(e.target.value)}
               />
             </div>
             <div className="action-btn-group">
@@ -991,7 +1050,7 @@ const ChapterForm: React.FunctionComponent<IProp> = props => {
               type="text"
               value={newChapterName}
               placeholder="Enter a chapter name"
-              onChange={e => setNewChapterName(e.target.value)}
+              onChange={(e) => setNewChapterName(e.target.value)}
             />
           </div>
           <div className="action-btn-group form-group">

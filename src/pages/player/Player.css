@@ -45,7 +45,8 @@
     padding: 1rem;
     margin: 0;
     text-align: center;
-    height: 100%;
+    position: relative;
+    top: 35%;
 }
 
 .player-menu {
@@ -74,8 +75,8 @@
     width: 75%;
 }
 
-.cp-bottom-container .description {
-    margin: 1rem 0;
+.cp-bottom-container .description-container {
+    padding-bottom: 1rem;
     border-bottom: 1px solid #dedfe0;
 }
 
@@ -119,7 +120,7 @@
     .cp-bottom-container {
         padding: 0 1rem;
     }
-    .cp-bottom-container .description {
+    .cp-bottom-container .description-container {
         display: none;
     }
 }

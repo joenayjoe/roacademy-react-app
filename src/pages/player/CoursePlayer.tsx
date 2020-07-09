@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { CourseService } from "../../services/CourseService";
 import ChapterService from "../../services/ChapterService";
 import {
@@ -7,11 +7,11 @@ import {
   IChapter,
   AlertVariant,
   ILecture,
-  ILectureResource
+  ILectureResource,
 } from "../../settings/DataTypes";
 import {
   DEFAULT_COURSE_STATUS,
-  BUILD_COURSE_WATCH_URL
+  BUILD_COURSE_WATCH_URL,
 } from "../../settings/Constants";
 import { parseError } from "../../utils/errorParser";
 import { parseQueryParams } from "../../utils/queryParser";
@@ -23,10 +23,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Avatar from "../../components/avatar/Avatar";
 import { AuthContext } from "../../contexts/AuthContext";
 import Collapse from "../../components/collapse/Collapse";
+import ShowMoreText from "../../components/showmoretext/ShowMoreText";
 
 interface IProps extends RouteComponentProps {}
 
-const CoursePlayer: React.FunctionComponent<IProps> = props => {
+const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
   const authContext = useContext(AuthContext);
 
   const query_params = parseQueryParams(props.location.search);
@@ -48,12 +49,6 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
   const [newComment, setNewComment] = useState<string>("");
   const [playingLecture, setPlayingLecture] = useState<ILecture | null>(null);
 
-  // const [nextChapter, setNextChapter] = useState<IChapter | null>(null);
-  // const [prevChapter, setPrevChapter] = useState<IChapter | null>(null);
-
-  // const [nextLecture, setNextLecture] = useState<ILecture | null>(null);
-  // const [prevLecture, setPrevLecture] = useState<ILecture | null>(null);
-
   const [showPlayerControls, setShowPlayerControls] = useState<boolean>(false);
 
   const avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
@@ -62,17 +57,17 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
     if (courseId > 0) {
       courseService
         .getCourse(courseId, DEFAULT_COURSE_STATUS)
-        .then(response => {
+        .then((response) => {
           setCourse(response.data);
           chapterService
             .getChaptersByCourseId(response.data.id)
-            .then(resp => {
+            .then((resp) => {
               setChapters(resp.data);
               if (playingLecutureId && playingChapterId) {
                 setExpandedChapterIds([playingChapterId]);
-                const ch = resp.data.find(ch => ch.id === playingChapterId);
+                const ch = resp.data.find((ch) => ch.id === playingChapterId);
                 if (ch) {
-                  const l = ch.lectures.find(l => l.id === playingLecutureId);
+                  const l = ch.lectures.find((l) => l.id === playingLecutureId);
                   if (l) {
                     setPlayingLecture(l);
                   }
@@ -94,12 +89,12 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
               }
               setIsLoaded(true);
             })
-            .catch(err => {
+            .catch((err) => {
               setChapterError(parseError(err));
               setIsLoaded(true);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           setCourseError(parseError(err));
           setIsLoaded(true);
         });
@@ -176,7 +171,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
   };
 
   const lectureList = (chapter: IChapter) => {
-    return chapter.lectures.map(lecture => {
+    return chapter.lectures.map((lecture) => {
       const klass =
         playingLecture && playingLecture.id === lecture.id ? "playing" : "";
       return (
@@ -194,7 +189,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
   const getExapndIcon = (ch: IChapter) => {
     return expandedChapterIds.includes(ch.id) ? "angle-up" : "angle-down";
   };
-  const chapterList = chapters.map(ch => {
+  const chapterList = chapters.map((ch) => {
     return (
       <div key={`${ch.id}_${ch.name}`} className="collapse-menu-item">
         <div
@@ -213,6 +208,30 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
     );
   });
 
+  const getFileResourcesForPlayingLecture = () => {
+    let resources =
+      playingLecture &&
+      playingLecture.lectureResources.map((resource) => {
+        if (!resource.contentType.startsWith("video/")) {
+          return (
+            <div className="lecture-file-resource" key={resource.id}>
+              <FontAwesomeIcon icon="file-pdf" className="mr-2" />
+              <Link to={{ pathname: resource.fileUrl }} target="_blank">
+                {resource.fileName}
+              </Link>
+            </div>
+          );
+        }
+      });
+
+    return resources && resources.length ? (
+      <div className="lecture-resources">
+        <h4>Resources</h4>
+        {resources}
+      </div>
+    ) : null;
+  };
+
   const markupDescription = () => {
     if (playingLecture) {
       return { __html: playingLecture.description };
@@ -221,30 +240,41 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
     }
   };
 
-  const buildIframeSrc = (resource: ILectureResource) => {
-    if (resource.contentType.startsWith("video")) {
+  const buildIframeSrc = (resources: ILectureResource[]) => {
+    let vr: ILectureResource | undefined;
+    let url: string | undefined;
+    for (let resource of resources) {
+      if (resource.contentType.startsWith("video/")) {
+        vr = resource;
+        break;
+      }
+    }
+    if (vr) {
       const params =
         "?controls=1&enablejsapi=1&modestbranding=1&showinfo=0&iv_load_policy=3&html5=1&fs=1&rel=0&hl=en&cc_lang_pref=en&cc_load_policy=1&start=0&autoplay=1";
-      const url =
-        "https://www.youtube-nocookie.com/embed/" + resource.fileUrl + params;
-      return url;
-    } else {
-      const url =
-        "https://docs.google.com/viewer?url=" +
-        resource.fileUrl +
-        "&embedded=true";
-      return url;
+      url = "https://www.youtube-nocookie.com/embed/" + vr.fileUrl + params;
     }
+    return url;
   };
   const getIframeForPlayingLecture = () => {
     if (playingLecture) {
-      if (playingLecture.lectureResource) {
-        return (
-          <iframe
-            style={{ width: "100%", height: "100%" }}
-            src={buildIframeSrc(playingLecture.lectureResource)}
-          ></iframe>
-        );
+      if (playingLecture.lectureResources.length > 0) {
+        let contentSrc = buildIframeSrc(playingLecture.lectureResources);
+        if (contentSrc == null) {
+          return (
+            <div className="empty-resource">
+              <h1>No Video Found</h1>
+              <p>See the resources below</p>
+            </div>
+          );
+        } else {
+          return (
+            <iframe
+              style={{ width: "100%", height: "100%" }}
+              src={contentSrc}
+            ></iframe>
+          );
+        }
       } else {
         return (
           <div className="empty-resource">
@@ -288,10 +318,19 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
           <div className="player-menu collapse-menu">{chapterList}</div>
 
           <div className="cp-bottom-container">
-            <div className="description">
+            <div className="description-container">
               <h4>{playingLecture && playingLecture.name}</h4>
-              <div dangerouslySetInnerHTML={markupDescription()} />
+              <ShowMoreText
+                key={playingLecture ? playingLecture.id : undefined}
+                expanded={false}
+              >
+                <div
+                  className="description"
+                  dangerouslySetInnerHTML={markupDescription()}
+                />
+              </ShowMoreText>
             </div>
+            {getFileResourcesForPlayingLecture()}
             <div className="comment-section">
               <div className="comment-top">
                 <div className="comment-count mr-2">
@@ -309,7 +348,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
                       className="form-control"
                       value={newComment}
                       placeholder="Add a public comment"
-                      onChange={e => setNewComment(e.target.value)}
+                      onChange={(e) => setNewComment(e.target.value)}
                     />
                   </div>
                   <div className="form-group float-right">
@@ -375,6 +414,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = props => {
       );
     }
   };
+
   return isLoaded ? (
     <div className="course-player">{getPlayerContent()}</div>
   ) : (

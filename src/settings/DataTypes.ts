@@ -169,7 +169,7 @@ export interface ILecture extends IPrimaryLecture, IAuditable {
   description: string;
   position: number;
   tags: string[];
-  lectureResource: ILectureResource;
+  lectureResources: ILectureResource[];
 }
 
 export interface INewLecture {
@@ -197,7 +197,7 @@ export interface ILectureResource extends IAuditable {
   id: number;
   fileName: string;
   contentType: string;
-  fileSize: number;
+  fileSize: string;
   fileUrl: string;
 }
 

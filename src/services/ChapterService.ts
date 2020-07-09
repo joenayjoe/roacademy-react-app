@@ -6,7 +6,7 @@ import {
   INewCategory,
   IEditChapter,
   IChapterPositinUpdateRequest,
-  HTTPStatus
+  HTTPStatus,
 } from "../settings/DataTypes";
 
 class ChapterService {

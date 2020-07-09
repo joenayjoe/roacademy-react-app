@@ -7,7 +7,6 @@ import {
   IEditLecture,
   HTTPStatus,
   ILecturePositionUpdateRequest,
-  ILectureResource
 } from "../settings/DataTypes";
 
 export class LectureService {
@@ -48,15 +47,20 @@ export class LectureService {
     >(url, positions);
   }
 
-  public async uploadLectureContent(
+  public async uploadLectureResource(
     lectureId: number,
     formData: FormData
-  ): Promise<AxiosResponse<ILectureResource>> {
-    const url = "/lectures/" + lectureId + "/upload_content";
-    return await this.apiRequest.post<FormData, ILectureResource>(
-      url,
-      formData
-    );
+  ): Promise<AxiosResponse<ILecture>> {
+    const url = "/lectures/" + lectureId + "/resources";
+    return await this.apiRequest.post<FormData, ILecture>(url, formData);
+  }
+
+  public async deleteLectureResource(
+    lectureId: number,
+    resourceId: number
+  ): Promise<AxiosResponse<HTTPStatus>> {
+    const url = "/lectures/" + lectureId + "/resources/" + resourceId;
+    return await this.apiRequest.delete(url);
   }
 
   public async deleteLecture(
