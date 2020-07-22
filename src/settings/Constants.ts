@@ -55,13 +55,13 @@ export const BUILD_TEACHER_EDIT_COURSE_URL = (
 
 // Global URLs
 
-export const DOMAIN = "http://localhost"; //"http://192.168.1.131";
+export const DOMAIN = "https://roacademy.herokuapp.com/"; // "http://localhost";
 
-export const API_PORT = ":8080";
-export const FRONT_END_PORT = ":3000";
+export const API_PORT = "8080";
+export const FRONT_END_PORT = process.env.PORT || "3000";
 
-export const API_BASE_URL = DOMAIN + API_PORT;
-export const FRONT_END_BASE_URL = DOMAIN + FRONT_END_PORT;
+export const API_BASE_URL = DOMAIN + ":" + API_PORT;
+export const FRONT_END_BASE_URL = DOMAIN + ":" + FRONT_END_PORT;
 
 export const HOME_URL = "/";
 export const CATEGORIES_URL = "/categories";
