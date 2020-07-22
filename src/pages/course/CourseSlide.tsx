@@ -54,11 +54,19 @@ const CourseSlide: React.FunctionComponent<IProps> = (props) => {
               ref={lastCourseCardElementRef}
             >
               <div className="card slick-card">
-                <div className="card-body slick-card-title">
-                  <h5 className="card-title">{course.name}</h5>
-                </div>
-                <div className="card-footer text-secondary">
-                  {course.createdBy.firstName + " " + course.createdBy.lastName}
+                <img
+                  className="card-img-top"
+                  src={course.imageUrl}
+                  height="100px"
+                />
+                <div className="card-body slick-card-body">
+                  <h5 className="card-title slick-card-title">{course.name}</h5>
+                  <div className="card-text text-secondary">
+                    By{" "}
+                    {course.createdBy.firstName +
+                      " " +
+                      course.createdBy.lastName}
+                  </div>
                 </div>
               </div>
             </Link>
@@ -71,11 +79,19 @@ const CourseSlide: React.FunctionComponent<IProps> = (props) => {
               onClick={(e) => handleCourseOnClick(e, course)}
             >
               <div className="card slick-card">
-                <div className="card-body slick-card-title">
-                  <h5 className="card-title">{course.name}</h5>
-                </div>
-                <div className="card-footer text-secondary">
-                  {course.createdBy.firstName + " " + course.createdBy.lastName}
+                <img
+                  className="card-img-top"
+                  src={course.imageUrl}
+                  height="100px"
+                />
+                <div className="card-body slick-card-body">
+                  <h5 className="card-title slick-card-title">{course.name}</h5>
+                  <div className="card-text text-secondary">
+                    By{" "}
+                    {course.createdBy.firstName +
+                      " " +
+                      course.createdBy.lastName}
+                  </div>
                 </div>
               </div>
             </Link>

@@ -6,9 +6,7 @@ import {
   ADMIN_COURSES_URL,
   ADMIN_PANEL_URL,
   ADMIN_USERS_URL,
-  ADMIN_YOUTUBE_LINK,
-  ADMIN_BOX_LINK,
-  ADMIN_IMGUR_LINK,
+  ADMIN_OAUTH2_CONFIG_URL,
 } from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {}
@@ -22,7 +20,7 @@ const AdminControl: React.FunctionComponent<IProps> = (props) => {
   };
 
   return (
-    <div className="admin-panel width-75">
+    <div className="admin-panel width-75 mt-2">
       <div className="admin-side-menu">
         <ul>
           <li
@@ -57,24 +55,12 @@ const AdminControl: React.FunctionComponent<IProps> = (props) => {
           </li>
 
           <li
-            className={`menu-link ${getActiveClassName(ADMIN_YOUTUBE_LINK)}`}
-            onClick={() => handleLinkClick(ADMIN_YOUTUBE_LINK)}
+            className={`menu-link ${getActiveClassName(
+              ADMIN_OAUTH2_CONFIG_URL
+            )}`}
+            onClick={() => handleLinkClick(ADMIN_OAUTH2_CONFIG_URL)}
           >
-            YouTube Config
-          </li>
-
-          <li
-            className={`menu-link ${getActiveClassName(ADMIN_BOX_LINK)}`}
-            onClick={() => handleLinkClick(ADMIN_BOX_LINK)}
-          >
-            Box Config
-          </li>
-
-          <li
-            className={`menu-link ${getActiveClassName(ADMIN_IMGUR_LINK)}`}
-            onClick={() => handleLinkClick(ADMIN_IMGUR_LINK)}
-          >
-            Imgur Config
+            OAuth2 Config
           </li>
         </ul>
       </div>

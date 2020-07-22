@@ -152,27 +152,26 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .slick-card {
     margin-bottom: 1rem;
-    box-shadow: 0 0.15rem 0.075rem rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    text-align: center;
+    border: none;
+}
+
+.slick-card .slick-card-body {
+    padding: 0.25rem !important;
+}
+
+.slick-card .slick-card-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    height: 50px;
 }
 
 .slick-card:hover,
 .slick-card:focus {
     box-shadow: 0.05rem 0.35rem 0.85rem rgba(0, 0, 0, .15) !important;
-}
-
-.slick-card .slick-card-title {
-    background-color: rgb(46, 57, 87);
-    color: var(--ra-color-white);
-    border-top-right-radius: inherit;
-    border-top-left-radius: inherit;
-    min-height: 80px;
-    padding: 0.25rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
 }
 
 .slick-track {
@@ -231,7 +230,6 @@ input[type="search"]::-webkit-search-results-decoration {
 @media only screen and (max-width: 414px) {
     .slick-card {
         width: 100% !important;
-        box-shadow: 0.075rem 0.075rem 0.0375rem rgba(0, 0, 0, 0.15);
     }
     .slider-xm {
         display: block;

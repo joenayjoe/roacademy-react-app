@@ -8,7 +8,7 @@ import {
   IUserEditRequest,
   IPasswordResetRequest,
   IEmailUpdateRequest,
-  IUserProfileUpdateRequest
+  IUserProfileUpdateRequest,
 } from "../settings/DataTypes";
 import { DEFAULT_SORTING } from "../settings/Constants";
 
@@ -55,7 +55,7 @@ export class UserService {
       data
     );
   }
-  
+
   public async updateEmail(
     userId: number,
     data: IEmailUpdateRequest

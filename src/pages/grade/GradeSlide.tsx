@@ -17,16 +17,16 @@ interface IProps extends RouteComponentProps {
   href?: string;
 }
 
-const GradeSlide: React.FunctionComponent<IProps> = props => {
+const GradeSlide: React.FunctionComponent<IProps> = (props) => {
   // refs
   const observer = useRef<IntersectionObserver>();
 
   const lastGradeCardElementRef = useCallback(
-    node => {
+    (node) => {
       if (observer.current) {
         observer.current.disconnect();
       }
-      observer.current = new IntersectionObserver(entries => {
+      observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && props.hasMore) {
           props.loadNextPage();
         }
@@ -53,11 +53,11 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
             <Link
               key={grade.id}
               to={BUILD_GRADE_URL(grade.id)}
-              onClick={e => handleGradeOnClick(e, grade)}
+              onClick={(e) => handleGradeOnClick(e, grade)}
               ref={lastGradeCardElementRef}
             >
-              <div className="card slick-card">
-                <div className="card-body">{grade.name}</div>
+              <div className="card slick-card border">
+                <div className="card-body text-center">{grade.name}</div>
               </div>
             </Link>
           );
@@ -66,10 +66,10 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
             <Link
               key={grade.id}
               to={BUILD_GRADE_URL(grade.id)}
-              onClick={e => handleGradeOnClick(e, grade)}
+              onClick={(e) => handleGradeOnClick(e, grade)}
             >
-              <div className="card slick-card">
-                <div className="card-body">{grade.name}</div>
+              <div className="card slick-card border">
+                <div className="card-body text-center">{grade.name}</div>
               </div>
             </Link>
           );
@@ -110,7 +110,7 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
     rows: props.grades.length >= 10 ? 2 : 1,
     nextArrow: <SliderNextArrow />,
     prevArrow: <SliderPrevArrow />,
-    afterChange: current => props.slideAfterChangeHandler(current),
+    afterChange: (current) => props.slideAfterChangeHandler(current),
     responsive: [
       {
         breakpoint: 769,
@@ -119,10 +119,10 @@ const GradeSlide: React.FunctionComponent<IProps> = props => {
           slidesToScroll: props.grades.length ? 3 : 1,
           initialSlide: props.grades.length ? 3 : 1,
           swipeToSlide: true,
-          rows: props.grades.length >= 6 ? 2 : 1
-        }
-      }
-    ]
+          rows: props.grades.length >= 6 ? 2 : 1,
+        },
+      },
+    ],
   };
 
   const gradeSlide = (

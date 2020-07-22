@@ -49,12 +49,14 @@ import {
   ADMIN_COURSE_URL,
   ADMIN_USER_URL,
   ADMIN_EDIT_COURSE_URL,
-  ADMIN_YOUTUBE_LINK,
   COURSE_WATCH_URL,
   TEACHER_REQUEST_URL,
   ADMIN_USER_EDIT_URL,
-  ADMIN_BOX_LINK,
-  ADMIN_IMGUR_LINK,
+  ADMIN_OAUTH2_CONFIG_URL,
+  TEACHER_DASHBOARD_URL,
+  TEACHER_NEW_COURSE_URL,
+  TEACHER_COURSE_URL,
+  TEACHER_EDIT_COURSE_URL,
 } from "../settings/Constants";
 import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
@@ -68,13 +70,15 @@ import AdminUser from "../pages/adminpanel/user/AdminUser";
 import EditCourse from "../pages/adminpanel/course/EditCourse";
 import AlertContextProvider from "../contexts/AlertContext";
 import AlertSelector from "../components/flash/AlertSelector";
-import Youtube from "../pages/adminpanel/youtube/Youtube";
 import CoursePlayer from "../pages/player/CoursePlayer";
 import TeacherRequest from "../pages/user/TeacherRequest";
 import AdminUserEdit from "../pages/adminpanel/user/AdminUserEdit";
 import { isMobileOnly } from "react-device-detect";
-import Box from "../pages/adminpanel/box/Box";
-import Imgur from "../pages/adminpanel/imgur/Imgur";
+import AdminOAuth2Config from "../pages/adminpanel/admin_oauth2_config/AdminOAuth2Config";
+import TeacherDashboard from "../pages/teacher/TeacherDashboard";
+import TeacherNewCourse from "../pages/teacher/TeacherNewCourse";
+import TeacherCourse from "../pages/teacher/TeacherCourse";
+import TeacherEditCourse from "../pages/teacher/TeacherEditCourse";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -228,21 +232,34 @@ const App = () => {
               <PrivateRoute
                 role={RoleType.ADMIN}
                 exact
-                path={ADMIN_YOUTUBE_LINK}
-                component={Youtube}
+                path={ADMIN_OAUTH2_CONFIG_URL}
+                component={AdminOAuth2Config}
+              />
+
+              <PrivateRoute
+                role={RoleType.TEACHER}
+                exact
+                path={TEACHER_DASHBOARD_URL}
+                component={TeacherDashboard}
               />
               <PrivateRoute
-                role={RoleType.ADMIN}
+                role={RoleType.TEACHER}
                 exact
-                path={ADMIN_BOX_LINK}
-                component={Box}
-              />
-                            <PrivateRoute
-                role={RoleType.ADMIN}
+                path={TEACHER_COURSE_URL}
+                component={TeacherCourse}
+              ></PrivateRoute>
+              <PrivateRoute
+                role={RoleType.TEACHER}
                 exact
-                path={ADMIN_IMGUR_LINK}
-                component={Imgur}
-              />
+                path={TEACHER_NEW_COURSE_URL}
+                component={TeacherNewCourse}
+              ></PrivateRoute>
+              <PrivateRoute
+                role={RoleType.TEACHER}
+                exact
+                path={TEACHER_EDIT_COURSE_URL}
+                component={TeacherEditCourse}
+              ></PrivateRoute>
               <PublicRoute component={PageNotFound} />
             </Switch>
           </div>

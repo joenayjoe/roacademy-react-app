@@ -8,13 +8,14 @@ import {
   ADMIN_PANEL_URL,
   USER_PROFILE_SETTING_URL,
   USER_COURSES_URL,
-  USER_ACCOUNT_SETTING_URL
+  USER_ACCOUNT_SETTING_URL,
+  TEACHER_DASHBOARD_URL,
 } from "../../settings/Constants";
 import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {}
 
-const UserDropDown: React.FunctionComponent<IProps> = props => {
+const UserDropDown: React.FunctionComponent<IProps> = (props) => {
   const authContext = useContext(AuthContext);
   const authService = new AuthService();
 
@@ -25,11 +26,15 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
   const [isMenuLinkClicked, setIsMenuLinkClicked] = useState<boolean>(false);
 
   useEffect(() => {
-    document.addEventListener("click", e => toogleShowAvatarDropDown(e), false);
+    document.addEventListener(
+      "click",
+      (e) => toogleShowAvatarDropDown(e),
+      false
+    );
     return () => {
       document.removeEventListener(
         "click",
-        e => toogleShowAvatarDropDown(e),
+        (e) => toogleShowAvatarDropDown(e),
         false
       );
     };
@@ -70,15 +75,28 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
   let openKlass = showDropDown ? "open" : "";
   let hideMenu = isMenuLinkClicked ? "d-none" : "";
 
+  let teacherDashbordLi;
   let adminPanelLi;
   if (authContext.hasRole(RoleType.ADMIN)) {
     adminPanelLi = (
       <li className="drop-down-list-item">
         <Link
           to={ADMIN_PANEL_URL}
-          onClick={e => handleMenuLinkClick(e, ADMIN_PANEL_URL)}
+          onClick={(e) => handleMenuLinkClick(e, ADMIN_PANEL_URL)}
         >
           <div className="menu-link">Admin Panel</div>
+        </Link>
+      </li>
+    );
+  }
+  if (authContext.hasRole(RoleType.TEACHER)) {
+    teacherDashbordLi = (
+      <li className="drop-down-list-item">
+        <Link
+          to={TEACHER_DASHBOARD_URL}
+          onClick={(e) => handleMenuLinkClick(e, TEACHER_DASHBOARD_URL)}
+        >
+          <div className="menu-link">Teacher Dashboard</div>
         </Link>
       </li>
     );
@@ -97,7 +115,7 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
         <li className="drop-down-list-item mt-2">
           <Link
             to={USER_PROFILE_SETTING_URL}
-            onClick={e => handleMenuLinkClick(e, USER_PROFILE_SETTING_URL)}
+            onClick={(e) => handleMenuLinkClick(e, USER_PROFILE_SETTING_URL)}
           >
             <div className="menu-link">
               <Avatar styles={avatarStyle} user={user} />
@@ -111,17 +129,19 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
         <li className="drop-down-list-item">
           <Link
             to={USER_COURSES_URL}
-            onClick={e => handleMenuLinkClick(e, USER_COURSES_URL)}
+            onClick={(e) => handleMenuLinkClick(e, USER_COURSES_URL)}
           >
             <div className="menu-link">My Courses</div>
           </Link>
         </li>
+        <li className="dropdown-divider"></li>
+        {teacherDashbordLi}
         {adminPanelLi}
         <li className="dropdown-divider"></li>
         <li className="drop-down-list-item">
           <Link
             to={USER_PROFILE_SETTING_URL}
-            onClick={e => handleMenuLinkClick(e, USER_PROFILE_SETTING_URL)}
+            onClick={(e) => handleMenuLinkClick(e, USER_PROFILE_SETTING_URL)}
           >
             <div className="menu-link">Edit Profile</div>
           </Link>
@@ -129,7 +149,7 @@ const UserDropDown: React.FunctionComponent<IProps> = props => {
         <li className="drop-down-list-item">
           <Link
             to={USER_ACCOUNT_SETTING_URL}
-            onClick={e => handleMenuLinkClick(e, USER_ACCOUNT_SETTING_URL)}
+            onClick={(e) => handleMenuLinkClick(e, USER_ACCOUNT_SETTING_URL)}
           >
             <div className="menu-link">Edit Account</div>
           </Link>

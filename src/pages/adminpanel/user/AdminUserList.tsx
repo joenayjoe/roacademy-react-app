@@ -9,7 +9,7 @@ import {
   DEFAULT_SORTING_FIELD,
   DEFAULT_SORTING_ORDER,
   PAGE_SIZE,
-  BUILD_ADMIN_USER_URL
+  BUILD_ADMIN_USER_URL,
 } from "../../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RouteComponentProps } from "react-router-dom";
@@ -17,7 +17,7 @@ import Pagination from "../../../components/pagination/Pagination";
 import Spinner from "../../../components/spinner/Spinner";
 
 interface IProps extends RouteComponentProps {}
-const AdminUserList: React.FunctionComponent<IProps> = props => {
+const AdminUserList: React.FunctionComponent<IProps> = (props) => {
   // service to make api cakk
   const userService = new UserService();
 
@@ -32,16 +32,23 @@ const AdminUserList: React.FunctionComponent<IProps> = props => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   // constants
-  const theads = ["ID", "First Name", "Last Name", "Roles", "Created At"];
+  const theads = [
+    "ID",
+    "First Name",
+    "Last Name",
+    "Email",
+    "Roles",
+    "Created At",
+  ];
 
   useEffect(() => {
     userService
       .getUsers(0, PAGE_SIZE)
-      .then(resp => {
+      .then((resp) => {
         setUserPage(resp.data);
         setIsLoaded(true);
       })
-      .catch(err => {
+      .catch((err) => {
         alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
@@ -60,11 +67,11 @@ const AdminUserList: React.FunctionComponent<IProps> = props => {
     const currentPage = userPage ? userPage.number : 0;
     userService
       .getUsers(currentPage, PAGE_SIZE, getSorting(th))
-      .then(resp => {
+      .then((resp) => {
         setUserPage(resp.data);
         setIsLoaded(true);
       })
-      .catch(err => {
+      .catch((err) => {
         alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
       });
   };
@@ -83,7 +90,7 @@ const AdminUserList: React.FunctionComponent<IProps> = props => {
   };
 
   const getThead = () => {
-    const ths = theads.map(th => {
+    const ths = theads.map((th) => {
       return (
         <th className="link" key={th} onClick={() => handleTableHeadClick(th)}>
           <span className="mr-1">{th}</span>
@@ -97,7 +104,7 @@ const AdminUserList: React.FunctionComponent<IProps> = props => {
   const getTbody = () => {
     const trows =
       userPage &&
-      userPage.content.map(user => {
+      userPage.content.map((user) => {
         return (
           <tr
             className="link"
@@ -107,7 +114,8 @@ const AdminUserList: React.FunctionComponent<IProps> = props => {
             <td> {user.id}</td>
             <td> {user.firstName}</td>
             <td> {user.lastName}</td>
-            <td>{user.roles.map(r => r.name).join(", ")}</td>
+            <td>{user.email}</td>
+            <td>{user.roles.map((r) => r.name).join(", ")}</td>
             <td>{user.createdAt}</td>
           </tr>
         );
@@ -136,7 +144,7 @@ const AdminUserList: React.FunctionComponent<IProps> = props => {
     if (page >= 0) {
       const sorting = sortCol + "_" + sortOrder;
       setIsLoaded(false);
-      userService.getUsers(page, PAGE_SIZE, sorting).then(resp => {
+      userService.getUsers(page, PAGE_SIZE, sorting).then((resp) => {
         setUserPage(resp.data);
         setIsLoaded(true);
       });

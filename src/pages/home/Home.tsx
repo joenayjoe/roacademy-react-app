@@ -347,10 +347,14 @@ const Home: React.FunctionComponent = () => {
   return (
     <React.Fragment>
       <TeacherRecruitBanner />;
-      <div className="width-75 category-courses">{getCategoryCourses()}</div>
-      <div className="width-75 trending-courses">{getTrendingCourses()}</div>
-      <div className="width-75 new-courses">{getNewCourses()}</div>
-      <div className="width-75 popular-topics">{getPoplarTopics()}</div>
+      <div className="width-75 category-courses mb-2">
+        {getCategoryCourses()}
+      </div>
+      <div className="width-75 trending-courses mb-2">
+        {getTrendingCourses()}
+      </div>
+      <div className="width-75 new-courses mb-2">{getNewCourses()}</div>
+      <div className="width-75 popular-topics mb-2">{getPoplarTopics()}</div>
       <DonationBanner />
     </React.Fragment>
   );

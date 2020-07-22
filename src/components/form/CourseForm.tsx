@@ -12,35 +12,36 @@ import {
   IGrade,
   INewCourse,
   AlertVariant,
-  IEditCourse,
   ICourse,
   ICourseStatusUpdateRequest,
   HTTPStatus,
-} from "../../../settings/DataTypes";
+  RoleType,
+} from "../../settings/DataTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { GradeService } from "../../../services/GradeService";
-import Flash from "../../../components/flash/Alert";
-import Spinner from "../../../components/spinner/Spinner";
-import { CategoryService } from "../../../services/CategoryService";
+import { GradeService } from "../../services/GradeService";
+import Flash from "../flash/Alert";
+import Spinner from "../spinner/Spinner";
+import { CategoryService } from "../../services/CategoryService";
 
 import "./Course.css";
-import { AlertContext } from "../../../contexts/AlertContext";
-import { CourseService } from "../../../services/CourseService";
-import {
-  ADMIN_COURSES_URL,
-  BUILD_ADMIN_EDIT_COURSE_URL,
-} from "../../../settings/Constants";
+import { AlertContext } from "../../contexts/AlertContext";
+import { CourseService } from "../../services/CourseService";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { parseError } from "../../../utils/errorParser";
-import ChapterForm from "../chapter/ChapterForm";
-import { RTE_TOOLBAR_CONFIG } from "../../../settings/rte_config";
+import { parseError } from "../../utils/errorParser";
+import ChapterForm from "../../pages/adminpanel/chapter/ChapterForm";
+import { RTE_TOOLBAR_CONFIG } from "../../settings/rte_config";
+import { AuthContext } from "../../contexts/AuthContext";
 
 interface IProp extends RouteComponentProps {
   course?: ICourse;
+  errors: string[];
+  formSubmitHandler: (formData: FormData) => void;
+  formCancelHandler: () => void;
 }
 
 const CourseForm: React.FunctionComponent<IProp> = (props) => {
   const alertContext = useContext(AlertContext);
+  const authContext = useContext(AuthContext);
 
   const categoryService = new CategoryService();
   const gradeService = new GradeService();
@@ -59,10 +60,11 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
   const [categoryId, setCategoryId] = useState<number>(0);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [grades, setGrades] = useState<IGrade[]>([]);
+  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [isLoaded, setIsloaded] = useState<boolean>(
     props.course ? false : true
   );
-  const [courseErrors, setCourseErrors] = useState<string[]>([]);
 
   enum PillEnum {
     COURSE,
@@ -90,6 +92,7 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
       setGradeId(course.primaryGrade.id);
       setCategoryId(course.primaryCategory.id);
       setIsloaded(true);
+      setImageUrl(course.imageUrl);
 
       gradeService
         .getGradesByCategoryId(course.primaryCategory.id, "id_asc")
@@ -125,31 +128,20 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
         categoryId: categoryId,
       };
 
+      courseData = { ...newCourseData };
       if (props.course) {
-        courseData = { ...newCourseData, id: props.course.id };
-        courseService
-          .updateCourse(courseData as IEditCourse)
-          .then((resp) => {
-            setCourseErrors([]);
-            props.history.push(BUILD_ADMIN_EDIT_COURSE_URL(resp.data.id));
-            alertContext.show("Course updated successfully");
-          })
-          .catch((err) => {
-            setCourseErrors(parseError(err));
-          });
-      } else {
-        courseData = { ...newCourseData };
-        courseService
-          .createCourse(courseData as INewCourse)
-          .then((resp) => {
-            setCourseErrors([]);
-            props.history.push(BUILD_ADMIN_EDIT_COURSE_URL(resp.data.id));
-            alertContext.show("Course created successfully");
-          })
-          .catch((err) => {
-            setCourseErrors(parseError(err));
-          });
+        courseData = { ...courseData, id: props.course.id };
       }
+
+      let formData = new FormData();
+      if (coverPhoto != null) {
+        formData.append("file", coverPhoto);
+      }
+      formData.append(
+        "courseData",
+        new Blob([JSON.stringify(courseData)], { type: "application/json" })
+      );
+      props.formSubmitHandler(formData);
     }
   };
 
@@ -240,6 +232,13 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
     }
   };
 
+  const handleCourseCoverPhotoInputOnChange = (files: FileList | null) => {
+    if (files) {
+      setCoverPhoto(files[0]);
+      setImageUrl(URL.createObjectURL(files[0]));
+    }
+  };
+
   const displayRequirements = () => {
     if (requirements.length) {
       return requirements.map((req, idx) => {
@@ -271,18 +270,30 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
 
   const publishCourse = () => {
     if (props.course) {
+      let courseStatus = CourseStatus.PENDING;
+
+      if (authContext.hasRole(RoleType.ADMIN)) {
+        courseStatus = CourseStatus.PUBLISHED;
+      }
       const payload: ICourseStatusUpdateRequest = {
         id: props.course.id,
-        status: CourseStatus.PUBLISHED,
+        status: courseStatus,
       };
       courseService
         .publishCourse(props.course.id, payload)
         .then((resp) => {
           if (resp.status === HTTPStatus.OK) {
-            alertContext.show("Course successfully published");
+            alertContext.show(
+              "Course status is updated to " +
+                courseStatus +
+                ". If you're not admin, admin has to approve to publish the course."
+            );
             setActivePill(PillEnum.COURSE);
           } else {
-            alertContext.show("Course published failed.", AlertVariant.DANGER);
+            alertContext.show(
+              "Course publish request failed.",
+              AlertVariant.DANGER
+            );
           }
         })
         .catch((err) => {
@@ -293,11 +304,23 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
     }
   };
 
+  const getImagePreview = () => {
+    if (props.course || coverPhoto !== null) {
+      return (
+        <div className="course-cover-photo-preview mt-2 mb-2">
+          <img src={imageUrl} alt="Cover preview" width="100" height="100" />
+        </div>
+      );
+    }
+    return null;
+  };
+
   let flashErrors;
-  if (courseErrors.length) {
-    flashErrors = <Flash variant={AlertVariant.DANGER} errors={courseErrors} />;
+  if (props.errors.length) {
+    flashErrors = <Flash variant={AlertVariant.DANGER} errors={props.errors} />;
   }
 
+  const coverPhotoLabel = coverPhoto ? coverPhoto.name : "Choose a photo";
   const courseForm = (
     <form onSubmit={handleCourseFormSubmit}>
       {flashErrors}
@@ -405,11 +428,29 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
           </div>
         </div>
       </div>
+      <div className="form-group">
+        <label>Add a cover photo for the course</label>
+        {getImagePreview()}
+        <div className="custom-file">
+          <input
+            type="file"
+            title={coverPhotoLabel}
+            className="custom-file-input"
+            id="course-photo-upload-input"
+            accept=".jpeg,.jpg,.png"
+            multiple={false}
+            onChange={(e) =>
+              handleCourseCoverPhotoInputOnChange(e.target.files)
+            }
+          />
+          <label className="custom-file-label">{coverPhotoLabel}</label>
+        </div>
+      </div>
       <div className="form-group action-btn-group">
         <button
           type="button"
           className="btn btn-danger action-btn"
-          onClick={() => props.history.push(ADMIN_COURSES_URL)}
+          onClick={props.formCancelHandler}
         >
           <FontAwesomeIcon icon="times" className="mr-1" />
           Cancel

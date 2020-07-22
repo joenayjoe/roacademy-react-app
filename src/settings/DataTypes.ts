@@ -6,7 +6,7 @@ export enum ModalIdentifier {
   LOGIN_MODAL = "LoginModal",
   SIGNUP_MODAL = "SignupModal",
   NEW_CATEGORY_MODAL = "NewCategoryModal",
-  CONFIRM_MODAL = "ConfirmModal"
+  CONFIRM_MODAL = "ConfirmModal",
 }
 
 export enum HTTPStatus {
@@ -15,19 +15,19 @@ export enum HTTPStatus {
   BAD_REQUEST = 400,
   UNAUTHORIZE = 401,
   FORBIDDEN = 401,
-  NOT_FOUND = 404
+  NOT_FOUND = 404,
 }
 
 export enum RoleType {
   ADMIN = "ROLE_ADMIN",
   TEACHER = "ROLE_TEACHER",
-  STUDENT = "ROLE_STUDENT"
+  STUDENT = "ROLE_STUDENT",
 }
 
 export enum CourseStatus {
   DRAFT = "DRAFT",
   PENDING = "PENDING",
-  PUBLISHED = "PUBLISHED"
+  PUBLISHED = "PUBLISHED",
 }
 
 export type MenuItemType = ICategory | IGrade | ICourse;
@@ -35,7 +35,7 @@ export type MenuItemType = ICategory | IGrade | ICourse;
 export enum ResourceType {
   CATEGORY = "Category",
   GRADE = "Grade",
-  COURSE = "Course"
+  COURSE = "Course",
 }
 export enum AlertVariant {
   PRIMARY = "alert alert-primary",
@@ -43,7 +43,7 @@ export enum AlertVariant {
   SUCCESS = "alert alert-success",
   INFO = "alert alert-info",
   WARNING = "alert alert-warning",
-  DANGER = "alert alert-danger"
+  DANGER = "alert alert-danger",
 }
 
 export interface IPrimaryCategory {
@@ -106,6 +106,7 @@ export interface ICourse extends IPrimaryCourse, IAuditable {
   level: string;
   hits: number;
   createdBy: IPrimaryUser;
+  imageUrl: string;
 }
 
 export interface IDetailCourse extends ICourse {

@@ -5,7 +5,7 @@ import {
   MenuItemType,
   ModalIdentifier,
   RoleType,
-  AlertVariant
+  AlertVariant,
 } from "../../settings/DataTypes";
 
 import "./SideDrawer.css";
@@ -26,7 +26,8 @@ import {
   USER_PROFILE_SETTING_URL,
   USER_ACCOUNT_SETTING_URL,
   ADMIN_PANEL_URL,
-  USER_COURSES_URL
+  USER_COURSES_URL,
+  TEACHER_DASHBOARD_URL,
 } from "../../settings/Constants";
 import Signup from "../../pages/user/Signup";
 import Login from "../../pages/user/Login";
@@ -41,7 +42,7 @@ interface IProps extends RouteComponentProps {
   backdropClickHandler: () => void;
 }
 
-const SideDrawerNew: React.FunctionComponent<IProps> = props => {
+const SideDrawerNew: React.FunctionComponent<IProps> = (props) => {
   const categoryService = new CategoryService();
   const gradeService = new GradeService();
   const authService = new AuthService();
@@ -65,10 +66,10 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   useEffect(() => {
     categoryService
       .getCategories("name_asc")
-      .then(response => {
+      .then((response) => {
         setCategories(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         alertContext.show(parseError(error).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
@@ -116,8 +117,8 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
 
   const getGradesForCategory = (category: ICategory) => {
-    gradeService.getGradesByCategoryId(category.id, "id_asc").then(resp => {
-      let categoryList = categories.map(cat => {
+    gradeService.getGradesByCategoryId(category.id, "id_asc").then((resp) => {
+      let categoryList = categories.map((cat) => {
         if (cat.id === category.id) {
           cat.grades = resp.data;
         }
@@ -127,10 +128,10 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     });
   };
   const getCoursesForGrade = (grade: IGrade) => {
-    courseService.getAllCoursesByGradeId(grade.id).then(resp => {
-      let categoryList = categories.map(cat => {
+    courseService.getAllCoursesByGradeId(grade.id).then((resp) => {
+      let categoryList = categories.map((cat) => {
         if (cat.id === grade.primaryCategory.id) {
-          cat.grades.map(grd => {
+          cat.grades.map((grd) => {
             if (grd.id === grade.id) {
               grd.courses = resp.data;
             }
@@ -246,13 +247,13 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
 
   const getLevelThreeMenuItems = (grade: IGrade) => {
-    const levelThreeMenuItems = grade.courses.map(course => {
+    const levelThreeMenuItems = grade.courses.map((course) => {
       return (
         <li key={course.id}>
           <Link
             className="menu-link"
             to={BUILD_COURSE_URL(course.id)}
-            onClick={e => handleMenuLinkClick(e, course)}
+            onClick={(e) => handleMenuLinkClick(e, course)}
           >
             {course.name}
           </Link>
@@ -269,14 +270,14 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
     );
   };
   const getLevelTwoMenuItems = (category: ICategory) => {
-    const levelTwoMenuItems = category.grades.map(grade => {
+    const levelTwoMenuItems = category.grades.map((grade) => {
       let openKlass = selectedMenuItem === grade ? "open-sub-menu" : "";
       return (
         <li key={grade.id} className={openKlass}>
           <Link
             className="menu-link"
             to={BUILD_GRADE_URL(grade.id)}
-            onClick={e => handleMenuLinkClick(e, grade)}
+            onClick={(e) => handleMenuLinkClick(e, grade)}
           >
             {grade.name}
             {getExpander()}
@@ -347,6 +348,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
 
       let openKlass = showAuthLinks ? "open-sub-menu" : "";
       let adminLink;
+      let teacherLink;
       if (authContext.hasRole(RoleType.ADMIN)) {
         adminLink = (
           <li>
@@ -358,6 +360,21 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
               onClick={() => redirectTo(ADMIN_PANEL_URL)}
             >
               <span>Admin Panel</span>
+            </div>
+          </li>
+        );
+      }
+      if (authContext.hasRole(RoleType.TEACHER)) {
+        teacherLink = (
+          <li>
+            <div className="mb-2">
+              <strong>Teach</strong>
+            </div>
+            <div
+              className="menu-link"
+              onClick={() => redirectTo(TEACHER_DASHBOARD_URL)}
+            >
+              <span>Teacher Dashboard</span>
             </div>
           </li>
         );
@@ -375,6 +392,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
             </div>
             {getAuthenticatedUserLinks()}
           </li>
+          {teacherLink}
           {adminLink}
           <li>
             <div className="mb-2">
@@ -405,7 +423,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
   };
 
   const getLevelOneMenuItems = (categories: ICategory[]) => {
-    const levelOneMenuItems = categories.map(category => {
+    const levelOneMenuItems = categories.map((category) => {
       let openKlass =
         selectedMenuItem === category || levelTwoParent === category
           ? "open-sub-menu"
@@ -415,7 +433,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = props => {
           <Link
             className="menu-link"
             to={BUILD_CATEGORY_URL(category.id)}
-            onClick={e => handleMenuLinkClick(e, category)}
+            onClick={(e) => handleMenuLinkClick(e, category)}
           >
             {category.name}
             {getExpander()}

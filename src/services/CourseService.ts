@@ -2,12 +2,11 @@ import Axios, { AxiosResponse, CancelTokenSource } from "axios";
 
 import {
   ICourse,
-  INewCourse,
   HTTPStatus,
   Page,
-  IEditCourse,
   ICourseStatusUpdateRequest,
   ISearchResponse,
+  CourseStatus,
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 import {
@@ -106,16 +105,17 @@ export class CourseService {
     return await this.apiRequest.get<Page<ICourse>>(url);
   }
 
-  public async createCourse(data: INewCourse): Promise<AxiosResponse<ICourse>> {
+  public async createCourse(data: FormData): Promise<AxiosResponse<ICourse>> {
     const url = this.baseUrl;
-    return await this.apiRequest.post<INewCourse, ICourse>(url, data);
+    return await this.apiRequest.post<FormData, ICourse>(url, data);
   }
 
   public async updateCourse(
-    data: IEditCourse
+    courseId: number,
+    data: FormData
   ): Promise<AxiosResponse<ICourse>> {
-    const url = this.baseUrl + "/" + data.id;
-    return await this.apiRequest.put<IEditCourse, ICourse>(url, data);
+    const url = this.baseUrl + "/" + courseId;
+    return await this.apiRequest.put<FormData, ICourse>(url, data);
   }
 
   public async publishCourse(
@@ -127,6 +127,17 @@ export class CourseService {
       url,
       payload
     );
+  }
+
+  public async getCoursesByTeacher(
+    userId: number,
+    page: number,
+    size: number,
+    status: CourseStatus[],
+    order = DEFAULT_SORTING
+  ): Promise<AxiosResponse<Page<ICourse>>> {
+    const url = `/teachers/${userId}/courses?page=${page}&size=${size}&status=${status}&order=${order}`;
+    return await this.apiRequest.get<Page<ICourse>>(url);
   }
 
   public async deleteCourse(

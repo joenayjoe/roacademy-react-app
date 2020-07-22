@@ -28,9 +28,7 @@ export const ADMIN_USER_EDIT_URL = ADMIN_USER_URL + "/edit";
 export const BUILD_ADMIN_USER_EDIT_URL = (userId: number) =>
   ADMIN_USER_EDIT_URL.replace(":user_id", userId.toString());
 
-export const ADMIN_YOUTUBE_LINK = "/admin/youtube";
-export const ADMIN_BOX_LINK = "/admin/box";
-export const ADMIN_IMGUR_LINK = "/admin/imgur";
+export const ADMIN_OAUTH2_CONFIG_URL = "/admin/oauth2-config";
 
 // Login User URLs
 
@@ -39,6 +37,21 @@ export const USER_ACCOUNT_SETTING_URL = "/user/account-settings";
 export const USER_PROFILE_SETTING_URL = "/user/profile-settings";
 export const USER_PHOTO_SETTING_URL = "/user/photo-settings";
 export const USER_COURSES_URL = "/user-courses";
+
+// teacher urls
+export const TEACHER_DASHBOARD_URL = "/teacher-dashboard";
+export const TEACHER_COURSE_URL = "/teachers/:teacher_id/courses/:course_id";
+export const TEACHER_NEW_COURSE_URL = "/teacher/courses/new";
+export const BUILD_TEACHER_COURSE_URL = (teacherId: number, courseId: number) =>
+  TEACHER_COURSE_URL.replace(":teacher_id", teacherId.toString()).replace(
+    ":course_id",
+    courseId.toString()
+  );
+export const TEACHER_EDIT_COURSE_URL = TEACHER_COURSE_URL + "/edit";
+export const BUILD_TEACHER_EDIT_COURSE_URL = (
+  teacherId: number,
+  courseId: number
+) => BUILD_TEACHER_COURSE_URL(teacherId, courseId) + "/edit";
 
 // Global URLs
 
@@ -90,8 +103,8 @@ export const TEACHER_REQUEST_URL = "/teacher-request";
 
 export const OAUTH2_REDIRECT_URL = "/oauth2/redirect";
 export const OAUTH2_REDIRECT_FULL_URL = FRONT_END_BASE_URL + "/oauth2/redirect";
-export const BOX_OAUTH2_REDIRECT_URL = FRONT_END_BASE_URL + ADMIN_BOX_LINK;
-export const IMGUR_OAUTH2_REDIRECT_URL = FRONT_END_BASE_URL + ADMIN_IMGUR_LINK;
+export const ADMIN_OAUTH2_REDIRECT_URL =
+  FRONT_END_BASE_URL + ADMIN_OAUTH2_CONFIG_URL;
 
 export const FACEBOOK_AUTH_URL =
   API_BASE_URL +
@@ -106,9 +119,17 @@ export const GOOGLE_AUTH_URL =
 export const BOX_AUTH_URL =
   API_BASE_URL +
   "/api/oauth2/authorize/box?redirect_uri=" +
-  BOX_OAUTH2_REDIRECT_URL;
+  ADMIN_OAUTH2_REDIRECT_URL;
 
-export const IMGUR_AUTH_URL = API_BASE_URL + "/api/oauth2/authorize/imgur?redirect_uri="+IMGUR_OAUTH2_REDIRECT_URL;
+export const IMGUR_AUTH_URL =
+  API_BASE_URL +
+  "/api/oauth2/authorize/imgur?redirect_uri=" +
+  ADMIN_OAUTH2_REDIRECT_URL;
+
+export const YOUTUBE_AUTH_URL =
+  API_BASE_URL +
+  "/api/oauth2/authorize/youtube?redirect_uri=" +
+  ADMIN_OAUTH2_REDIRECT_URL;
 
 // cookie constants
 export const ACCESS_TOKEN_COOKIE_NAME = "accessToken";

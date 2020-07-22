@@ -439,7 +439,16 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
         .then((resp) => {
           if (resp.status === HTTPStatus.OK) {
             setChapters(chptrs as IChapter[]);
+            alertContext.show("Position updated successfully");
           }
+        })
+        .catch((err) => {
+          alertContext.show(
+            "Failed to update position.",
+            AlertVariant.DANGER,
+            parseError(err),
+            false
+          );
         });
     } else if (result.type === DROPABLE_TYPE.LECTURE) {
       let initVal: any = {};
@@ -484,10 +493,16 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           .then((resp) => {
             if (resp.status === HTTPStatus.OK) {
               setChapters(newChapters);
+              alertContext.show("Position updated successfully");
             }
           })
           .catch((err) => {
-            alertContext.show("Something went wrong.", AlertVariant.DANGER);
+            alertContext.show(
+              "Failed to update position.",
+              AlertVariant.DANGER,
+              parseError(err),
+              false
+            );
           });
       } else {
         let newSourceLectures = [...sourceLectures];
@@ -525,10 +540,16 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           .then((resp) => {
             if (resp.status === HTTPStatus.OK) {
               setChapters(newChapters);
+              alertContext.show("Position updated successfully");
             }
           })
           .catch((err) => {
-            alertContext.show("Something went wrong.", AlertVariant.DANGER);
+            alertContext.show(
+              "Failed to update position.",
+              AlertVariant.DANGER,
+              parseError(err),
+              false
+            );
           });
       }
     }
@@ -662,7 +683,10 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
         ? "file-video"
         : "file-pdf";
       let a = (
-        <div key={lectureResource.id} className="d-flex flex-wrap align-items-center">
+        <div
+          key={lectureResource.id}
+          className="d-flex flex-wrap align-items-center"
+        >
           <FontAwesomeIcon icon={icon} size="2x" className="mr-3" />
           <Link
             to={{ pathname: lectureResource.fileUrl }}

@@ -3,7 +3,6 @@ import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { CourseService } from "../../services/CourseService";
 import ChapterService from "../../services/ChapterService";
 import {
-  ICourse,
   IChapter,
   AlertVariant,
   ILecture,
@@ -38,7 +37,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
   const courseService = new CourseService();
   const chapterService = new ChapterService();
 
-  const [course, setCourse] = useState<ICourse | null>(null);
+  // const [course, setCourse] = useState<ICourse | null>(null);
   const [chapters, setChapters] = useState<IChapter[]>([]);
 
   const [courseError, setCourseError] = useState<string[]>([]);
@@ -58,7 +57,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
       courseService
         .getCourse(courseId, DEFAULT_COURSE_STATUS)
         .then((response) => {
-          setCourse(response.data);
+          // setCourse(response.data);
           chapterService
             .getChaptersByCourseId(response.data.id)
             .then((resp) => {
@@ -222,8 +221,10 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
             </div>
           );
         }
+        return null;
       });
 
+    console.log("resources = ", resources);
     return resources && resources.length ? (
       <div className="lecture-resources">
         <h4>Resources</h4>
@@ -270,6 +271,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
         } else {
           return (
             <iframe
+              title="Lecture View Frame"
               style={{ width: "100%", height: "100%" }}
               src={contentSrc}
             ></iframe>
