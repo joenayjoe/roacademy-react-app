@@ -5,13 +5,14 @@ import axios, {
   CancelTokenSource,
 } from "axios";
 import { CookieService } from "./CookieService";
+import { API_DOMAIN } from "../settings/Constants";
 
 class ApiRequest {
   private axiosInstance: AxiosInstance;
   private cookiesService: CookieService;
 
   constructor() {
-    const config = { baseURL: "http://192.168.1.61:8080/api" };
+    const config = { baseURL: API_DOMAIN+"/api" };
     this.axiosInstance = axios.create(config);
 
     this.cookiesService = new CookieService();
