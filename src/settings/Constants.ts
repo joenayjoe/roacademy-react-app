@@ -55,13 +55,14 @@ export const BUILD_TEACHER_EDIT_COURSE_URL = (
 
 // Global URLs
 
-export const DOMAIN = "https://roacademy.herokuapp.com/"; // "http://localhost";
+export const FRONT_END_DOMAIN = "https://roacademy.herokuapp.com/"; // "http://localhost";
+export const API_DOMAIN = "https://roacademy-backend.herokuapp.com";
 
-export const API_PORT = "8080";
-export const FRONT_END_PORT = process.env.PORT || "3000";
+// export const API_PORT = "8080";
+// export const FRONT_END_PORT = process.env.PORT || "3000";
 
-export const API_BASE_URL = DOMAIN + ":" + API_PORT;
-export const FRONT_END_BASE_URL = DOMAIN + ":" + FRONT_END_PORT;
+// export const API_BASE_URL = DOMAIN + ":" + API_PORT;
+// export const FRONT_END_BASE_URL = FRONT_END_DOMAIN + ":" + FRONT_END_PORT;
 
 export const HOME_URL = "/";
 export const CATEGORIES_URL = "/categories";
@@ -102,32 +103,32 @@ export const TEACHER_REQUEST_URL = "/teacher-request";
 // OAuth2 URLS
 
 export const OAUTH2_REDIRECT_URL = "/oauth2/redirect";
-export const OAUTH2_REDIRECT_FULL_URL = FRONT_END_BASE_URL + "/oauth2/redirect";
+export const OAUTH2_REDIRECT_FULL_URL = FRONT_END_DOMAIN + "/oauth2/redirect";
 export const ADMIN_OAUTH2_REDIRECT_URL =
-  FRONT_END_BASE_URL + ADMIN_OAUTH2_CONFIG_URL;
+  FRONT_END_DOMAIN + ADMIN_OAUTH2_CONFIG_URL;
 
 export const FACEBOOK_AUTH_URL =
-  API_BASE_URL +
+  API_DOMAIN +
   "/oauth2/authorize/facebook?redirect_uri=" +
   OAUTH2_REDIRECT_FULL_URL;
 
 export const GOOGLE_AUTH_URL =
-  API_BASE_URL +
+  API_DOMAIN +
   "/oauth2/authorize/google?redirect_uri=" +
   OAUTH2_REDIRECT_FULL_URL;
 
 export const BOX_AUTH_URL =
-  API_BASE_URL +
+  API_DOMAIN +
   "/api/oauth2/authorize/box?redirect_uri=" +
   ADMIN_OAUTH2_REDIRECT_URL;
 
 export const IMGUR_AUTH_URL =
-  API_BASE_URL +
+  API_DOMAIN +
   "/api/oauth2/authorize/imgur?redirect_uri=" +
   ADMIN_OAUTH2_REDIRECT_URL;
 
 export const YOUTUBE_AUTH_URL =
-  API_BASE_URL +
+  API_DOMAIN +
   "/api/oauth2/authorize/youtube?redirect_uri=" +
   ADMIN_OAUTH2_REDIRECT_URL;
 
