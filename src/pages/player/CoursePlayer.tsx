@@ -23,6 +23,7 @@ import Avatar from "../../components/avatar/Avatar";
 import { AuthContext } from "../../contexts/AuthContext";
 import Collapse from "../../components/collapse/Collapse";
 import ShowMoreText from "../../components/showmoretext/ShowMoreText";
+import { isMobile } from "react-device-detect";
 
 interface IProps extends RouteComponentProps {}
 
@@ -49,10 +50,14 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
   const [playingLecture, setPlayingLecture] = useState<ILecture | null>(null);
 
   const [showPlayerControls, setShowPlayerControls] = useState<boolean>(false);
+  const [showDescription, setShowDescription] = useState<boolean>(true);
 
   const avatarStyle = { width: "48px", height: "48px", cursor: "pointer" };
 
   useEffect(() => {
+    if (isMobile) {
+      setShowDescription(false);
+    }
     if (courseId > 0) {
       courseService
         .getCourse(courseId, DEFAULT_COURSE_STATUS)
@@ -169,6 +174,12 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
     }
   };
 
+  const handleTitleClick = () => {
+    if (isMobile) {
+      setShowDescription(!showDescription);
+    }
+  };
+
   const lectureList = (chapter: IChapter) => {
     return chapter.lectures.map((lecture) => {
       const klass =
@@ -207,6 +218,21 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
     );
   });
 
+  const getLectureDescription = () => {
+    return showDescription ? (
+      <div className="lecture-description">
+        <ShowMoreText
+          key={playingLecture ? playingLecture.id : undefined}
+          expanded={false}
+        >
+          <div
+            className="description"
+            dangerouslySetInnerHTML={markupDescription()}
+          />
+        </ShowMoreText>
+      </div>
+    ) : null;
+  };
   const getFileResourcesForPlayingLecture = () => {
     let resources =
       playingLecture &&
@@ -224,7 +250,6 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
         return null;
       });
 
-    console.log("resources = ", resources);
     return resources && resources.length ? (
       <div className="lecture-resources">
         <h4>Resources</h4>
@@ -298,7 +323,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
       return (
         <React.Fragment>
           <div
-            className="player-container"
+            className="player-section"
             onMouseEnter={() => setShowPlayerControls(true)}
             onMouseLeave={() => setShowPlayerControls(false)}
           >
@@ -317,98 +342,81 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
             </div>
           </div>
 
-          <div className="player-menu collapse-menu">{chapterList}</div>
-
-          <div className="cp-bottom-container">
-            <div className="description-container">
-              <h4>{playingLecture && playingLecture.name}</h4>
-              <ShowMoreText
-                key={playingLecture ? playingLecture.id : undefined}
-                expanded={false}
-              >
-                <div
-                  className="description"
-                  dangerouslySetInnerHTML={markupDescription()}
+          <div className="player-info-section">
+            <div className="player-title" onClick={handleTitleClick}>
+              <h4 className="mr-2">{playingLecture && playingLecture.name}</h4>
+              {isMobile && (
+                <FontAwesomeIcon
+                  icon={showDescription ? "angle-up" : "angle-down"}
                 />
-              </ShowMoreText>
+              )}
             </div>
+            {getLectureDescription()}
             {getFileResourcesForPlayingLecture()}
-            <div className="comment-section">
-              <div className="comment-top">
-                <div className="comment-count mr-2">
-                  <h5>29 Comments</h5>
-                </div>
-                <div className="comment-filter">Filter</div>
+          </div>
+
+          <div className="player-menu-section collapse-menu">{chapterList}</div>
+
+          <div className="comment-section">
+            <div className="comment-top">
+              <div className="comment-count mr-2">
+                <h5>29 Comments</h5>
               </div>
-              <div className="new-comment">
+              <div className="comment-filter">Filter</div>
+            </div>
+            <div className="new-comment">
+              <div className="avatar mr-2">
+                <Avatar user={authContext.currentUser} styles={avatarStyle} />
+              </div>
+              <form className="comment-form">
+                <div className="form-group">
+                  <textarea
+                    className="form-control"
+                    value={newComment}
+                    placeholder="Add a public comment"
+                    onChange={(e) => setNewComment(e.target.value)}
+                  />
+                </div>
+                <div className="form-group float-right">
+                  <button type="button" className="btn btn-danger mr-2">
+                    CANCEL
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    COMMENT
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="comment-list">
+              <div className="comment">
                 <div className="avatar mr-2">
-                  <Avatar user={authContext.currentUser} styles={avatarStyle} />
+                  <Avatar styles={avatarStyle} user={authContext.currentUser} />
                 </div>
-                <form className="comment-form">
-                  <div className="form-group">
-                    <textarea
-                      className="form-control"
-                      value={newComment}
-                      placeholder="Add a public comment"
-                      onChange={(e) => setNewComment(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group float-right">
-                    <button type="button" className="btn btn-danger mr-2">
-                      CANCEL
-                    </button>
-                    <button type="submit" className="btn btn-primary">
-                      COMMENT
-                    </button>
-                  </div>
-                </form>
+                <div>this is a comment</div>
               </div>
-              <div className="comment-list">
-                <div className="comment">
-                  <div className="avatar mr-2">
-                    <Avatar
-                      styles={avatarStyle}
-                      user={authContext.currentUser}
-                    />
-                  </div>
-                  <div>this is a comment</div>
+              <div className="comment">
+                <div className="avatar mr-2">
+                  <Avatar styles={avatarStyle} user={authContext.currentUser} />
                 </div>
-                <div className="comment">
-                  <div className="avatar mr-2">
-                    <Avatar
-                      styles={avatarStyle}
-                      user={authContext.currentUser}
-                    />
-                  </div>
-                  <div>this is a comment</div>
+                <div>this is a comment</div>
+              </div>
+              <div className="comment">
+                <div className="avatar mr-2">
+                  <Avatar styles={avatarStyle} user={authContext.currentUser} />
                 </div>
-                <div className="comment">
-                  <div className="avatar mr-2">
-                    <Avatar
-                      styles={avatarStyle}
-                      user={authContext.currentUser}
-                    />
-                  </div>
-                  <div>this is a comment</div>
+                <div>this is a comment</div>
+              </div>
+              <div className="comment">
+                <div className="avatar mr-2">
+                  <Avatar styles={avatarStyle} user={authContext.currentUser} />
                 </div>
-                <div className="comment">
-                  <div className="avatar mr-2">
-                    <Avatar
-                      styles={avatarStyle}
-                      user={authContext.currentUser}
-                    />
-                  </div>
-                  <div>this is a comment</div>
+                <div>this is a comment</div>
+              </div>
+              <div className="comment">
+                <div className="avatar mr-2">
+                  <Avatar styles={avatarStyle} user={authContext.currentUser} />
                 </div>
-                <div className="comment">
-                  <div className="avatar mr-2">
-                    <Avatar
-                      styles={avatarStyle}
-                      user={authContext.currentUser}
-                    />
-                  </div>
-                  <div>this is a comment</div>
-                </div>
+                <div>this is a comment</div>
               </div>
             </div>
           </div>
@@ -418,7 +426,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
   };
 
   return isLoaded ? (
-    <div className="course-player">{getPlayerContent()}</div>
+    <div className="course-player-wrapper">{getPlayerContent()}</div>
   ) : (
     <Spinner size="3x" />
   );

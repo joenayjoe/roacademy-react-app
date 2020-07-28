@@ -58,6 +58,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
           setLoadingCourse(false);
         })
         .catch((err) => {
+          console.log("Error = ", err);
           alertContext.show(
             "Failed to load courses.",
             AlertVariant.DANGER,

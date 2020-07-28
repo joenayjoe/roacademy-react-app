@@ -238,8 +238,8 @@ const Home: React.FunctionComponent = () => {
   };
 
   const getDesktopCategoryCourseView = () => {
-    return (
-      <React.Fragment>
+    return categories.length ? (
+      <div className="width-75 category-courses mb-2">
         <ul className="nav nav-pills">{categoryPill()}</ul>
 
         <div className="category-pill-content-container mt-2">
@@ -253,8 +253,8 @@ const Home: React.FunctionComponent = () => {
             loadNextPage={loadNextCategoryCoursePage}
           />
         </div>
-      </React.Fragment>
-    );
+      </div>
+    ) : null;
   };
   const getMobileCategoryCourseView = () => {
     return categories.map((category) => {
@@ -346,10 +346,8 @@ const Home: React.FunctionComponent = () => {
 
   return (
     <React.Fragment>
-      <TeacherRecruitBanner />;
-      <div className="width-75 category-courses mb-2">
-        {getCategoryCourses()}
-      </div>
+      <TeacherRecruitBanner />
+      {getCategoryCourses()}
       <div className="width-75 trending-courses mb-2">
         {getTrendingCourses()}
       </div>

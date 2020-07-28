@@ -55,14 +55,11 @@ export const BUILD_TEACHER_EDIT_COURSE_URL = (
 
 // Global URLs
 
-export const FRONT_END_DOMAIN = "https://roacademy.herokuapp.com"; // "http://localhost";
-export const API_DOMAIN = "https://roacademy-backend.herokuapp.com";
+const FRONT_END_LOCALHOST = "http://localhost:3000";
+const API_LOCALHOST = "http://localhost:8080";
 
-// export const API_PORT = "8080";
-// export const FRONT_END_PORT = process.env.PORT || "3000";
-
-// export const API_BASE_URL = DOMAIN + ":" + API_PORT;
-// export const FRONT_END_BASE_URL = FRONT_END_DOMAIN + ":" + FRONT_END_PORT;
+export const FRONT_END_DOMAIN = FRONT_END_LOCALHOST ; // "https://roacademy.herokuapp.com"; 
+export const API_DOMAIN =  API_LOCALHOST; // "https://roacademy-backend.herokuapp.com";
 
 export const HOME_URL = "/";
 export const CATEGORIES_URL = "/categories";

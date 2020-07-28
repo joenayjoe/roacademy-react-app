@@ -11,6 +11,8 @@ import { withRouter, RouteComponentProps } from "react-router";
 import { BUILD_COURSE_URL } from "../../settings/Constants";
 import { Link } from "react-router-dom";
 
+import imagePlaeholder from "../../assets/images/image-placeholder.jpg";
+
 interface IProps extends RouteComponentProps {
   courses: ICourse[];
   slideAfterChangeHandler: (currentSlide: number) => void;
@@ -55,8 +57,9 @@ const CourseSlide: React.FunctionComponent<IProps> = (props) => {
             >
               <div className="card slick-card">
                 <img
+                  alt={course.name}
                   className="card-img-top"
-                  src={course.imageUrl}
+                  src={course.imageUrl || imagePlaeholder}
                   height="100px"
                 />
                 <div className="card-body slick-card-body">
@@ -80,8 +83,9 @@ const CourseSlide: React.FunctionComponent<IProps> = (props) => {
             >
               <div className="card slick-card">
                 <img
+                  alt={course.name}
                   className="card-img-top"
-                  src={course.imageUrl}
+                  src={course.imageUrl || imagePlaeholder}
                   height="100px"
                 />
                 <div className="card-body slick-card-body">
