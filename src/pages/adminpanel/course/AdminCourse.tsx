@@ -18,7 +18,7 @@ import {
 import Spinner from "../../../components/spinner/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConfirmDialog from "../../../components/modal/ConfirmDialog";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import Alert from "../../../components/flash/Alert";
 import CourseDetail from "../../course/CourseDetail";
 import { AlertContext } from "../../../contexts/AlertContext";
@@ -53,11 +53,11 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
             setIsLoaded(true);
           })
           .catch(err => {
-            alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+            alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
           });
       })
       .catch(err => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
   }, []);
@@ -73,7 +73,7 @@ const AdminCourse: React.FunctionComponent<IProps> = props => {
         }
       })
       .catch(err => {
-        setFlashMessages(parseError(err));
+        setFlashMessages(axiosErrorParser(err));
       });
   };
 

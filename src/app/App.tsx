@@ -57,6 +57,7 @@ import {
   TEACHER_NEW_COURSE_URL,
   TEACHER_COURSE_URL,
   TEACHER_EDIT_COURSE_URL,
+  PUBLIC_USER_PROFILE_URL,
 } from "../settings/Constants";
 import AdminGradeList from "../pages/adminpanel/grade/AdminGradeList";
 import AdminCategoryList from "../pages/adminpanel/category/AdminCategoryList";
@@ -79,6 +80,7 @@ import TeacherDashboard from "../pages/teacher/TeacherDashboard";
 import TeacherNewCourse from "../pages/teacher/TeacherNewCourse";
 import TeacherCourse from "../pages/teacher/TeacherCourse";
 import TeacherEditCourse from "../pages/teacher/TeacherEditCourse";
+import PublicProfile from "../pages/user/PublicProfile";
 
 const App = () => {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
@@ -121,6 +123,16 @@ const App = () => {
                 path={COURSE_WATCH_URL}
                 component={CoursePlayer}
               />
+              <PublicRoute
+                path={OAUTH2_REDIRECT_URL}
+                component={OAuth2RedirectHandler}
+              />
+              <PublicRoute
+                exact
+                path={PUBLIC_USER_PROFILE_URL}
+                component={PublicProfile}
+              />
+
               <PrivateRoute
                 exact
                 path={USER_DASHBOARD_URL}
@@ -150,10 +162,6 @@ const App = () => {
                 exact
                 path={TEACHER_REQUEST_URL}
                 component={TeacherRequest}
-              />
-              <PublicRoute
-                path={OAUTH2_REDIRECT_URL}
-                component={OAuth2RedirectHandler}
               />
               <PrivateRoute
                 role={RoleType.ADMIN}

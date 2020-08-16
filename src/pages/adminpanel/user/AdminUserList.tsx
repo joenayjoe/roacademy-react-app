@@ -3,7 +3,7 @@ import AdminControl from "../AdminControl";
 import UserService from "../../../services/UserService";
 import { IUser, Page, AlertVariant } from "../../../settings/DataTypes";
 import { AlertContext } from "../../../contexts/AlertContext";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import { camelize } from "../../../utils/StringUtils";
 import {
   DEFAULT_SORTING_FIELD,
@@ -49,7 +49,7 @@ const AdminUserList: React.FunctionComponent<IProps> = (props) => {
         setIsLoaded(true);
       })
       .catch((err) => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
   }, []);
@@ -72,7 +72,7 @@ const AdminUserList: React.FunctionComponent<IProps> = (props) => {
         setIsLoaded(true);
       })
       .catch((err) => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
   };
 

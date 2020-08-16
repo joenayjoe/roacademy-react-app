@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { ICourse, IChapter } from "../../settings/DataTypes";
 import { Link } from "react-router-dom";
 import {
-  BUILD_ADMIN_USER_URL,
   BUILD_COURSE_WATCH_URL,
+  BUILD_PUBLIC_USER_PROFILE_URL,
 } from "../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Collapse from "../../components/collapse/Collapse";
@@ -180,7 +180,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
                 <div className="course-detail-item">
                   Created by{" "}
                   <Link
-                    to={BUILD_ADMIN_USER_URL(course.createdBy.id)}
+                    to={BUILD_PUBLIC_USER_PROFILE_URL(course.createdBy.id)}
                     className="instructor-link"
                   >
                     {course.createdBy.firstName +

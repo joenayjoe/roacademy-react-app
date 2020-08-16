@@ -12,7 +12,7 @@ import { Redirect, RouteComponentProps } from "react-router-dom";
 import { HOME_URL } from "../../settings/Constants";
 import UserService from "../../services/UserService";
 import AuthService from "../../services/AuthService";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import Alert from "../../components/flash/Alert";
 
 interface IProps extends RouteComponentProps {}
@@ -49,7 +49,7 @@ const AccountSetting: React.FunctionComponent<IProps> = props => {
           alertContext.show("Email address updated successfully.");
         })
         .catch(err => {
-          setEmailError(parseError(err));
+          setEmailError(axiosErrorParser(err));
         });
     }
   };
@@ -70,7 +70,7 @@ const AccountSetting: React.FunctionComponent<IProps> = props => {
           }
         })
         .catch(err => {
-          setPassworErrors(parseError(err));
+          setPassworErrors(axiosErrorParser(err));
         });
     }
   };

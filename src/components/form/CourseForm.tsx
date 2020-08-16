@@ -20,14 +20,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GradeService } from "../../services/GradeService";
 import Flash from "../flash/Alert";
-import Spinner from "../spinner/Spinner";
 import { CategoryService } from "../../services/CategoryService";
 
 import "./Course.css";
 import { AlertContext } from "../../contexts/AlertContext";
 import { CourseService } from "../../services/CourseService";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import ChapterForm from "../../pages/adminpanel/chapter/ChapterForm";
 import { RTE_TOOLBAR_CONFIG } from "../../settings/rte_config";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -62,10 +61,6 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
   const [grades, setGrades] = useState<IGrade[]>([]);
   const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [isLoaded, setIsloaded] = useState<boolean>(
-    props.course ? false : true
-  );
-
   enum PillEnum {
     COURSE,
     CHAPTER,
@@ -91,7 +86,6 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
       setStatus(course.status as CourseStatus);
       setGradeId(course.primaryGrade.id);
       setCategoryId(course.primaryCategory.id);
-      setIsloaded(true);
       setImageUrl(course.imageUrl);
 
       gradeService
@@ -297,7 +291,10 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
           }
         })
         .catch((err) => {
-          alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+          alertContext.show(
+            axiosErrorParser(err).join(", "),
+            AlertVariant.DANGER
+          );
         });
     } else {
       alertContext.show("No couse is selected", AlertVariant.DANGER);
@@ -468,95 +465,91 @@ const CourseForm: React.FunctionComponent<IProp> = (props) => {
   ) : null;
   const formTitle = props.course ? "Edit Course" : "Create New Course";
 
-  let formContainer = <Spinner size="3x" />;
-  if (isLoaded) {
-    formContainer = (
-      <div>
-        <h4>{formTitle}</h4>
-        <nav className="nav nav-pills flex-column flex-sm-row my-3">
-          <button
-            className={`btn btn-outline-primary mr-sm-2 flex-sm-fill text-sm-center nav-link ${
-              activePill === PillEnum.COURSE ? "active" : ""
-            }`}
-            onClick={() => setActivePill(PillEnum.COURSE)}
-          >
-            Basic Info
-          </button>
-          <button
-            className={`btn btn-outline-primary mt-2 mt-sm-0 mr-sm-2 flex-sm-fill text-sm-center nav-link ${
-              activePill === PillEnum.CHAPTER ? "active" : ""
-            }`}
-            disabled={props.course == null ? true : false}
-            onClick={() => setActivePill(PillEnum.CHAPTER)}
-          >
-            Course Contents
-          </button>
-          <button
-            className={`btn btn-outline-primary mt-2 mt-sm-0 flex-sm-fill text-sm-center nav-link ${
-              activePill === PillEnum.PUBLISH ? "active" : ""
-            }`}
-            disabled={
-              props.course == null ||
-              (props.course && props.course.status === CourseStatus.PUBLISHED)
-                ? true
-                : false
-            }
-            onClick={() => setActivePill(PillEnum.PUBLISH)}
-          >
-            Publish
-          </button>
-        </nav>
-        <div className="tab-content">
-          <div
-            id="courseContent"
-            className={`tab-pane ${
-              activePill === PillEnum.COURSE ? "active" : ""
-            }`}
-          >
-            {courseForm}
-          </div>
-          <div
-            id="courseChapter"
-            className={`tab-pane ${
-              activePill === PillEnum.CHAPTER ? "active" : ""
-            }`}
-          >
-            {chapterForm}
-          </div>
-          <div
-            id="coursePublish"
-            className={`tab-pane ${
-              activePill === PillEnum.PUBLISH ? "active" : ""
-            }`}
-          >
-            <div className="course-publish border p-3 d-flex justify-content-center">
-              <div className="form-group ">
-                <label>Do you want to publish the course</label>
-                <div className="action-btn-group">
-                  <button
-                    type="button"
-                    className="btn btn-danger action-btn"
-                    onClick={() => setActivePill(PillEnum.COURSE)}
-                  >
-                    <FontAwesomeIcon icon="times" className="mr-2" />
-                    No
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary action-btn"
-                    onClick={publishCourse}
-                  >
-                    <FontAwesomeIcon icon="check" className="mr-2" />
-                    Yes
-                  </button>
-                </div>
+  return (
+    <div>
+      <h4>{formTitle}</h4>
+      <nav className="nav nav-pills flex-column flex-sm-row my-3">
+        <button
+          className={`btn btn-outline-primary mr-sm-2 flex-sm-fill text-sm-center nav-link ${
+            activePill === PillEnum.COURSE ? "active" : ""
+          }`}
+          onClick={() => setActivePill(PillEnum.COURSE)}
+        >
+          Basic Info
+        </button>
+        <button
+          className={`btn btn-outline-primary mt-2 mt-sm-0 mr-sm-2 flex-sm-fill text-sm-center nav-link ${
+            activePill === PillEnum.CHAPTER ? "active" : ""
+          }`}
+          disabled={props.course == null ? true : false}
+          onClick={() => setActivePill(PillEnum.CHAPTER)}
+        >
+          Course Contents
+        </button>
+        <button
+          className={`btn btn-outline-primary mt-2 mt-sm-0 flex-sm-fill text-sm-center nav-link ${
+            activePill === PillEnum.PUBLISH ? "active" : ""
+          }`}
+          disabled={
+            props.course == null ||
+            (props.course && props.course.status === CourseStatus.PUBLISHED)
+              ? true
+              : false
+          }
+          onClick={() => setActivePill(PillEnum.PUBLISH)}
+        >
+          Publish
+        </button>
+      </nav>
+      <div className="tab-content">
+        <div
+          id="courseContent"
+          className={`tab-pane ${
+            activePill === PillEnum.COURSE ? "active" : ""
+          }`}
+        >
+          {courseForm}
+        </div>
+        <div
+          id="courseChapter"
+          className={`tab-pane ${
+            activePill === PillEnum.CHAPTER ? "active" : ""
+          }`}
+        >
+          {chapterForm}
+        </div>
+        <div
+          id="coursePublish"
+          className={`tab-pane ${
+            activePill === PillEnum.PUBLISH ? "active" : ""
+          }`}
+        >
+          <div className="course-publish border p-3 d-flex justify-content-center">
+            <div className="form-group ">
+              <label>Do you want to publish the course</label>
+              <div className="action-btn-group">
+                <button
+                  type="button"
+                  className="btn btn-danger action-btn"
+                  onClick={() => setActivePill(PillEnum.COURSE)}
+                >
+                  <FontAwesomeIcon icon="times" className="mr-2" />
+                  No
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary action-btn"
+                  onClick={publishCourse}
+                >
+                  <FontAwesomeIcon icon="check" className="mr-2" />
+                  Yes
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    );
-  }
-  return <React.Fragment>{formContainer}</React.Fragment>;
+    </div>
+  );
 };
 export default withRouter(CourseForm);

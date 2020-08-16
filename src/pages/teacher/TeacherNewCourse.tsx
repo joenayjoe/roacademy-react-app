@@ -6,7 +6,7 @@ import CourseForm from "../../components/form/CourseForm";
 import { AlertContext } from "../../contexts/AlertContext";
 import { CourseService } from "../../services/CourseService";
 import { RouteComponentProps } from "react-router-dom";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 
 interface IProp extends RouteComponentProps {}
 
@@ -26,7 +26,7 @@ const TeacherNewCourse: React.FunctionComponent<IProp> = (props) => {
         alertContext.show("Course created successfully");
       })
       .catch((err) => {
-        setErrors(parseError(err));
+        setErrors(axiosErrorParser(err));
       });
   };
 

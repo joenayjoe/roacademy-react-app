@@ -34,7 +34,7 @@ import Login from "../../pages/user/Login";
 import Modal from "../modal/Modal";
 import { CourseService } from "../../services/CourseService";
 import { AlertContext } from "../../contexts/AlertContext";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import { Link } from "react-router-dom";
 
 interface IProps extends RouteComponentProps {
@@ -70,7 +70,7 @@ const SideDrawerNew: React.FunctionComponent<IProps> = (props) => {
         setCategories(response.data);
       })
       .catch((error) => {
-        alertContext.show(parseError(error).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(error).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
   }, []);

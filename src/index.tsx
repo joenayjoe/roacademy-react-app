@@ -50,14 +50,16 @@ import {
   faFilePdf,
   faFileVideo,
   faKeyboard,
-  faUserPlus
+  faUserPlus,
+  faFilter,
+  faSort,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
   faFacebookF,
   faFacebook,
   faGoogle,
-  faYoutube
+  faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
 library.add(
   faSignInAlt,
@@ -103,7 +105,9 @@ library.add(
   faInfoCircle,
   faCheckCircle,
   faFlag,
-  faKeyboard
+  faKeyboard,
+  faFilter,
+  faSort
 );
 
 ReactDOM.render(<App />, document.getElementById("root"));

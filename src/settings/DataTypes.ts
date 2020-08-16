@@ -32,6 +32,11 @@ export enum CourseStatus {
 
 export type MenuItemType = ICategory | IGrade | ICourse;
 
+export enum CommentableType {
+  COURSE = "Course",
+  LECTURE = "Lecture",
+}
+
 export enum ResourceType {
   CATEGORY = "Category",
   GRADE = "Grade",
@@ -64,6 +69,7 @@ export interface IPrimaryUser {
   firstName: string;
   lastName: string;
   email: string;
+  imageUrl: string;
 }
 
 interface IAuditable {
@@ -208,11 +214,14 @@ export interface ITag {
 }
 
 export interface IUser extends IPrimaryUser, IAuditable {
-  imageUrl: string;
   roles: IRole[];
 }
 
-export interface IUserEditRequest extends IPrimaryUser {
+export interface IUserEditRequest {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
   roleIds: number[];
 }
 
@@ -293,4 +302,21 @@ export interface Page<T> {
   size: number;
   first: boolean;
   last: boolean;
+}
+
+export interface IComment extends IAuditable {
+  id: number;
+  commentBody: string;
+  commentedBy: IPrimaryUser;
+  parentId: number;
+  numberOfReplies: number;
+}
+
+export interface ICommentRequest {
+  commentBody: string;
+}
+
+export interface ICommentEditRequest {
+  id: number;
+  commentBody: string;
 }

@@ -8,7 +8,7 @@ interface IProps {
   classNames?: string;
   size?: SizeProp;
 }
-const Spinner: React.FunctionComponent<IProps> = props => {
+const Spinner: React.FunctionComponent<IProps> = (props) => {
   let size = props.size ? props.size : "2x";
   return (
     <div className={`spinner ${props.classNames ? props.classNames : ""}`}>

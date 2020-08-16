@@ -11,7 +11,7 @@ import {
   base64StringtoFile,
 } from "../../utils/imageUtil";
 import UserService from "../../services/UserService";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import { AlertVariant } from "../../settings/DataTypes";
 import Spinner from "../../components/spinner/Spinner";
 import Alert from "../../components/flash/Alert";
@@ -130,7 +130,7 @@ const UserPhotoSetting: React.FunctionComponent = () => {
           })
           .catch((e) => {
             setIsUploading(false);
-            const errorMessages: string[] = parseError(e);
+            const errorMessages: string[] = axiosErrorParser(e);
             setUploadError(errorMessages);
           });
       }

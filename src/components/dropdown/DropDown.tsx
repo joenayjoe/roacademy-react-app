@@ -6,7 +6,7 @@ interface iProps {
   showDropDown?: boolean;
   name?: string;
   id?: string;
-  classNames?: string;
+  className?: string;
   icon?: IconProp;
   dropDownBtnRef?: any;
   handleMouseEnter?(): void;
@@ -18,7 +18,9 @@ class DropDown extends Component<iProps, {}> {
     return (
       <div
         id={this.props.id}
-        className={`drop-down ${this.props.classNames} ${openKlass}`}
+        className={`drop-down ${
+          this.props.className ? this.props.className : ""
+        } ${openKlass}`}
         onMouseEnter={this.props.handleMouseEnter}
       >
         <button

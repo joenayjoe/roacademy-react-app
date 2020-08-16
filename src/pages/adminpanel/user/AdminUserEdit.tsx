@@ -9,7 +9,7 @@ import {
   HTTPStatus
 } from "../../../settings/DataTypes";
 import { AlertContext } from "../../../contexts/AlertContext";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import Spinner from "../../../components/spinner/Spinner";
 import RoleService from "../../../services/RoleService";
 import {
@@ -46,7 +46,7 @@ const AdminUserEdit: React.FunctionComponent<IProps> = props => {
         setUser(resp.data);
       })
       .catch(err => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
     roleService
       .getRoles()
@@ -55,7 +55,7 @@ const AdminUserEdit: React.FunctionComponent<IProps> = props => {
         setIsLoaded(true);
       })
       .catch(err => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
   }, [userId]);
@@ -80,7 +80,7 @@ const AdminUserEdit: React.FunctionComponent<IProps> = props => {
           }
         })
         .catch(err => {
-          alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+          alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
         });
     }
   };

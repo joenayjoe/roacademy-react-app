@@ -17,7 +17,7 @@ import {
 } from "../../../settings/DataTypes";
 import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import Alert from "../../../components/flash/Alert";
 import RichTextEditor, { EditorValue } from "react-rte";
 import { RTE_TOOLBAR_CONFIG } from "../../../settings/rte_config";
@@ -133,7 +133,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
         resetNewChapter();
       })
       .catch((err) => {
-        setNewChapterErrors(parseError(err));
+        setNewChapterErrors(axiosErrorParser(err));
       });
   };
 
@@ -153,7 +153,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           resetEditChapter();
         })
         .catch((err) => {
-          setEditChapterErrors(parseError(err));
+          setEditChapterErrors(axiosErrorParser(err));
         });
     } else {
       alertContext.show(
@@ -265,7 +265,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
         alertContext.show("Lecture succesfully deleted");
       })
       .catch((err) => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
   };
 
@@ -348,7 +348,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           alertContext.show("Lecture added successfully");
         })
         .catch((err) => {
-          setNewLectureErrors(parseError(err));
+          setNewLectureErrors(axiosErrorParser(err));
         });
     }
   };
@@ -393,7 +393,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           }
         })
         .catch((err) => {
-          setEditingLectureErrors(parseError(err));
+          setEditingLectureErrors(axiosErrorParser(err));
         });
     }
   };
@@ -446,7 +446,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           alertContext.show(
             "Failed to update position.",
             AlertVariant.DANGER,
-            parseError(err),
+            axiosErrorParser(err),
             false
           );
         });
@@ -500,7 +500,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
             alertContext.show(
               "Failed to update position.",
               AlertVariant.DANGER,
-              parseError(err),
+              axiosErrorParser(err),
               false
             );
           });
@@ -547,7 +547,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
             alertContext.show(
               "Failed to update position.",
               AlertVariant.DANGER,
-              parseError(err),
+              axiosErrorParser(err),
               false
             );
           });
@@ -607,7 +607,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
         alertContext.show("Lecture Resource deleted successfully");
       })
       .catch((err) => {
-        let errors = parseError(err);
+        let errors = axiosErrorParser(err);
         setLectureContentError(errors);
       });
   };
@@ -642,7 +642,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
         })
         .catch((err) => {
           setIsUploadingLectureResource(false);
-          setLectureContentError(parseError(err));
+          setLectureContentError(axiosErrorParser(err));
         });
     }
   };

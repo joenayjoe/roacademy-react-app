@@ -9,7 +9,7 @@ import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
 import { CATEGORIES_URL } from "../../settings/Constants";
 import { AlertContext } from "../../contexts/AlertContext";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import CategoryDisplay from "./CategoryDisplay";
 
 interface MatchParams {
@@ -38,7 +38,7 @@ const Category: React.FunctionComponent<IProps> = props => {
         setIsLoaded(true);
       })
       .catch(error => {
-        alertContext.show("Errors :", AlertVariant.DANGER, parseError(error));
+        alertContext.show("Errors :", AlertVariant.DANGER, axiosErrorParser(error));
       });
 
     // eslint-disable-next-line

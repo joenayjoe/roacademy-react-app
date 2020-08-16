@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../../../components/modal/Modal";
 import NewCategory from "./NewCategory";
 import Spinner from "../../../components/spinner/Spinner";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import { camelize } from "../../../utils/StringUtils";
 import { AlertContext } from "../../../contexts/AlertContext";
 
@@ -79,7 +79,7 @@ const AdminCategoryList: React.FunctionComponent<IProps> = props => {
         }
       })
       .catch(err => {
-        const errorMsg: string[] = parseError(err);
+        const errorMsg: string[] = axiosErrorParser(err);
         setNewCategoryErrors(errorMsg);
       });
   };

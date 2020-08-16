@@ -11,7 +11,7 @@ import {
 import { AlertContext } from "../../../contexts/AlertContext";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 
 interface MatchProp {
   course_id: string;
@@ -36,7 +36,7 @@ const EditCourse: React.FunctionComponent<IProp> = (props) => {
         alertContext.show(
           "Failed to load course: ",
           AlertVariant.DANGER,
-          parseError(err)
+          axiosErrorParser(err)
         );
         props.history.push(ADMIN_COURSES_URL);
       });
@@ -52,7 +52,7 @@ const EditCourse: React.FunctionComponent<IProp> = (props) => {
         alertContext.show("Course edited successfully");
       })
       .catch((err) => {
-        setErrors(parseError(err));
+        setErrors(axiosErrorParser(err));
       });
   };
 

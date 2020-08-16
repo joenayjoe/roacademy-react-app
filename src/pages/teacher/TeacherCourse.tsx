@@ -15,7 +15,7 @@ import {
   TEACHER_DASHBOARD_URL,
   BUILD_TEACHER_EDIT_COURSE_URL,
 } from "../../settings/Constants";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import ChapterService from "../../services/ChapterService";
 import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
@@ -61,13 +61,13 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
             })
             .catch((err) => {
               alertContext.show(
-                parseError(err).join(", "),
+                axiosErrorParser(err).join(", "),
                 AlertVariant.DANGER
               );
             });
         })
         .catch((err) => {
-          alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+          alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
         });
     } else {
       alertContext.show("Access denied", AlertVariant.DANGER);
@@ -87,7 +87,7 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
         }
       })
       .catch((err) => {
-        setFlashErrors(parseError(err));
+        setFlashErrors(axiosErrorParser(err));
       });
   };
 

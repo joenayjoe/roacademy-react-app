@@ -5,7 +5,7 @@ import GradeSlide from "../grade/GradeSlide";
 import { CourseService } from "../../services/CourseService";
 import { PAGE_SIZE } from "../../settings/Constants";
 import { AlertContext } from "../../contexts/AlertContext";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 
 interface IProps {
   category: ICategory;
@@ -33,7 +33,7 @@ const CategoryDisplay: React.FunctionComponent<IProps> = props => {
         }
       })
       .catch(err => {
-        alertContext.show("Errors :", AlertVariant.DANGER, parseError(err));
+        alertContext.show("Errors :", AlertVariant.DANGER, axiosErrorParser(err));
       });
   };
   useEffect(() => {

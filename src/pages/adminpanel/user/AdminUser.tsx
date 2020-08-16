@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { IUser, AlertVariant, HTTPStatus } from "../../../settings/DataTypes";
 import UserService from "../../../services/UserService";
 import { AlertContext } from "../../../contexts/AlertContext";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import Spinner from "../../../components/spinner/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConfirmDialog from "../../../components/modal/ConfirmDialog";
@@ -38,7 +38,7 @@ const AdminUser: React.FunctionComponent<IProps> = props => {
         setIsLoaded(true);
       })
       .catch(err => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
     // eslint-disable-next-line
   }, [userId]);
@@ -55,7 +55,7 @@ const AdminUser: React.FunctionComponent<IProps> = props => {
         }
       })
       .catch(err => {
-        alertContext.show(parseError(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
       });
   };
 

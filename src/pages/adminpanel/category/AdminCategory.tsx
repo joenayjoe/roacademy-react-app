@@ -15,7 +15,7 @@ import {
 } from "../../../settings/Constants";
 import Modal from "../../../components/modal/Modal";
 import EditCategory from "./EditCategory";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../../components/breadcrumb/BreadcrumbItem";
 import ConfirmDialog from "../../../components/modal/ConfirmDialog";
@@ -68,7 +68,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
         }
       })
       .catch(err => {
-        setErrorMessage(parseError(err));
+        setErrorMessage(axiosErrorParser(err));
       });
     setShowConfirmModal(false);
   };
@@ -82,7 +82,7 @@ const AdminCategory: React.FunctionComponent<IProps> = props => {
         handleModalClose();
       })
       .catch(err => {
-        let errs = parseError(err);
+        let errs = axiosErrorParser(err);
         setCategoryErrorMessages(errs);
       });
   };

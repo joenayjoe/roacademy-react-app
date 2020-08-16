@@ -19,7 +19,7 @@ import Spinner from "../../../components/spinner/Spinner";
 import ConfirmDialog from "../../../components/modal/ConfirmDialog";
 import Modal from "../../../components/modal/Modal";
 import EditGrade from "./EditGrade";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import { Link } from "react-router-dom";
 import Alert from "../../../components/flash/Alert";
 import { AlertContext } from "../../../contexts/AlertContext";
@@ -61,7 +61,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
         alertContext.show("Grade successfully updated");
       })
       .catch(err => {
-        setGradeErrorMessages(parseError(err));
+        setGradeErrorMessages(axiosErrorParser(err));
       });
   };
 
@@ -80,7 +80,7 @@ const AdminGrade: React.FunctionComponent<IProp> = props => {
         }
       })
       .catch(err => {
-        setGradeErrorMessages(parseError(err));
+        setGradeErrorMessages(axiosErrorParser(err));
       });
   };
 

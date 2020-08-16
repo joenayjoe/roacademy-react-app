@@ -10,7 +10,7 @@ import {
   ADMIN_COURSE_STATUS,
   BUILD_TEACHER_EDIT_COURSE_URL,
 } from "../../settings/Constants";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import Breadcrumb from "../../components/breadcrumb/Breadcrumb";
 import BreadcrumbItem from "../../components/breadcrumb/BreadcrumbItem";
 import CourseForm from "../../components/form/CourseForm";
@@ -40,7 +40,7 @@ const TeacherEditCourse: React.FunctionComponent<IProp> = (props) => {
           alertContext.show(
             "Fail to load course: ",
             AlertVariant.DANGER,
-            parseError(err)
+            axiosErrorParser(err)
           );
           props.history.push(TEACHER_DASHBOARD_URL);
         });
@@ -66,7 +66,7 @@ const TeacherEditCourse: React.FunctionComponent<IProp> = (props) => {
           );
         })
         .catch((err) => {
-          setErrors(parseError(err));
+          setErrors(axiosErrorParser(err));
         });
     } else {
       alertContext.show("Access denied!", AlertVariant.DANGER);

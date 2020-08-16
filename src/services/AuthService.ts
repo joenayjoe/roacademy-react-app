@@ -6,7 +6,8 @@ import {
   ILoginResponse,
   IToken,
   ISignupRequest,
-  ISocialLoginRequest
+  ISocialLoginRequest,
+  IPrimaryUser
 } from "../settings/DataTypes";
 import { CookieService } from "./CookieService";
 import JwtDecode from "jwt-decode";
@@ -85,21 +86,21 @@ class AuthService {
     return accessToken !== undefined && !this.isTokenExpired(accessToken);
   }
 
-  public getUserFullName(user: IUser | null): string {
+  public getUserFullName(user: IUser | IPrimaryUser | null): string {
     if (user) {
       return user.firstName + " " + user.lastName;
     }
     return "";
   }
 
-  public getUserNameInitials(user: IUser | null): string {
+  public getUserNameInitials(user: IUser | IPrimaryUser | null): string {
     if (user) {
       return user.firstName[0] + user.lastName[0];
     }
     return "";
   }
 
-  public getUserEmail(user: IUser | null): string {
+  public getUserEmail(user: IUser | IPrimaryUser | null): string {
     if (user) {
       return user.email;
     }

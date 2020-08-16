@@ -18,7 +18,7 @@ import {
 import Modal from "../../../components/modal/Modal";
 import NewGrade from "./NewGrade";
 import { camelize } from "../../../utils/StringUtils";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 import Spinner from "../../../components/spinner/Spinner";
 import Pagination from "../../../components/pagination/Pagination";
 import { AlertContext } from "../../../contexts/AlertContext";
@@ -73,7 +73,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
         }
       })
       .catch(err => {
-        setNewGradeErrors(parseError(err));
+        setNewGradeErrors(axiosErrorParser(err));
       });
   };
 

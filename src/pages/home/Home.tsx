@@ -12,6 +12,7 @@ import { DEFAULT_COURSE_STATUS } from "../../settings/Constants";
 import GradeSlide from "../grade/GradeSlide";
 import { GradeService } from "../../services/GradeService";
 import DonationBanner from "../../components/banner/DonationBanner";
+import Spinner from "../../components/spinner/Spinner";
 
 const Home: React.FunctionComponent = () => {
   // services
@@ -20,6 +21,7 @@ const Home: React.FunctionComponent = () => {
   const courseService = new CourseService();
 
   // states
+  // category courses
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
   const [categoryCourses, setCategoryCourses] = useState<ICourse[]>([]);
@@ -33,6 +35,9 @@ const Home: React.FunctionComponent = () => {
     lastCategoryCourseSlideIndex,
     setLastCategoryCourseSlideIndex,
   ] = useState<number>(0);
+  const [isCategoryCourseLoading, setIsCategoryCourseLoading] = useState<
+    boolean
+  >(true);
 
   // trending course states
   const [trendingCourses, setTrendingCourses] = useState<ICourse[]>([]);
@@ -46,6 +51,9 @@ const Home: React.FunctionComponent = () => {
     lastTrendingCourseSlideIndex,
     setLastTrendingCourseSlideIndex,
   ] = useState<number>(0);
+  const [isTrendingCourseLoading, setIsTrendingCourseLoading] = useState<
+    boolean
+  >(true);
 
   // new courses states
   const [newCourses, setNewCourses] = useState<ICourse[]>([]);
@@ -54,6 +62,7 @@ const Home: React.FunctionComponent = () => {
   const [lastNewCourseSlideIndex, setLastNewCourseSlideIndex] = useState<
     number
   >(0);
+  const [isNewCoursesLoading, setIsNewCoursesLoading] = useState<boolean>(true);
 
   // popular topic states
   const [popularTopics, setPopularTopics] = useState<IGrade[]>([]);
@@ -66,6 +75,9 @@ const Home: React.FunctionComponent = () => {
   const [lastPopularTopicSlideIndex, setLastPopularTopicSlideIndex] = useState<
     number
   >(0);
+  const [isPopularTopicLoading, setIsPopularTopicLoading] = useState<boolean>(
+    true
+  );
 
   const loadCategories = () => {
     categoryService.getCategories("name_asc").then((resp) => {
@@ -76,10 +88,12 @@ const Home: React.FunctionComponent = () => {
     });
   };
   const loadCategoryCourses = (categoryId: number, page: number, size = 10) => {
+    setIsCategoryCourseLoading(true);
     courseService
       .getCoursesByCategoryId(categoryId, page, size)
       .then((resp) => {
         setCategoryCourses(categoryCourses.concat(resp.data.content));
+        setIsCategoryCourseLoading(false);
         if (resp.data.last) {
           setHasMoreCategoryCourses(false);
         } else {
@@ -89,10 +103,12 @@ const Home: React.FunctionComponent = () => {
   };
 
   const loadTrendingCourses = (page: number, size = 10) => {
+    setIsTrendingCourseLoading(true);
     courseService
       .getCourses(page, size, DEFAULT_COURSE_STATUS, "hits_desc")
       .then((resp) => {
         setTrendingCourses(trendingCourses.concat(resp.data.content));
+        setIsTrendingCourseLoading(false);
         if (resp.data.last) {
           setHasMoreTrendingCourse(false);
         } else {
@@ -102,10 +118,12 @@ const Home: React.FunctionComponent = () => {
   };
 
   const loadNewCourses = (page: number, size = 10) => {
+    setIsNewCoursesLoading(true);
     courseService
       .getCourses(page, size, DEFAULT_COURSE_STATUS, "createdAt_desc")
       .then((resp) => {
         setNewCourses(newCourses.concat(resp.data.content));
+        setIsNewCoursesLoading(false);
         if (resp.data.last) {
           setHasMoreNewCourse(false);
         } else {
@@ -115,8 +133,10 @@ const Home: React.FunctionComponent = () => {
   };
 
   const loadPopularTopics = (page: number, size = 15) => {
+    setIsPopularTopicLoading(true);
     gradeService.getGrades(page, size, "name_asc").then((resp) => {
       setPopularTopics(popularTopics.concat(resp.data.content));
+      setIsPopularTopicLoading(false);
       if (resp.data.last) {
         setHasMorePopularTopics(false);
       } else {
@@ -347,12 +367,16 @@ const Home: React.FunctionComponent = () => {
   return (
     <React.Fragment>
       <TeacherRecruitBanner />
-      {getCategoryCourses()}
+      {isCategoryCourseLoading ? <Spinner size="3x" /> : getCategoryCourses()}
       <div className="width-75 trending-courses mb-2">
-        {getTrendingCourses()}
+        {isTrendingCourseLoading ? <Spinner size="3x" /> : getTrendingCourses()}
       </div>
-      <div className="width-75 new-courses mb-2">{getNewCourses()}</div>
-      <div className="width-75 popular-topics mb-2">{getPoplarTopics()}</div>
+      <div className="width-75 new-courses mb-2">
+        {isNewCoursesLoading ? <Spinner size="3x" /> : getNewCourses()}
+      </div>
+      <div className="width-75 popular-topics mb-2">
+        {isPopularTopicLoading ? <Spinner size="3x" /> : getPoplarTopics()}
+      </div>
       <DonationBanner />
     </React.Fragment>
   );

@@ -15,7 +15,7 @@ import Spinner from "../../components/spinner/Spinner";
 import { CourseService } from "../../services/CourseService";
 import { camelize } from "../../utils/StringUtils";
 import { AlertContext } from "../../contexts/AlertContext";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import Pagination from "../../components/pagination/Pagination";
 
 interface IProp extends RouteComponentProps {}
@@ -62,7 +62,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
           alertContext.show(
             "Failed to load courses.",
             AlertVariant.DANGER,
-            parseError(err)
+            axiosErrorParser(err)
           );
         });
     } else {
@@ -104,7 +104,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
           alertContext.show(
             "Failed to load!",
             AlertVariant.DANGER,
-            parseError(err)
+            axiosErrorParser(err)
           );
         });
     } else {
@@ -144,7 +144,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
           alertContext.show(
             "Failed to load page: ",
             AlertVariant.DANGER,
-            parseError(err)
+            axiosErrorParser(err)
           );
         });
     } else {

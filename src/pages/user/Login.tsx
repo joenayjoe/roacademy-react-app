@@ -8,7 +8,7 @@ import {
   AlertVariant
 } from "../../settings/DataTypes";
 import { withRouter, RouteComponentProps } from "react-router";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import Alert from "../../components/flash/Alert";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -43,7 +43,7 @@ const Login: React.FunctionComponent<IProps> = props => {
         props.closeHandler();
       })
       .catch(error => {
-        const errorMessages: string[] = parseError(error);
+        const errorMessages: string[] = axiosErrorParser(error);
         setErrorMessages(errorMessages);
       });
   };

@@ -183,7 +183,7 @@ const Navbar: React.FunctionComponent<IProbs> = (props) => {
           <DropDown
             icon="bars"
             showDropDown={showAuthLinksDropDown}
-            classNames="drop-down-on-hover"
+            className="drop-down-on-hover"
             dropDownBtnRef={authLinkDrpDwnRef}
           >
             <ul

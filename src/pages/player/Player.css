@@ -84,20 +84,9 @@
  
  .comment-section .comment-top {
      display: flex;
- }
- 
- .comment-section .new-comment {
-     display: flex;
- }
- 
- .new-comment .comment-form {
-     flex: 1;
- }
- 
- .comment-list .comment {
-     display: flex;
      align-items: center;
-     margin: 1rem 0;
+     margin-bottom: 1.5rem;
+     border-bottom: 1px solid #dedfe0;
  }
  
  @media (max-width: 768px) {
@@ -119,7 +108,7 @@
          height: 350px;
          position: sticky;
          top: 0;
-         z-index: 100;
+         z-index: 10
      }
      .player-info-section .player-title {
          cursor: pointer;

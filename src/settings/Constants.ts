@@ -58,8 +58,8 @@ export const BUILD_TEACHER_EDIT_COURSE_URL = (
 const FRONT_END_LOCALHOST = "http://localhost:3000";
 const API_LOCALHOST = "http://localhost:8080";
 
-export const FRONT_END_DOMAIN = "https://roacademy.herokuapp.com";
-export const API_DOMAIN = "https://roacademy-backend.herokuapp.com";
+export const FRONT_END_DOMAIN = FRONT_END_LOCALHOST; //"http://www.roacademy.no";
+export const API_DOMAIN = API_LOCALHOST; // "https://roacademy-backend.herokuapp.com";
 
 export const HOME_URL = "/";
 export const CATEGORIES_URL = "/categories";
@@ -96,6 +96,11 @@ export const BUILD_SEARCH_WITH_QUERY_URL = (query: string) =>
 export const DONATION_URL = "/donation";
 
 export const TEACHER_REQUEST_URL = "/teacher-request";
+
+export const PUBLIC_USER_PROFILE_URL = "/users/:user_id";
+
+export const BUILD_PUBLIC_USER_PROFILE_URL = (userId: number) =>
+  PUBLIC_USER_PROFILE_URL.replace(":user_id", userId.toString());
 
 // OAuth2 URLS
 
@@ -135,7 +140,7 @@ export const LOGGED_IN_USER_COOKIES_NAME = "lastAuthUserInfo";
 export const COOKIE_PATH = "/";
 
 // default value constants
-export const PAGE_SIZE = 15;
+export const PAGE_SIZE = 10;
 export const DEFAULT_SORTING_FIELD = "id";
 export const DEFAULT_SORTING_ORDER = "desc";
 export const DEFAULT_SORTING =

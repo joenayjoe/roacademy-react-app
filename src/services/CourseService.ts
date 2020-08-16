@@ -7,6 +7,8 @@ import {
   ICourseStatusUpdateRequest,
   ISearchResponse,
   CourseStatus,
+  IComment,
+  ICommentRequest,
 } from "../settings/DataTypes";
 import ApiRequest from "./ApiRequest";
 import {
@@ -144,6 +146,52 @@ export class CourseService {
     courseId: string
   ): Promise<AxiosResponse<HTTPStatus>> {
     const url = this.baseUrl + "/" + courseId;
+    return await this.apiRequest.delete(url);
+  }
+
+  public async getComments(
+    courseId: number,
+    page: number,
+    size: number,
+    order = DEFAULT_SORTING
+  ): Promise<AxiosResponse<Page<IComment>>> {
+    const url = `/courses/${courseId}/comments?page=${page}&size=${size}&order=${order}`;
+    return await this.apiRequest.get<Page<IComment>>(url);
+  }
+
+  public async getReplies(
+    courseId: number,
+    commentId: number,
+    page: number,
+    size: number,
+    order = "id_asc"
+  ): Promise<AxiosResponse<Page<IComment>>> {
+    const url = `/courses/${courseId}/comments/${commentId}/replies?page=${page}&size=${size}&order=${order}`;
+    return await this.apiRequest.get<Page<IComment>>(url);
+  }
+
+  public async addComment(
+    courseId: number,
+    comment: ICommentRequest
+  ): Promise<AxiosResponse<IComment>> {
+    const url = `/courses/${courseId}/comments`;
+    return await this.apiRequest.post<ICommentRequest, IComment>(url, comment);
+  }
+
+  public async addCommentReply(
+    courseId: number,
+    commentId: number,
+    reply: ICommentRequest
+  ): Promise<AxiosResponse<IComment>> {
+    const url = `/courses/${courseId}/comments/${commentId}/replies`;
+    return await this.apiRequest.post<ICommentRequest, IComment>(url, reply);
+  }
+
+  public async deleteComment(
+    courseId: number,
+    commentId: number
+  ): Promise<AxiosResponse<HTTPStatus>> {
+    const url = `/courses/${courseId}/comments/${commentId}`;
     return await this.apiRequest.delete(url);
   }
 }

@@ -10,7 +10,7 @@ import {
   IUserProfileUpdateRequest
 } from "../../settings/DataTypes";
 import UserService from "../../services/UserService";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import Alert from "../../components/flash/Alert";
 
 const ProfileSetting: React.FunctionComponent = () => {
@@ -42,7 +42,7 @@ const ProfileSetting: React.FunctionComponent = () => {
           window.location.reload();
         })
         .catch(err => {
-          setFormError(parseError(err));
+          setFormError(axiosErrorParser(err));
         });
     }
   };

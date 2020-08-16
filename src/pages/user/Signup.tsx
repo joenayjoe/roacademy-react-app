@@ -7,7 +7,7 @@ import {
 } from "../../settings/DataTypes";
 import AuthService from "../../services/AuthService";
 import { RouteComponentProps, withRouter } from "react-router";
-import { parseError } from "../../utils/errorParser";
+import { axiosErrorParser } from "../../utils/errorParser";
 import Alert from "../../components/flash/Alert";
 import { HOME_URL } from "../../settings/Constants";
 import { AlertContext } from "../../contexts/AlertContext";
@@ -48,7 +48,7 @@ const Signup: React.FunctionComponent<IProps> = props => {
         props.closeHandler();
       })
       .catch(error => {
-        const errorMessages: string[] = parseError(error);
+        const errorMessages: string[] = axiosErrorParser(error);
         setErrorMessages(errorMessages);
       });
   };

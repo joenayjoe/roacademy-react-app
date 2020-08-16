@@ -10,7 +10,7 @@ import CourseForm from "../../../components/form/CourseForm";
 import { CourseService } from "../../../services/CourseService";
 import { RouteComponentProps } from "react-router-dom";
 import { AlertContext } from "../../../contexts/AlertContext";
-import { parseError } from "../../../utils/errorParser";
+import { axiosErrorParser } from "../../../utils/errorParser";
 
 interface IProp extends RouteComponentProps {}
 
@@ -29,7 +29,7 @@ const NewCourse: React.FunctionComponent<IProp> = (props) => {
         alertContext.show("Course created successfully");
       })
       .catch((err) => {
-        setErrors(parseError(err));
+        setErrors(axiosErrorParser(err));
       });
   };
   return (

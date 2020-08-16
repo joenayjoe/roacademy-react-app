@@ -7,7 +7,7 @@ import {
   ICategory,
   IGrade,
   ICourse,
-  MenuItemType
+  MenuItemType,
 } from "../../settings/DataTypes";
 import { withRouter, RouteComponentProps } from "react-router";
 import { CategoryService } from "../../services/CategoryService";
@@ -17,7 +17,7 @@ import Spinner from "../spinner/Spinner";
 import {
   BUILD_GRADE_URL,
   BUILD_COURSE_URL,
-  BUILD_CATEGORY_URL
+  BUILD_CATEGORY_URL,
 } from "../../settings/Constants";
 import { CourseService } from "../../services/CourseService";
 import { Link } from "react-router-dom";
@@ -27,7 +27,7 @@ interface IProps extends RouteComponentProps {
   icon?: IconProp;
 }
 
-const DropDownMenu: React.FunctionComponent<IProps> = props => {
+const DropDownMenu: React.FunctionComponent<IProps> = (props) => {
   // api services
   const categoryService = new CategoryService();
   const gradeService = new GradeService();
@@ -55,14 +55,14 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
 
   useEffect(() => {
     setIsLoadingCategory(true);
-    categoryService.getCategories("name_asc").then(response => {
+    categoryService.getCategories("name_asc").then((response) => {
       setCategories(response.data);
       setIsLoadingCategory(false);
     });
-    document.addEventListener("mousedown", e => handleOnClick(e), false);
+    document.addEventListener("mousedown", (e) => handleOnClick(e), false);
 
     return () => {
-      document.removeEventListener("mousedown", e => handleOnClick(e), false);
+      document.removeEventListener("mousedown", (e) => handleOnClick(e), false);
     };
     // eslint-disable-next-line
   }, []);
@@ -128,7 +128,7 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
 
   const fetchGradesForCategory = (category: ICategory) => {
     setIsLoadingGrade(true);
-    gradeService.getGradesByCategoryId(category.id, "id_asc").then(resp => {
+    gradeService.getGradesByCategoryId(category.id, "id_asc").then((resp) => {
       let updated_cats: ICategory[] = categories.map((cat: ICategory) => {
         if (cat.id === category.id) {
           cat.grades = resp.data;
@@ -141,10 +141,10 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
   };
   const fetchCoursesForGrade = (grade: IGrade) => {
     setIsLoadingCourse(true);
-    courseService.getAllCoursesByGradeId(grade.id).then(resp => {
-      let updated_cats = categories.map(cat => {
+    courseService.getAllCoursesByGradeId(grade.id).then((resp) => {
+      let updated_cats = categories.map((cat) => {
         if (cat.id === grade.primaryCategory.id) {
-          cat.grades.map(grd => {
+          cat.grades.map((grd) => {
             if (grd.id === grade.id) {
               grd.courses = resp.data;
             }
@@ -189,7 +189,7 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
           <Link
             to={BUILD_COURSE_URL(item.id)}
             className="menu-link"
-            onClick={e => handleMenuLinkClick(e, item)}
+            onClick={(e) => handleMenuLinkClick(e, item)}
           >
             <span>{item.name}</span>
           </Link>
@@ -250,7 +250,7 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
           <Link
             className="menu-link"
             to={BUILD_GRADE_URL(item.id)}
-            onClick={e => handleMenuLinkClick(e, item)}
+            onClick={(e) => handleMenuLinkClick(e, item)}
           >
             <span>{item.name}</span>
             {expander}
@@ -313,7 +313,7 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
           <Link
             className="menu-link"
             to={BUILD_CATEGORY_URL(item.id)}
-            onClick={e => handleMenuLinkClick(e, item)}
+            onClick={(e) => handleMenuLinkClick(e, item)}
           >
             <span>{item.name}</span>
             {expander}
@@ -337,7 +337,7 @@ const DropDownMenu: React.FunctionComponent<IProps> = props => {
   return (
     <DropDown
       name="Categories"
-      classNames="drop-down-on-hover"
+      className="drop-down-on-hover"
       showDropDown={showDropDownMenu}
       icon={props.icon}
       dropDownBtnRef={menuBtnNode}

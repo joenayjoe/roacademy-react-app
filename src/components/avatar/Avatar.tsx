@@ -1,13 +1,13 @@
 import React from "react";
 import AuthService from "../../services/AuthService";
-import { IUser } from "../../settings/DataTypes";
+import { IUser, IPrimaryUser } from "../../settings/DataTypes";
 
 interface IProps {
   styles: object;
-  user: IUser | null;
+  user: IUser | IPrimaryUser | null;
   avatarRef?: any;
 }
-const Avatar: React.FunctionComponent<IProps> = props => {
+const Avatar: React.FunctionComponent<IProps> = (props) => {
   const authService = new AuthService();
 
   let userAvatar;
