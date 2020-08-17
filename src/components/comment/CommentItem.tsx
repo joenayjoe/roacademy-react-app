@@ -80,6 +80,8 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
   };
 
   const loadReplies = (page: number, size: number) => {
+    setNewAddedReplies([]);
+
     if (props.commentableType === CommentableType.COURSE) {
       loadCourseReplies(page, size);
     } else {
@@ -131,7 +133,6 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
   };
 
   const handleViewReplyClick = () => {
-    setNewAddedReplies([]);
     loadReplies(currentPage, PAGE_SIZE);
   };
 
@@ -140,10 +141,6 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
     setNewAddedReplies([]);
     setCurrentPage(0);
     setHasMoreReplies(false);
-  };
-
-  const handleReplyClick = () => {
-    setShowReplyForm(true);
   };
 
   const loadMoreReplies = () => {
@@ -278,10 +275,6 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
     );
   };
 
-  const handleDeleteCommentClick = () => {
-    setShowConfirmationModal(true);
-  };
-
   return (
     <React.Fragment>
       {getCommentDeleteComfimationDialog()}
@@ -314,12 +307,15 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
               authContext.currentUser.id === comment.commentedBy.id && (
                 <div
                   className="link text-secondary mr-2"
-                  onClick={handleDeleteCommentClick}
+                  onClick={() => setShowConfirmationModal(true)}
                 >
                   Delete
                 </div>
               )}
-            <div className="link text-secondary" onClick={handleReplyClick}>
+            <div
+              className="link text-secondary"
+              onClick={() => setShowReplyForm(!showReplyForm)}
+            >
               Reply
             </div>
           </div>
