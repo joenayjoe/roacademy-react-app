@@ -97,9 +97,10 @@ export class LectureService {
     lectureId: number,
     commentId: number,
     page: number,
-    size: number
+    size: number,
+    order = "id_asc"
   ): Promise<AxiosResponse<Page<IComment>>> {
-    const url = `/lectures/${lectureId}/comments/${commentId}/replies?page=${page}&size=${size}`;
+    const url = `/lectures/${lectureId}/comments/${commentId}/replies?page=${page}&size=${size}&order=${order}`;
     return await this.apiRequest.get<Page<IComment>>(url);
   }
 

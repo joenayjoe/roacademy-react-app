@@ -43,7 +43,12 @@ const PublicProfile: React.FunctionComponent<IProp> = (props) => {
     return <Spinner size="3x" />;
   }
 
-  return <div className="user-public-profile-wrapper">{user}</div>;
+  return (
+    <div className="user-public-profile-wrapper">
+      First Name: {user!.firstName}
+      Last Name : {user!.lastName}
+    </div>
+  );
 };
 
 export default PublicProfile;

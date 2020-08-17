@@ -77,31 +77,17 @@
      background-color: #f3f3d9;
  }
  
- .comment-section {
-     width: 74%;
-     padding: .75rem 0;
- }
- 
- .comment-section .comment-top {
-     display: flex;
-     align-items: center;
-     margin-bottom: 1.5rem;
-     border-bottom: 1px solid #dedfe0;
- }
- 
  @media (max-width: 768px) {
      .course-player-wrapper {
          width: 100%;
      }
      .player-section,
      .player-info-section,
-     .player-menu-section,
-     .comment-section {
+     .player-menu-section {
          width: 100%;
      }
      .player-info-section,
-     .player-menu-section,
-     .comment-section {
+     .player-menu-section {
          padding: .75rem;
      }
      .player-section {

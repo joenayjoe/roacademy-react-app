@@ -3,7 +3,6 @@ import {
   IComment,
   CommentableType,
   ICommentRequest,
-  AlertVariant,
 } from "../../settings/DataTypes";
 import Avatar from "../avatar/Avatar";
 import AuthService from "../../services/AuthService";
@@ -18,7 +17,6 @@ import NewComment from "./NewComment";
 import CommentList from "./CommentList";
 import LectureService from "../../services/LectureService";
 import { axiosErrorParser } from "../../utils/errorParser";
-import { AlertContext } from "../../contexts/AlertContext";
 import Spinner from "../spinner/Spinner";
 import { AuthContext } from "../../contexts/AuthContext";
 import ConfirmDialog from "../modal/ConfirmDialog";
@@ -29,11 +27,11 @@ interface IProp {
   commentableType: CommentableType;
   commentableId: number;
   deleteHandler: (comment: IComment) => void;
+  errorHandler: (errors: string[]) => void;
 }
 
 const CommentItem: React.FunctionComponent<IProp> = (props) => {
   const authService = new AuthService();
-  const alertContext = useContext(AlertContext);
   const authContext = useContext(AuthContext);
   const courseService = new CourseService();
   const lectureService = new LectureService();
@@ -49,6 +47,7 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(
     false
   );
+  const [newAddedReplies, setNewAddedReplies] = useState<IComment[]>([]);
 
   const loadCourseReplies = (page: number, size: number) => {
     setIsLoading(true);
@@ -59,6 +58,9 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
         setCurrentPage(resp.data.number);
         setHasMoreReplies(!resp.data.last);
         setIsLoading(false);
+      })
+      .catch((err) => {
+        props.errorHandler(axiosErrorParser(err));
       });
   };
 
@@ -71,6 +73,9 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
         setCurrentPage(resp.data.number);
         setHasMoreReplies(!resp.data.last);
         setIsLoading(false);
+      })
+      .catch((err) => {
+        props.errorHandler(axiosErrorParser(err));
       });
   };
 
@@ -83,45 +88,56 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
   };
 
   const deleteReply = (reply: IComment) => {
+    if (!authContext.isAuthenticated) {
+      props.errorHandler([
+        "You're not logged in. Please login to continue this action.",
+      ]);
+      return;
+    }
+
     if (props.commentableType === CommentableType.COURSE) {
       courseService
         .deleteComment(props.commentableId, reply.id)
         .then((resp) => {
           let r = replies.filter((c) => c.id !== reply.id);
+          let nr = newAddedReplies.filter((c) => c.id !== reply.id);
           setReplies(r);
+          setNewAddedReplies(nr);
           setComment({
             ...comment,
             numberOfReplies: comment.numberOfReplies - 1,
           });
         })
         .catch((err) => {
-          alertContext.show(
-            axiosErrorParser(err).join(", "),
-            AlertVariant.DANGER
-          );
+          props.errorHandler(axiosErrorParser(err));
         });
     } else {
       lectureService
         .deleteComment(props.commentableId, reply.id)
         .then((resp) => {
           let r = replies.filter((c) => c.id !== reply.id);
+          let nr = newAddedReplies.filter((c) => c.id !== reply.id);
           setReplies(r);
+          setNewAddedReplies(nr);
+          setComment({
+            ...comment,
+            numberOfReplies: comment.numberOfReplies - 1,
+          });
         })
         .catch((err) => {
-          alertContext.show(
-            axiosErrorParser(err).join(", "),
-            AlertVariant.DANGER
-          );
+          props.errorHandler(axiosErrorParser(err));
         });
     }
   };
 
   const handleViewReplyClick = () => {
+    setNewAddedReplies([]);
     loadReplies(currentPage, PAGE_SIZE);
   };
 
   const handleHideReplyClick = () => {
     setReplies([]);
+    setNewAddedReplies([]);
     setCurrentPage(0);
     setHasMoreReplies(false);
   };
@@ -131,6 +147,7 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
   };
 
   const loadMoreReplies = () => {
+    setNewAddedReplies([]);
     loadReplies(currentPage + 1, PAGE_SIZE);
   };
 
@@ -139,18 +156,27 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
   };
 
   const handleNewReplySubmit = (text: string) => {
+    if (!authContext.isAuthenticated) {
+      props.errorHandler([
+        "You're not logged in. Please login to continue this action.",
+      ]);
+      return;
+    }
     setNewReplyBody(text);
+
     let mention = `<a href=${BUILD_PUBLIC_USER_PROFILE_URL(
       comment.commentedBy.id
     )}>@${authService.getUserFullName(comment.commentedBy)}</a>`;
+
     let reply: ICommentRequest = {
       commentBody: mention + " " + text,
     };
+
     if (props.commentableType === CommentableType.COURSE) {
       courseService
         .addCommentReply(props.commentableId, comment.id, reply)
         .then((resp) => {
-          setReplies([...replies, resp.data]);
+          setNewAddedReplies([...newAddedReplies, resp.data]);
           setComment({
             ...comment,
             numberOfReplies: comment.numberOfReplies + 1,
@@ -159,17 +185,13 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
           setShowReplyForm(false);
         })
         .catch((err) => {
-          console.log("Error", axiosErrorParser(err));
-          alertContext.show(
-            axiosErrorParser(err).join(", "),
-            AlertVariant.DANGER
-          );
+          props.errorHandler(axiosErrorParser(err));
         });
     } else {
       lectureService
         .addCommentReply(props.commentableId, comment.id, reply)
         .then((resp) => {
-          setReplies([...replies, resp.data]);
+          setNewAddedReplies([...newAddedReplies, resp.data]);
           setComment({
             ...comment,
             numberOfReplies: comment.numberOfReplies + 1,
@@ -178,10 +200,7 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
           setShowReplyForm(false);
         })
         .catch((err) => {
-          alertContext.show(
-            axiosErrorParser(err).join(", "),
-            AlertVariant.DANGER
-          );
+          props.errorHandler(axiosErrorParser(err));
         });
     }
   };
@@ -213,7 +232,21 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
           hasMore={hasMoreReplies}
           loadMore={loadMoreReplies}
           deleteHandler={deleteReply}
+          errorHandler={props.errorHandler}
         />
+
+        {newAddedReplies.length > 0 ? (
+          <CommentList
+            className="new-added-comment"
+            comments={newAddedReplies}
+            commentableType={props.commentableType}
+            commentableId={props.commentableId}
+            hasMore={false}
+            loadMore={loadMoreReplies}
+            deleteHandler={deleteReply}
+            errorHandler={props.errorHandler}
+          />
+        ) : null}
         {isLoading ? <Spinner size="3x" /> : null}
       </React.Fragment>
     );

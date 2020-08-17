@@ -1,0 +1,23 @@
+.comment-section {
+    width: 74%;
+    padding: .75rem 0;
+}
+
+.comment-section .comment-top {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #dedfe0;
+}
+
+.new-added-comment {
+    background-color: rgb(235, 240, 237);
+    padding: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .comment-section {
+        width: 100%;
+        padding: .75rem;
+    }
+}

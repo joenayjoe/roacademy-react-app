@@ -10,6 +10,7 @@ interface IProp {
   loadMore: () => void;
   className?: string;
   deleteHandler: (comment: IComment) => void;
+  errorHandler: (errors: string[]) => void;
 }
 const CommentList: React.FunctionComponent<IProp> = (props) => {
   const getCommentItems = () => {
@@ -21,6 +22,7 @@ const CommentList: React.FunctionComponent<IProp> = (props) => {
           commentableType={props.commentableType}
           commentableId={props.commentableId}
           deleteHandler={props.deleteHandler}
+          errorHandler={props.errorHandler}
         />
       );
     });
