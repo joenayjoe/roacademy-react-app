@@ -57,6 +57,7 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
         setReplies([...replies, ...resp.data.content]);
         setCurrentPage(resp.data.number);
         setHasMoreReplies(!resp.data.last);
+        setComment({ ...comment, numberOfReplies: resp.data.totalElements });
         setIsLoading(false);
       })
       .catch((err) => {
@@ -72,6 +73,7 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
         setReplies([...replies, ...resp.data.content]);
         setCurrentPage(resp.data.number);
         setHasMoreReplies(!resp.data.last);
+        setComment({ ...comment, numberOfReplies: resp.data.totalElements });
         setIsLoading(false);
       })
       .catch((err) => {

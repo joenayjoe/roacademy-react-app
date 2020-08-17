@@ -11,7 +11,6 @@ import DropDown from "../dropdown/DropDown";
 import { DEFAULT_SORTING, PAGE_SIZE } from "../../settings/Constants";
 import NewComment from "./NewComment";
 import CommentList from "./CommentList";
-import { AlertContext } from "../../contexts/AlertContext";
 import { axiosErrorParser } from "../../utils/errorParser";
 import Spinner from "../spinner/Spinner";
 
@@ -28,8 +27,6 @@ interface IProp {
 const CommentModule: React.FunctionComponent<IProp> = (props) => {
   const courseService = new CourseService();
   const lectureService = new LectureService();
-
-  const alertContext = useContext(AlertContext);
   const authContext = useContext(AuthContext);
 
   const [comments, setComments] = useState<IComment[]>([]);
