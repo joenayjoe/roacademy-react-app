@@ -20,6 +20,7 @@ import { axiosErrorParser } from "../../utils/errorParser";
 import Spinner from "../spinner/Spinner";
 import { AuthContext } from "../../contexts/AuthContext";
 import ConfirmDialog from "../modal/ConfirmDialog";
+import EditComment from "./EditComment";
 
 interface IProp {
   comment: IComment;
@@ -300,11 +301,6 @@ const CommentItem: React.FunctionComponent<IProp> = (props) => {
           </div>
           <div dangerouslySetInnerHTML={markupReply(comment.commentBody)} />
           <div className="comment-actions-wrapper d-flex">
-            {authContext.currentUser &&
-              authContext.currentUser.id === comment.commentedBy.id && (
-                <div className="link text-secondary mr-2">Edit</div>
-              )}
-
             {authContext.currentUser &&
               authContext.currentUser.id === comment.commentedBy.id && (
                 <div
