@@ -58,8 +58,8 @@ export const BUILD_TEACHER_EDIT_COURSE_URL = (
 const FRONT_END_LOCALHOST = "http://localhost:3000";
 const API_LOCALHOST = "http://localhost:8080";
 
-export const FRONT_END_DOMAIN = FRONT_END_LOCALHOST; //"http://www.roacademy.no";
-export const API_DOMAIN = API_LOCALHOST; // "https://roacademy-backend.herokuapp.com";
+export const FRONT_END_DOMAIN = "http://www.roacademy.no";
+export const API_DOMAIN = "https://roacademy-backend.herokuapp.com";
 
 export const HOME_URL = "/";
 export const CATEGORIES_URL = "/categories";
