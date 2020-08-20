@@ -2,12 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import "./Modal.css";
+import { ModalSize } from "../../settings/DataTypes";
 
 interface IProps {
   isOpen: boolean;
   modalTitle: string;
   modalBody: JSX.Element;
   modalFooter?: JSX.Element;
+  size?: ModalSize;
   onCloseHandler: () => void;
 }
 
@@ -20,21 +22,24 @@ if (modalRootOrNull) {
   modalRoot = modalRootOrNull;
 }
 
-const Modal: React.FunctionComponent<IProps> = props => {
+const Modal: React.FunctionComponent<IProps> = (props) => {
   const closeModal = () => {
     props.onCloseHandler();
   };
+
   const handleBackgroundClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeModal();
     }
   };
+
   const modalFooter = props.modalFooter ? (
     <div className="modal-footer">{props.modalFooter}</div>
   ) : null;
+
   const MODAL = props.isOpen ? (
     <div className="modal-wrapper" onClick={handleBackgroundClick}>
-      <div className={`ra-modal animate-top modal-md`}>
+      <div className={`ra-modal animate-top ${props.size ? props.size : ""}`}>
         <div className="modal-header">
           <h5 className="modal-title">{props.modalTitle}</h5>
           <button

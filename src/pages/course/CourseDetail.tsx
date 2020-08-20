@@ -4,20 +4,26 @@ import { Link } from "react-router-dom";
 import {
   BUILD_COURSE_WATCH_URL,
   BUILD_PUBLIC_USER_PROFILE_URL,
+  BUILD_COURSE_URL,
+  FRONT_END_DOMAIN,
 } from "../../settings/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Collapse from "../../components/collapse/Collapse";
 import ShowMoreText from "../../components/showmoretext/ShowMoreText";
+import ShareDialog from "../../components/modal/ShareDialog";
 
 interface IProp {
   course: ICourse;
   chapters: IChapter[];
   className?: string;
 }
+
 const CourseDetail: React.FunctionComponent<IProp> = (props) => {
   const [collapsedChapter, setCollapsedChapter] = useState<IChapter | null>(
     null
   );
+
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState<boolean>(false);
 
   const course = props.course;
 
@@ -80,7 +86,10 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
         </button>
       </div>
       <div className="share-btn mb-2">
-        <button className="btn btn-outline-primary btn-block">
+        <button
+          className="btn btn-outline-primary btn-block"
+          onClick={() => setIsShareDialogOpen(true)}
+        >
           <FontAwesomeIcon icon="share" />
           <strong>
             <span className="pl-2">Share with friends</span>
@@ -104,7 +113,11 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
             </button>
           </div>
           <div className="share-btn mb-2">
-            <button className="btn btn-info btn-block">
+            <button
+              className="btn btn-info btn-block"
+              type="button"
+              onClick={() => setIsShareDialogOpen(true)}
+            >
               <FontAwesomeIcon icon="share" />
               <span className="pl-2">Share with Friends</span>
             </button>
@@ -167,6 +180,17 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
   const classNames = props.className ? props.className : "";
   return (
     <div className={`course-detail ${classNames}`}>
+      {isShareDialogOpen && (
+        <ShareDialog
+          isOpen={isShareDialogOpen}
+          title="Share this course"
+          description={
+            "You might like this course on @RoAcademy: " + course.name
+          }
+          link={FRONT_END_DOMAIN + BUILD_COURSE_URL(course.id)}
+          closeHandler={() => setIsShareDialogOpen(false)}
+        />
+      )}
       <div className="course-detail-header">
         <div className="width-75">
           <div className="row">

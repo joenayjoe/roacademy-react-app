@@ -6,7 +6,7 @@ interface IProp {
   onDismissHandler: () => void;
   onConfirmHandler: () => void;
 }
-const ConfirmDialog: React.FunctionComponent<IProp> = props => {
+const ConfirmDialog: React.FunctionComponent<IProp> = (props) => {
   const confirmModalBody = <div>Do you really want to delete this?</div>;
 
   const confirmModalFooter = (

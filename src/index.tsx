@@ -60,6 +60,8 @@ import {
   faFacebook,
   faGoogle,
   faYoutube,
+  faTwitter,
+  faTwitterSquare,
 } from "@fortawesome/free-brands-svg-icons";
 library.add(
   faSignInAlt,
@@ -78,6 +80,8 @@ library.add(
   faFacebookF,
   faFacebook,
   faGoogle,
+  faTwitter,
+  faTwitterSquare,
   faEnvelope,
   faLock,
   faUser,

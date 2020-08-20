@@ -17,11 +17,13 @@ import {
   BUILD_CATEGORY_URL,
   BUILD_GRADE_URL,
   DEFAULT_COURSE_STATUS,
+  BUILD_COURSE_URL,
 } from "../../settings/Constants";
 import ChapterService from "../../services/ChapterService";
 import { AlertContext } from "../../contexts/AlertContext";
 import { axiosErrorParser } from "../../utils/errorParser";
 import CommentModule from "../../components/comment/CommentModule";
+import { Helmet } from "react-helmet";
 
 interface matchedParams {
   course_id: string;
@@ -73,6 +75,24 @@ const Course: React.FunctionComponent<IProps> = (props) => {
   const getCourseView = (course: ICourse) => {
     return (
       <React.Fragment>
+        <Helmet>
+          <meta property="og:url" content={BUILD_COURSE_URL(course.id)} />
+          <meta
+            property="og:title"
+            content={course.name + " | Rohingya Academy"}
+          />
+          <meta property="og:description" content={course.description} />
+          <meta property="og:image" content={course.imageUrl} />
+
+          <meta property="twitter:url" content={BUILD_COURSE_URL(course.id)} />
+          <meta
+            property="twitter:title"
+            content={course.name + " | Rohingya Academy"}
+          />
+          <meta property="twitter:description" content={course.description} />
+          <meta property="twitter:image" content={course.imageUrl} />
+        </Helmet>
+
         <Breadcrumb className="width-75 bg-transparent">
           <BreadcrumbItem href={BUILD_CATEGORY_URL(course.primaryCategory.id)}>
             {course.primaryCategory.name}
@@ -82,6 +102,7 @@ const Course: React.FunctionComponent<IProps> = (props) => {
           </BreadcrumbItem>
           <BreadcrumbItem active>{course.name}</BreadcrumbItem>
         </Breadcrumb>
+
         <CourseDetail course={course} chapters={chapters} />
 
         <CommentModule
