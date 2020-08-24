@@ -99,6 +99,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .content-wrapper {
     flex: 1 0 auto;
+    margin-top: 63px;
 }
 
 .width-75 {
@@ -153,7 +154,6 @@ input[type="search"]::-webkit-search-results-decoration {
 .slick-card {
     margin-bottom: 1rem;
     cursor: pointer;
-    border: none;
 }
 
 .slick-card .slick-card-body {

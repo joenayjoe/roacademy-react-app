@@ -20,7 +20,6 @@ import { axiosErrorParser } from "../../utils/errorParser";
 import Spinner from "../spinner/Spinner";
 import { AuthContext } from "../../contexts/AuthContext";
 import ConfirmDialog from "../modal/ConfirmDialog";
-import EditComment from "./EditComment";
 
 interface IProp {
   comment: IComment;

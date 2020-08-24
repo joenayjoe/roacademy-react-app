@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import TeacherRecruitBanner from "../../components/banner/TeacherRecruitBanner";
 import { ICategory, ICourse, IGrade } from "../../settings/DataTypes";
 import { CategoryService } from "../../services/CategoryService";
@@ -13,8 +13,12 @@ import GradeSlide from "../grade/GradeSlide";
 import { GradeService } from "../../services/GradeService";
 import DonationBanner from "../../components/banner/DonationBanner";
 import Spinner from "../../components/spinner/Spinner";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Home: React.FunctionComponent = () => {
+  // context
+  const authContext = useContext(AuthContext);
+
   // services
   const categoryService = new CategoryService();
   const gradeService = new GradeService();
@@ -259,7 +263,7 @@ const Home: React.FunctionComponent = () => {
 
   const getDesktopCategoryCourseView = () => {
     return categories.length ? (
-      <div className="width-75 category-courses mb-2">
+      <div>
         <ul className="nav nav-pills">{categoryPill()}</ul>
 
         <div className="category-pill-content-container mt-2">
@@ -366,8 +370,10 @@ const Home: React.FunctionComponent = () => {
 
   return (
     <React.Fragment>
-      <TeacherRecruitBanner />
-      {isCategoryCourseLoading ? <Spinner size="3x" /> : getCategoryCourses()}
+      {authContext.isAuthenticated && <TeacherRecruitBanner />}
+      <div className="width-75 category-courses my-2">
+        {isCategoryCourseLoading ? <Spinner size="3x" /> : getCategoryCourses()}
+      </div>
       <div className="width-75 trending-courses mb-2">
         {isTrendingCourseLoading ? <Spinner size="3x" /> : getTrendingCourses()}
       </div>

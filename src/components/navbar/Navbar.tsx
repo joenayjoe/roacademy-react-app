@@ -273,7 +273,7 @@ const Navbar: React.FunctionComponent<IProbs> = (props) => {
   };
 
   return (
-    <header className="bg-white rounded top-header">
+    <header className="bg-white top-header">
       {modalDialog}
       <nav className="navbar navbar-expand-md navbar-light nav-container">
         {getContentForMobileDevice()}

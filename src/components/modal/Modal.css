@@ -9,6 +9,10 @@
     z-index: 300;
 }
 
+.modal-wrapper {
+    top: 62px;
+}
+
 .ra-modal {
     background: #ffffff;
     overflow-x: hidden;

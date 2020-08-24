@@ -212,9 +212,6 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
                       course.createdBy.lastName}
                   </Link>
                 </div>
-                <div className="course-detail-item">
-                  Last Updated {course.updatedAt}
-                </div>
               </div>
               <div className="course-detail-row">
                 <div className="course-detail-item">Level {course.level}</div>
