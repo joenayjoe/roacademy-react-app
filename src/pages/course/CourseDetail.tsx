@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { ICourse, IChapter } from "../../settings/DataTypes";
 import { Link } from "react-router-dom";
 import {
@@ -15,25 +15,44 @@ import ShareDialog from "../../components/modal/ShareDialog";
 interface IProp {
   course: ICourse;
   chapters: IChapter[];
+  isSubscribed: boolean;
+  subscribeHandler: () => void;
   className?: string;
 }
 
 const CourseDetail: React.FunctionComponent<IProp> = (props) => {
-  const [collapsedChapter, setCollapsedChapter] = useState<IChapter | null>(
-    null
-  );
-
+  const [expandedChapterIds, setExpandedChapterIds] = useState<number[]>([]);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState<boolean>(false);
 
-  const course = props.course;
+  useEffect(() => {
+    if (props.chapters.length) {
+      setExpandedChapterIds([props.chapters[0].id]);
+    }
+    // eslint-disable-next-line
+  }, []);
 
-  const handleChalpetClick = (ch: IChapter) => {
-    collapsedChapter && collapsedChapter.id === ch.id
-      ? setCollapsedChapter(null)
-      : setCollapsedChapter(ch);
+  const handleChapterClick = (ch: IChapter) => {
+    let eids = [...expandedChapterIds];
+    if (eids.includes(ch.id)) {
+      eids.splice(eids.indexOf(ch.id), 1);
+    } else {
+      eids.push(ch.id);
+    }
+    console.log("ids = ", eids);
+    setExpandedChapterIds(eids);
   };
 
-  const courseObjectives = course.objectives.map((obj) => {
+  const expandAll = (e: FormEvent) => {
+    e.preventDefault();
+    if (expandedChapterIds.length === props.chapters.length) {
+      setExpandedChapterIds([]);
+    } else {
+      let ids = props.chapters.map((c) => c.id);
+      setExpandedChapterIds(ids);
+    }
+  };
+
+  const courseObjectives = props.course.objectives.map((obj) => {
     return (
       <li key={obj} className="course-objective-item">
         <FontAwesomeIcon icon="check" className="course-objective-icon" />
@@ -41,7 +60,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
       </li>
     );
   });
-  const courseRequirements = course.requirements.map((req) => {
+  const courseRequirements = props.course.requirements.map((req) => {
     return (
       <li key={req} className="course-requirement-item">
         <FontAwesomeIcon
@@ -53,86 +72,12 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
     );
   });
 
-  const courseInfoList = (
-    <ul className="course-info-list">
-      <li className="course-info-item">
-        <FontAwesomeIcon
-          icon={["fab", "youtube"]}
-          className="course-info-icon"
-        />
-        <span>20hrs of Videos</span>
-      </li>
-      <li className="course-info-item">
-        <FontAwesomeIcon icon="file" className="course-info-icon" />
-        <span>19 Articles</span>
-      </li>
-      <li className="course-info-item">
-        <FontAwesomeIcon icon="tasks" className="course-info-icon" />
-        <span>20 Exericices</span>
-      </li>
-      <li className="course-info-item">
-        <FontAwesomeIcon icon="file-download" className="course-info-icon" />
-        <span>20 Downloadable materials</span>
-      </li>
-    </ul>
-  );
-
-  const courseInfoMobile = (
-    <div className="col-md-4 mt-2 mobile-course-info">
-      <div className="course-enroll-btn mb-2">
-        <button className="btn btn-outline-primary btn-block">
-          <FontAwesomeIcon icon="calendar-check" />
-          <strong className="pl-2"> Subscribe</strong>
-        </button>
-      </div>
-      <div className="share-btn mb-2">
-        <button
-          className="btn btn-outline-primary btn-block"
-          onClick={() => setIsShareDialogOpen(true)}
-        >
-          <FontAwesomeIcon icon="share" />
-          <strong>
-            <span className="pl-2">Share with friends</span>
-          </strong>
-        </button>
-      </div>
-      <h5>This course includes</h5>
-      {courseInfoList}
-    </div>
-  );
-  const courseInfoDesktop = (
-    <div className="col-md-4 desktop-course-info">
-      <div className="course-detail-info">
-        <div className="course-detail-info-content shadow-sm">
-          <h4>This course includes</h4>
-          {courseInfoList}
-          <div className="course-enroll-btn mb-2">
-            <button className="btn btn-warning btn-block">
-              <FontAwesomeIcon icon="calendar-check" />
-              <span className="pl-2">Subscribe</span>
-            </button>
-          </div>
-          <div className="share-btn mb-2">
-            <button
-              className="btn btn-info btn-block"
-              type="button"
-              onClick={() => setIsShareDialogOpen(true)}
-            >
-              <FontAwesomeIcon icon="share" />
-              <span className="pl-2">Share with Friends</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   const getLectureList = (ch: IChapter) => {
     return ch.lectures.map((lecture) => {
       return (
         <Link
           key={`${lecture.id}_${lecture.name}`}
-          to={BUILD_COURSE_WATCH_URL(course.id, ch.id, lecture.id)}
+          to={BUILD_COURSE_WATCH_URL(props.course.id, ch.id, lecture.id)}
         >
           <div className="lecture-list-item">
             <span className="mr-3">
@@ -146,8 +91,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
   };
 
   const chapterList = props.chapters.map((ch) => {
-    const icon =
-      collapsedChapter && collapsedChapter.id === ch.id ? "minus" : "plus";
+    const icon = expandedChapterIds.includes(ch.id) ? "minus" : "plus";
     return (
       <div
         key={`${ch.id}_${ch.name}`}
@@ -155,18 +99,14 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
       >
         <div
           className="chapter-list-header collapse-item-header"
-          onClick={() => handleChalpetClick(ch)}
+          onClick={() => handleChapterClick(ch)}
         >
           <span>{ch.name}</span>
           <span>
             <FontAwesomeIcon icon={icon} size="sm" color="#003845" />
           </span>
         </div>
-        <Collapse
-          isOpen={
-            collapsedChapter && collapsedChapter.id === ch.id ? true : false
-          }
-        >
+        <Collapse isOpen={expandedChapterIds.includes(ch.id)}>
           <div className="lecture-container">{getLectureList(ch)}</div>
         </Collapse>
       </div>
@@ -174,7 +114,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
   });
 
   const markupDescription = () => {
-    return { __html: course.description };
+    return { __html: props.course.description };
   };
 
   const classNames = props.className ? props.className : "";
@@ -185,9 +125,9 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
           isOpen={isShareDialogOpen}
           title="Share this course"
           description={
-            "You might like this course on @RoAcademy: " + course.name
+            "You might like this course on @RoAcademy: " + props.course.name
           }
-          link={FRONT_END_DOMAIN + BUILD_COURSE_URL(course.id)}
+          link={FRONT_END_DOMAIN + BUILD_COURSE_URL(props.course.id)}
           closeHandler={() => setIsShareDialogOpen(false)}
         />
       )}
@@ -195,35 +135,68 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
         <div className="width-75">
           <div className="row">
             <div className="col-md-8">
-              <h3 className="course-detail-title">{course.name}</h3>
-              <div className="course-detail-headline">{course.headline}</div>
+              <h3 className="course-detail-title">{props.course.name}</h3>
+              <div className="course-detail-headline">
+                {props.course.headline}
+              </div>
               <div className="course-detail-row">
-                <div className="course-detail-item">Views {course.hits}</div>
+                <div className="course-detail-item">
+                  Views {props.course.hits}
+                </div>
               </div>
               <div className="course-detail-row">
                 <div className="course-detail-item">
                   Created by{" "}
                   <Link
-                    to={BUILD_PUBLIC_USER_PROFILE_URL(course.createdBy.id)}
+                    to={BUILD_PUBLIC_USER_PROFILE_URL(
+                      props.course.createdBy.id
+                    )}
                     className="instructor-link"
                   >
-                    {course.createdBy.firstName +
+                    {props.course.createdBy.firstName +
                       " " +
-                      course.createdBy.lastName}
+                      props.course.createdBy.lastName}
                   </Link>
                 </div>
               </div>
               <div className="course-detail-row">
-                <div className="course-detail-item">Level {course.level}</div>
+                <div className="course-detail-item">
+                  Level {props.course.level}
+                </div>
+              </div>
+              <div className="course-detail-row">
+                <div className="course-subscribe course-detail-item">
+                  <button
+                    className={`btn ${
+                      props.isSubscribed
+                        ? "btn-outline-warning"
+                        : "btn-outline-info"
+                    }`}
+                    onClick={props.subscribeHandler}
+                  >
+                    <FontAwesomeIcon icon="calendar-check" />
+                    <span className="pl-2">
+                      {props.isSubscribed ? "Unsubscribe" : "Subscribe"}
+                    </span>
+                  </button>
+                </div>
+                <div className="course-share course-detail-item">
+                  <button
+                    className=" btn btn-outline-info"
+                    type="button"
+                    onClick={() => setIsShareDialogOpen(true)}
+                  >
+                    <FontAwesomeIcon icon="share" />
+                    <span className="pl-2">Share</span>
+                  </button>
+                </div>
               </div>
             </div>
-            {courseInfoDesktop}
           </div>
         </div>
       </div>
       <div className="course-detail-content width-75">
         <div className="row">
-          {courseInfoMobile}
           <div className="col-md-8 pt-4">
             <div className="course-detail-objectives pt-2 shadow-sm">
               <h4>What you'll learn</h4>
@@ -233,7 +206,21 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
               <h4>Course content</h4>
               <div className="chapter-container">
                 <div className="float-right pb-2">
-                  <Link to={BUILD_COURSE_WATCH_URL(course.id)}>View All</Link>
+                  {/* <span className="link mr-2" onClick={expandAll}>
+                    {expandedChapterIds.length === props.chapters.length
+                      ? "Collapse All"
+                      : "Expand All"}
+                  </span> */}
+
+                  <button className="btn btn-link mr-2" onClick={expandAll}>
+                    {expandedChapterIds.length === props.chapters.length
+                      ? "Collapse All"
+                      : "Expand All"}
+                  </button>
+
+                  <Link to={BUILD_COURSE_WATCH_URL(props.course.id)}>
+                    View All
+                  </Link>
                 </div>
                 <div style={{ clear: "right" }} className="collapse-menu">
                   {chapterList}

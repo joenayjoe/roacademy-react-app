@@ -12,7 +12,7 @@ interface IProps {
   duration?: number;
   closeHandler?(): void;
 }
-const Alert: React.FunctionComponent<IProps> = props => {
+const Alert: React.FunctionComponent<IProps> = (props) => {
   useEffect(() => {
     let t = props.duration ? props.duration : 3200;
     const timer = setTimeout(() => {
@@ -63,7 +63,7 @@ const Alert: React.FunctionComponent<IProps> = props => {
   }
 
   if (props.errors) {
-    let errorMap = props.errors.map(error => {
+    let errorMap = props.errors.map((error) => {
       return (
         <li key={error} className="alert-error-item">
           {error}
@@ -101,7 +101,7 @@ const Alert: React.FunctionComponent<IProps> = props => {
 
   errorFlash = (
     <div
-      className={`d-flex justify-content-between align-items-center ${props.variant} ${klass}`}
+      className={`d-flex justify-content-between align-items-center mt-1 ${props.variant} ${klass}`}
       role="alert"
     >
       <div>

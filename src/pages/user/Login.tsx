@@ -5,7 +5,7 @@ import "./UserSetting.css";
 import {
   ILoginRequest,
   ModalIdentifier,
-  AlertVariant
+  AlertVariant,
 } from "../../settings/DataTypes";
 import { withRouter, RouteComponentProps } from "react-router";
 import { axiosErrorParser } from "../../utils/errorParser";
@@ -19,7 +19,7 @@ interface IProps extends RouteComponentProps {
   modalSwitchHandler: (modal: ModalIdentifier) => void;
 }
 
-const Login: React.FunctionComponent<IProps> = props => {
+const Login: React.FunctionComponent<IProps> = (props) => {
   const authService = new AuthService();
 
   const authContext = useContext(AuthContext);
@@ -33,16 +33,16 @@ const Login: React.FunctionComponent<IProps> = props => {
 
     let formData: ILoginRequest = {
       email: email,
-      password: password
+      password: password,
     };
     authService
       .login(formData)
-      .then(resp => {
+      .then((resp) => {
         authContext && authContext.login(resp.data);
-        props.history.push("/dashboard");
+        props.history.replace(props.location.pathname);
         props.closeHandler();
       })
-      .catch(error => {
+      .catch((error) => {
         const errorMessages: string[] = axiosErrorParser(error);
         setErrorMessages(errorMessages);
       });
@@ -97,7 +97,7 @@ const Login: React.FunctionComponent<IProps> = props => {
                 aria-label="Email"
                 aria-describedby="basic-addon1"
                 required
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -117,7 +117,7 @@ const Login: React.FunctionComponent<IProps> = props => {
                 aria-label="Password"
                 aria-describedby="basic-addon2"
                 required
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>

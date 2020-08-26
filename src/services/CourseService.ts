@@ -77,7 +77,7 @@ export class CourseService {
     status = DEFAULT_COURSE_STATUS
   ): Promise<AxiosResponse<ICourse>> {
     const url = this.baseUrl + "/" + courseId + "?status=" + status;
-    return await this.apiRequest.get(url);
+    return await this.apiRequest.get<ICourse>(url);
   }
 
   public async getAutoSuggestForCourse(

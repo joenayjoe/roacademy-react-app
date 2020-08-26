@@ -9,6 +9,8 @@ import {
   IPasswordResetRequest,
   IEmailUpdateRequest,
   IUserProfileUpdateRequest,
+  ICourseSubscribeRequest,
+  ICourseSubscriptionCheckResponse,
 } from "../settings/DataTypes";
 import { DEFAULT_SORTING } from "../settings/Constants";
 
@@ -69,6 +71,25 @@ export class UserService {
   ): Promise<AxiosResponse<IUser>> {
     let url = `/users/${userId}/reset_password`;
     return await this.apiRequest.post<IPasswordResetRequest, IUser>(url, data);
+  }
+
+  public async subscribeCourse(
+    userId: number,
+    data: ICourseSubscribeRequest
+  ): Promise<AxiosResponse<HTTPStatus>> {
+    const url = `/users/${userId}/subscribe-course`;
+    return await this.apiRequest.put<ICourseSubscribeRequest, HTTPStatus>(
+      url,
+      data
+    );
+  }
+
+  public async isSubscribed(
+    userId: number,
+    courseId: number
+  ): Promise<AxiosResponse<ICourseSubscriptionCheckResponse>> {
+    const url = `/users/${userId}/courses/${courseId}/is-subscribed`;
+    return await this.apiRequest.get<ICourseSubscriptionCheckResponse>(url);
   }
 
   public async deleteUser(userId: number): Promise<AxiosResponse<HTTPStatus>> {

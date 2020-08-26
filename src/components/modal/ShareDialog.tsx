@@ -40,7 +40,8 @@ const ShareDialog: React.FunctionComponent<IProp> = (props) => {
         <input
           type="text"
           className="form-control"
-          value={props.link}
+          defaultValue={props.link}
+          readOnly={true}
           aria-label="Course Link"
           ref={textRef}
         />

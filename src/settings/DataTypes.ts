@@ -115,6 +115,17 @@ export interface ICourse extends IPrimaryCourse, IAuditable {
   imageUrl: string;
 }
 
+export interface ICourseSubscribeRequest {
+  userId: number;
+  courseId: number;
+}
+
+export interface ICourseSubscriptionCheckResponse {
+  userId: number;
+  courseId: number;
+  subscribed: boolean;
+}
+
 export interface IDetailCourse extends ICourse {
   chapters: IChapter[];
   tags: ITag[];
@@ -271,19 +282,6 @@ export interface IToken {
   sub: string;
   exp: number;
   iat: number;
-}
-
-export interface IYoutubeCredentials {
-  refreshToken: string;
-  accessToken: string;
-  expiresInSeconds: number;
-  scopes: string[];
-  tokenType: string;
-}
-export interface IYoutubeCredentialUpdateRequest {
-  refreshToken: string;
-  accessToken: string;
-  expiresInSeconds: number;
 }
 
 export interface ISearchResponse {

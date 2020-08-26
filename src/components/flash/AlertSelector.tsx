@@ -8,7 +8,7 @@ const AlertSelector: React.FunctionComponent = () => {
   if (alertContext.message) {
     return (
       <Alert
-        className="flash-alert sticky-top"
+        className="flash-alert"
         variant={alertContext.type}
         title={alertContext.message}
         errors={alertContext.errors}

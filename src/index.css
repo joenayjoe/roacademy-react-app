@@ -11,14 +11,17 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-body a {
+body a,
+body .btn-link {
     color: #007791;
     text-decoration: none;
     outline: 0;
 }
 
 body a:hover,
-body a:focus {
+body a:focus,
+body .btn-link:focus,
+body .btn-link:hover {
     text-decoration: none;
     outline: 0;
     color: #003845;

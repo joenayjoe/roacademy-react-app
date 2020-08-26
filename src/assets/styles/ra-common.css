@@ -36,6 +36,9 @@ input[type="search"]::-webkit-search-results-decoration {
     width: 75%;
     margin: 0 auto;
     margin-bottom: 5px;
+    position: sticky;
+    top: 63px;
+    z-index: 1024;
 }
 
 .ra-icon {

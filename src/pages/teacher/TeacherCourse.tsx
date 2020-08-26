@@ -7,6 +7,8 @@ import {
   ICourse,
   IChapter,
   HTTPStatus,
+  RoleType,
+  ICourseSubscribeRequest,
 } from "../../settings/DataTypes";
 import { CourseService } from "../../services/CourseService";
 import {
@@ -24,6 +26,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConfirmDialog from "../../components/modal/ConfirmDialog";
 import Alert from "../../components/flash/Alert";
 import Spinner from "../../components/spinner/Spinner";
+import UserService from "../../services/UserService";
 
 interface MatchParams {
   course_id: string;
@@ -39,42 +42,90 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
 
   const courseService = new CourseService();
   const chapterService = new ChapterService();
+  const userService = new UserService();
 
   const [course, setCourse] = useState<ICourse | null>(null);
   const [chapters, setChapters] = useState<IChapter[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [flashErrors, setFlashErrors] = useState<string[]>([]);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
   useEffect(() => {
-    if (authContext.currentUser) {
+    if (authContext.currentUser && authContext.hasRole(RoleType.TEACHER)) {
       setIsLoading(true);
-      courseService
-        .getCourse(+courseId, ADMIN_COURSE_STATUS)
-        .then((resp) => {
-          setCourse(resp.data);
-          chapterService
-            .getChaptersByCourseId(resp.data.id)
-            .then((resp) => {
-              setChapters(resp.data);
-              setIsLoading(false);
-            })
-            .catch((err) => {
-              alertContext.show(
-                axiosErrorParser(err).join(", "),
-                AlertVariant.DANGER
-              );
-            });
-        })
-        .catch((err) => {
-          alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
-        });
+      loadCourse(+courseId);
+      loadChapters(+courseId);
+      checkIsSubscribe(authContext.currentUser.id, +courseId);
+      setIsLoading(false);
     } else {
       alertContext.show("Access denied", AlertVariant.DANGER);
       props.history.push(HOME_URL);
     }
     // eslint-disable-next-line
-  }, []);
+  }, [courseId]);
+
+  const loadCourse = (courseId: number) => {
+    courseService
+      .getCourse(courseId, ADMIN_COURSE_STATUS)
+      .then((resp) => {
+        setCourse(resp.data);
+      })
+      .catch((err) => {
+        alertContext.show(
+          axiosErrorParser(err).join(", "),
+          AlertVariant.DANGER
+        );
+      });
+  };
+
+  const loadChapters = (courseId: number) => {
+    chapterService
+      .getChaptersByCourseId(courseId)
+      .then((resp) => {
+        setChapters(resp.data);
+      })
+      .catch((err) => {
+        alertContext.show(
+          axiosErrorParser(err).join(", "),
+          AlertVariant.DANGER
+        );
+      });
+  };
+
+  const checkIsSubscribe = (userId: number, courseId: number) => {
+    userService
+      .isSubscribed(userId, courseId)
+      .then((resp) => {
+        setIsSubscribed(resp.data.subscribed);
+      })
+      .catch((err) => {
+        alertContext.show(
+          "Couldn't determine course subscription status.",
+          AlertVariant.DANGER
+        );
+      });
+  };
+
+  const subscribeCourse = () => {
+    const request: ICourseSubscribeRequest = {
+      userId: authContext.currentUser!.id,
+      courseId: course!.id,
+    };
+    userService
+      .subscribeCourse(authContext.currentUser!.id, request)
+      .then((resp) => {
+        if (resp.status === HTTPStatus.OK) {
+          setIsSubscribed(!isSubscribed);
+        }
+      })
+      .catch((err) => {
+        alertContext.show(
+          axiosErrorParser(err).join(", "),
+          AlertVariant.DANGER
+        );
+      });
+  };
 
   const handleDeleteCourse = () => {
     setShowConfirmModal(false);
@@ -130,7 +181,12 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
             </BreadcrumbItem>
             <BreadcrumbItem active>Course Details</BreadcrumbItem>
           </Breadcrumb>
-          <CourseDetail course={course} chapters={chapters} />
+          <CourseDetail
+            course={course}
+            chapters={chapters}
+            isSubscribed={isSubscribed}
+            subscribeHandler={subscribeCourse}
+          />
 
           <div className="action-btn-group">
             <button
