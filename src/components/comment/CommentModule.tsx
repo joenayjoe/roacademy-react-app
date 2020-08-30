@@ -14,7 +14,8 @@ import CommentList from "./CommentList";
 import { axiosErrorParser } from "../../utils/errorParser";
 import Spinner from "../spinner/Spinner";
 
-import "./Comment.css";
+import styles from "./Comment.module.css";
+
 import { AuthContext } from "../../contexts/AuthContext";
 import Alert from "../flash/Alert";
 
@@ -238,10 +239,12 @@ const CommentModule: React.FunctionComponent<IProp> = (props) => {
 
   return (
     <div
-      className={`comment-section ${props.className ? props.className : ""}`}
+      className={`${styles.commentSection} ${
+        props.className ? props.className : ""
+      }`}
     >
-      <div className="comment-top">
-        <div className="comment-count mr-2">
+      <div className={styles.commentTop}>
+        <div className="mr-2">
           <h5>{totalComments} Comments</h5>
         </div>
         <div className="comment-filter">
@@ -288,7 +291,7 @@ const CommentModule: React.FunctionComponent<IProp> = (props) => {
 
       {newAddedComments.length > 0 ? (
         <CommentList
-          className="new-added-comment"
+          className={styles.newAddedComment}
           comments={newAddedComments}
           commentableType={props.commentableType}
           commentableId={props.commentableId}

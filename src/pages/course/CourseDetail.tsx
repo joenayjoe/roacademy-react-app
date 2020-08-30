@@ -12,6 +12,8 @@ import Collapse from "../../components/collapse/Collapse";
 import ShowMoreText from "../../components/showmoretext/ShowMoreText";
 import ShareDialog from "../../components/modal/ShareDialog";
 
+import styles from "./Course.module.css";
+
 interface IProp {
   course: ICourse;
   chapters: IChapter[];
@@ -54,7 +56,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
 
   const courseObjectives = props.course.objectives.map((obj) => {
     return (
-      <li key={obj} className="course-objective-item">
+      <li key={obj} className={styles.course_objective_item}>
         <FontAwesomeIcon icon="check" className="course-objective-icon" />
         <span className="course-objective-text">{obj}</span>
       </li>
@@ -131,27 +133,27 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
           closeHandler={() => setIsShareDialogOpen(false)}
         />
       )}
-      <div className="course-detail-header">
+      <div className={styles.courseDetailHeader}>
         <div className="width-75">
           <div className="row">
             <div className="col-md-8">
-              <h3 className="course-detail-title">{props.course.name}</h3>
-              <div className="course-detail-headline">
+              <h3 className={styles.courseDetailTitle}>{props.course.name}</h3>
+              <div className={styles.courseDetailHeadline}>
                 {props.course.headline}
               </div>
-              <div className="course-detail-row">
-                <div className="course-detail-item">
+              <div className={styles.courseDetailRow}>
+                <div className={styles.courseDetailItem}>
                   Views {props.course.hits}
                 </div>
               </div>
-              <div className="course-detail-row">
-                <div className="course-detail-item">
+              <div className={styles.courseDetailRow}>
+                <div className={styles.courseDetailItem}>
                   Created by{" "}
                   <Link
                     to={BUILD_PUBLIC_USER_PROFILE_URL(
                       props.course.createdBy.id
                     )}
-                    className="instructor-link"
+                    className={styles.instructorLink}
                   >
                     {props.course.createdBy.firstName +
                       " " +
@@ -159,13 +161,13 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
                   </Link>
                 </div>
               </div>
-              <div className="course-detail-row">
-                <div className="course-detail-item">
+              <div className={styles.courseDetailRow}>
+                <div className={styles.courseDetailItem}>
                   Level {props.course.level}
                 </div>
               </div>
-              <div className="course-detail-row">
-                <div className="course-subscribe course-detail-item">
+              <div className={styles.courseDetailRow}>
+                <div className={styles.courseDetailItem}>
                   <button
                     className={`btn ${
                       props.isSubscribed
@@ -180,7 +182,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
                     </span>
                   </button>
                 </div>
-                <div className="course-share course-detail-item">
+                <div className={styles.courseDetailItem}>
                   <button
                     className=" btn btn-outline-info"
                     type="button"
@@ -195,23 +197,17 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
           </div>
         </div>
       </div>
-      <div className="course-detail-content width-75">
+      <div className="width-75">
         <div className="row">
           <div className="col-md-8 pt-4">
-            <div className="course-detail-objectives pt-2 shadow-sm">
+            <div className={styles.courseDetailObjectives + " pt-2 shadow-sm"}>
               <h4>What you'll learn</h4>
-              <ul className="course-objective-list">{courseObjectives}</ul>
+              <ul className={styles.courseObjectiveList}>{courseObjectives}</ul>
             </div>
-            <div className="course-detail-sections pt-4">
+            <div className="pt-4">
               <h4>Course content</h4>
               <div className="chapter-container">
                 <div className="float-right pb-2">
-                  {/* <span className="link mr-2" onClick={expandAll}>
-                    {expandedChapterIds.length === props.chapters.length
-                      ? "Collapse All"
-                      : "Expand All"}
-                  </span> */}
-
                   <button className="btn btn-link mr-2" onClick={expandAll}>
                     {expandedChapterIds.length === props.chapters.length
                       ? "Collapse All"
@@ -227,11 +223,13 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
                 </div>
               </div>
             </div>
-            <div className="course-detail-requirements pt-3">
+            <div className="pt-3">
               <h4>Requirements</h4>
-              <ul className="course-requirement-list">{courseRequirements}</ul>
+              <ul className={styles.courseRequirementList}>
+                {courseRequirements}
+              </ul>
             </div>
-            <div className="course-detail-description pt-3">
+            <div className="pt-3">
               <h4>Description</h4>
               <ShowMoreText height={200}>
                 <div dangerouslySetInnerHTML={markupDescription()} />

@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { CATEGORIES_URL, DONATION_URL } from "../../settings/Constants";
 
 class DesktopFooter extends Component {
   render() {
@@ -15,29 +17,23 @@ class DesktopFooter extends Component {
                   <a href="/">About Us</a>
                 </li>
                 <li>
-                  <a href="/">Contact Us</a>
-                </li>
-                <li>
                   <a href="/">Our Team</a>
                 </li>
                 <li>
-                  <a href="/">Support Us</a>
+                  <a href="/">Contact Us</a>
                 </li>
               </ul>
               <ul>
                 <li>
-                  <a href="/">Categories</a>
-                </li>
-                <li>
-                  <a href="/">Courses</a>
+                  <Link to={CATEGORIES_URL}>Categories</Link>
                 </li>
                 <li>
                   <a href="/">Advice Us</a>
                 </li>
+                <li>
+                  <Link to={DONATION_URL}>Support Us</Link>
+                </li>
               </ul>
-              <div>
-                <a href="/">Change Language</a>
-              </div>
             </div>
           </div>
 
@@ -45,7 +41,9 @@ class DesktopFooter extends Component {
 
           <div className="footer-bottom">
             <div className="footer-content width-75">
-              <p>Copyright © {year} <strong>Rohingya Academy</strong></p>
+              <p>
+                Copyright © {year} <strong>Rohingya Academy</strong>
+              </p>
               <div className="d-flex">
                 <div className="mr-2">
                   <a href="/">Term of Use</a>

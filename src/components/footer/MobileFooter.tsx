@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { DONATION_URL } from "../../settings/Constants";
 
 class MobileFooter extends Component {
   render() {
@@ -18,10 +20,13 @@ class MobileFooter extends Component {
                   <a href="/">Privacy and Cookie Policy</a>
                 </li>
                 <li>
-                  <a href="/">Courses</a>
+                  <a href="/">About Us</a>
                 </li>
                 <li>
-                  <a href="/">Support Us</a>
+                  <a href="/">Contact Us</a>
+                </li>
+                <li>
+                  <Link to={DONATION_URL}>Support Us</Link>
                 </li>
               </ul>
             </div>
@@ -31,7 +36,9 @@ class MobileFooter extends Component {
 
           <div className="footer-bottom">
             <div className="footer-content">
-              <p><strong>Rohingya Academy</strong></p>
+              <p>
+                <strong>Rohingya Academy</strong>
+              </p>
               <p>© {year} </p>
             </div>
           </div>

@@ -58,6 +58,7 @@
         ]
     },
     "devDependencies": {
-        "@types/redux-thunk": "^2.1.0"
+        "@types/redux-thunk": "^2.1.0",
+        "typed-css-modules-webpack-plugin": "^0.2.0"
     }
 }

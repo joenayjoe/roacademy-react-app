@@ -1,4 +1,4 @@
-.course-detail-header {
+.courseDetailHeader {
     padding-top: 2rem;
     padding-bottom: 2rem;
     background-color: #505763;
@@ -6,7 +6,7 @@
     color: #fff;
 }
 
-.course-detail-info-content {
+.courseDetailInfoContent {
     position: absolute;
     background: #fff;
     color: #212529;
@@ -16,41 +16,41 @@
     padding: 10px 20px;
 }
 
-.course-detail-title {
+.courseDetailTitle {
     font-size: 35px;
     line-height: 41px;
     font-weight: 600;
 }
 
-.course-detail-headline {
+.courseDetailHeadline {
     font-size: 21px;
     line-height: 27px;
 }
 
-.instructor-link,
-.instructor-link:hover {
+.instructorLink,
+.instructorLink:hover {
     color: #fff;
 }
 
-.course-detail-row {
+.courseDetailRow {
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
     margin: 0.25rem 0;
 }
 
-.course-detail-item {
+.courseDetailItem {
     padding-right: 10px;
 }
 
-.course-detail-objectives {
+.courseDetailObjectives {
     background-color: #f9f9f9;
     border: 1px solid#dedfe0;
     padding: 10px 15px;
 }
 
-.course-objective-list,
-.course-requirement-list {
+.courseObjectiveList,
+.courseRequirementList {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -60,7 +60,7 @@
     flex-wrap: wrap;
 }
 
-.course-info-list {
+.courseInfoList {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -70,24 +70,24 @@
     flex-direction: column;
 }
 
-.course-objective-item,
-.course-requirement-item {
+.courseObjectiveItem,
+.courseRequirementItem {
     width: 45%;
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.course-info-item {
+.courseInfoItem {
     width: 100%;
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.course-objective-icon,
-.course-requirement-icon,
-.course-info-icon {
+.courseObjectiveIcon,
+.courseRequirementIcon,
+.courseInfoIcon {
     align-self: flex-start;
     color: #8a92a3;
     font-size: 16px;
@@ -95,28 +95,28 @@
     margin-top: 2px;
 }
 
-.course-objective-text,
+.courseObjectiveText,
 .course-requirement-text {
     font-size: 15px;
 }
 
-.mobile-course-info,
-.desktop-course-info {
+.mobileCourseInfo,
+.desktopCourseInfo {
     display: none;
 }
 
-.chapter-list-item {
+.chapterListItem {
     margin-bottom: 0.25rem;
 }
 
-.chapter-list-item .chapter-list-header {
+.chapterListItem .chapterListHeader {
     font-size: 15px;
     background-color: #f9f9f9;
     padding: 0.7rem;
     border: 1px solid#dedfe0;
 }
 
-.lecture-list-item {
+.lectureListItem {
     border: 1px solid#dedfe0;
     border-top: none;
     padding: 0.7rem 2rem;
@@ -129,19 +129,19 @@
 */
 
 @media (max-width: 767px) {
-    .mobile-course-info {
+    .mobileCourseInfo {
         display: block;
     }
-    .desktop-course-info {
+    .desktopCourseInfo {
         display: none;
     }
 }
 
 @media (min-width: 768px) {
-    .mobile-course-info {
+    .mobileCourseInfo {
         display: none;
     }
-    .desktop-course-info {
+    .desktopCourseInfo {
         display: block;
     }
 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import "./Course.css";
 import { RouteComponentProps } from "react-router";
 import {
   ICourse,
