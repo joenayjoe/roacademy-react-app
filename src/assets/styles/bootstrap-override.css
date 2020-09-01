@@ -1,0 +1,42 @@
+body a,
+body .btn-link {
+    color: #007791;
+    text-decoration: none;
+    outline: 0;
+}
+
+body a:hover,
+body a:focus,
+body .btn-link:focus,
+body .btn-link:hover {
+    text-decoration: none;
+    outline: 0;
+    color: #003845;
+}
+
+body button:focus,
+body .btn:focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6 {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.nav-pills .nav-link {
+    border-radius: 0;
+}
+
+.nav-pills .nav-link.active {
+    color: #003845 !important;
+    background-color: #fff;
+    border-bottom: 4px solid #007791;
+    margin-bottom: .5rem;
+}

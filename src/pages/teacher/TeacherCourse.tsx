@@ -9,6 +9,7 @@ import {
   HTTPStatus,
   RoleType,
   ICourseSubscribeRequest,
+  CommentableType,
 } from "../../settings/DataTypes";
 import { CourseService } from "../../services/CourseService";
 import {
@@ -27,6 +28,8 @@ import ConfirmDialog from "../../components/modal/ConfirmDialog";
 import Alert from "../../components/flash/Alert";
 import Spinner from "../../components/spinner/Spinner";
 import UserService from "../../services/UserService";
+import CommentModule from "../../components/comment/CommentModule";
+import PageNotFound from "../route/PageNotFound";
 
 interface MatchParams {
   course_id: string;
@@ -50,14 +53,13 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [flashErrors, setFlashErrors] = useState<string[]>([]);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+  const [found, setFound] = useState<boolean>(true);
 
   useEffect(() => {
     if (authContext.currentUser && authContext.hasRole(RoleType.TEACHER)) {
-      setIsLoading(true);
       loadCourse(+courseId);
       loadChapters(+courseId);
       checkIsSubscribe(authContext.currentUser.id, +courseId);
-      setIsLoading(false);
     } else {
       alertContext.show("Access denied", AlertVariant.DANGER);
       props.history.push(HOME_URL);
@@ -66,12 +68,15 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
   }, [courseId]);
 
   const loadCourse = (courseId: number) => {
+    setIsLoading(true);
     courseService
       .getCourse(courseId, ADMIN_COURSE_STATUS)
       .then((resp) => {
         setCourse(resp.data);
       })
       .catch((err) => {
+        setIsLoading(false);
+        setFound(false);
         alertContext.show(
           axiosErrorParser(err).join(", "),
           AlertVariant.DANGER
@@ -83,9 +88,11 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
     chapterService
       .getChaptersByCourseId(courseId)
       .then((resp) => {
+        setIsLoading(false);
         setChapters(resp.data);
       })
       .catch((err) => {
+        setIsLoading(false);
         alertContext.show(
           axiosErrorParser(err).join(", "),
           AlertVariant.DANGER
@@ -100,10 +107,7 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
         setIsSubscribed(resp.data.subscribed);
       })
       .catch((err) => {
-        alertContext.show(
-          "Couldn't determine course subscription status.",
-          AlertVariant.DANGER
-        );
+        setIsSubscribed(false);
       });
   };
 
@@ -168,11 +172,12 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
     return null;
   };
 
-  const getCourseView = () => {
-    if (authContext.currentUser && course) {
-      return (
+  if (isLoading) {
+    return <Spinner size="3x" />;
+  } else if (authContext.currentUser && course) {
+    return (
+      <div className="teacher-course-wrapper">
         <div className="teacher-course-view">
-          {isLoading && <Spinner size="3x" />}
           {getFlashErrors()}
           {getConfirmDialog()}
           <Breadcrumb className="width-75 bg-transparent">
@@ -186,6 +191,12 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
             chapters={chapters}
             isSubscribed={isSubscribed}
             subscribeHandler={subscribeCourse}
+          />
+
+          <CommentModule
+            commentableType={CommentableType.COURSE}
+            commentableId={course.id}
+            className="width-75"
           />
 
           <div className="action-btn-group">
@@ -209,11 +220,12 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
             </Link>
           </div>
         </div>
-      );
-    }
+      </div>
+    );
+  } else if (!found) {
+    return <PageNotFound />;
+  } else {
     return null;
-  };
-
-  return <div className="teacher-course-wrapper">{getCourseView()}</div>;
+  }
 };
 export default TeacherCourse;

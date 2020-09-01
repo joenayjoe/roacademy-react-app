@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./assets/styles/ra-common.css";
 import "./assets/styles/ra-drop-down.css";
 import "./assets/styles/ra-collapsible.css";
+import "./assets/styles/bootstrap-override.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -52,6 +53,7 @@ import {
   faUserPlus,
   faFilter,
   faSort,
+  faCalendarMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -97,6 +99,7 @@ library.add(
   faDotCircle,
   faShare,
   faCalendarCheck,
+  faCalendarMinus,
   faYoutube,
   faFile,
   faFileDownload,

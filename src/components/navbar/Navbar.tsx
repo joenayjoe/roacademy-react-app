@@ -287,7 +287,7 @@ const Navbar: React.FunctionComponent<IProbs> = (props) => {
               alt=""
             />
             <div className={`brand-title ${brandNameDisplayKlass}`}>
-              Rohingya Academy
+              Roacademy
             </div>
           </Link>
         </div>

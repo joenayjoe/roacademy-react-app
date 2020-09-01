@@ -7,6 +7,7 @@ import {
   IChapter,
   ICourseSubscribeRequest,
   RoleType,
+  CommentableType,
 } from "../../../settings/DataTypes";
 import { CourseService } from "../../../services/CourseService";
 import Breadcrumb from "../../../components/breadcrumb/Breadcrumb";
@@ -27,6 +28,8 @@ import { AlertContext } from "../../../contexts/AlertContext";
 import ChapterService from "../../../services/ChapterService";
 import UserService from "../../../services/UserService";
 import { AuthContext } from "../../../contexts/AuthContext";
+import CommentModule from "../../../components/comment/CommentModule";
+import PageNotFound from "../../route/PageNotFound";
 
 interface MatchParams {
   course_id: string;
@@ -42,9 +45,10 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
 
   const [course, setCourse] = useState<ICourse | null>(null);
   const [chapters, setChapters] = useState<IChapter[]>([]);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+  const [found, setFound] = useState<boolean>(true);
 
   const courseService = new CourseService();
   const chapterService = new ChapterService();
@@ -52,11 +56,9 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
 
   useEffect(() => {
     if (authContext.currentUser && authContext.hasRole(RoleType.ADMIN)) {
-      setIsLoaded(false);
       loadCourse(+courseId);
       loadChapters(+courseId);
       checkIsSubscribe(authContext.currentUser.id, +courseId);
-      setIsLoaded(true);
     } else {
       alertContext.show("Access denied", AlertVariant.DANGER);
       props.history.push(HOME_URL);
@@ -65,12 +67,15 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
   }, [courseId]);
 
   const loadCourse = (courseId: number) => {
+    setIsLoading(true);
     courseService
       .getCourse(courseId, ADMIN_COURSE_STATUS)
       .then((resp) => {
         setCourse(resp.data);
       })
       .catch((err) => {
+        setIsLoading(false);
+        setFound(false);
         alertContext.show(
           axiosErrorParser(err).join(", "),
           AlertVariant.DANGER
@@ -82,9 +87,11 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
     chapterService
       .getChaptersByCourseId(courseId)
       .then((resp) => {
+        setIsLoading(false);
         setChapters(resp.data);
       })
       .catch((err) => {
+        setIsLoading(false);
         alertContext.show(
           axiosErrorParser(err).join(", "),
           AlertVariant.DANGER
@@ -99,10 +106,7 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
         setIsSubscribed(resp.data.subscribed);
       })
       .catch((err) => {
-        alertContext.show(
-          "Couldn't determine course subscription status.",
-          AlertVariant.DANGER
-        );
+        setIsSubscribed(false);
       });
   };
 
@@ -144,17 +148,18 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
       });
   };
 
-  let courseView = <Spinner size="3x" />;
-  let confirmDialog;
-  if (course && isLoaded) {
-    confirmDialog = (
-      <ConfirmDialog
-        isOpen={showConfirmModal}
-        onConfirmHandler={handleDeleteCourse}
-        onDismissHandler={() => setShowConfirmModal(false)}
-      />
-    );
-    courseView = (
+  let confirmDialog = (
+    <ConfirmDialog
+      isOpen={showConfirmModal}
+      onConfirmHandler={handleDeleteCourse}
+      onDismissHandler={() => setShowConfirmModal(false)}
+    />
+  );
+
+  if (isLoading) {
+    return <Spinner size="3x" />;
+  } else if (course) {
+    return (
       <div className="admin-course-view">
         {confirmDialog}
         <Breadcrumb className="width-75 bg-transparent">
@@ -167,6 +172,12 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
           chapters={chapters}
           isSubscribed={isSubscribed}
           subscribeHandler={subscribeCourse}
+        />
+
+        <CommentModule
+          commentableType={CommentableType.COURSE}
+          commentableId={course.id}
+          className="width-75"
         />
 
         <div className="action-btn-group">
@@ -186,7 +197,10 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
         </div>
       </div>
     );
+  } else if (!found) {
+    return <PageNotFound />;
+  } else {
+    return null;
   }
-  return <React.Fragment>{courseView}</React.Fragment>;
 };
 export default withRouter(AdminCourse);

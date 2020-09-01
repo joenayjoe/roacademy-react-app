@@ -25,6 +25,7 @@ import { axiosErrorParser } from "../../utils/errorParser";
 import CommentModule from "../../components/comment/CommentModule";
 import { AuthContext } from "../../contexts/AuthContext";
 import UserService from "../../services/UserService";
+import PageNotFound from "../route/PageNotFound";
 
 interface matchedParams {
   course_id: string;
@@ -43,6 +44,8 @@ const Course: React.FunctionComponent<IProps> = (props) => {
   const [course, setCourse] = useState<ICourse | null>(null);
   const [chapters, setChapters] = useState<IChapter[]>([]);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [found, setFound] = useState<boolean>(true);
 
   useEffect(() => {
     setIsSubscribed(false);
@@ -69,12 +72,15 @@ const Course: React.FunctionComponent<IProps> = (props) => {
   };
 
   const loadCourse = (courseId: number) => {
+    setIsLoading(true);
     courseService
       .getCourse(courseId, DEFAULT_COURSE_STATUS)
       .then((response) => {
         setCourse(response.data);
       })
       .catch((err) => {
+        setIsLoading(false);
+        setFound(false);
         alertContext.show(
           axiosErrorParser(err).join(", "),
           AlertVariant.DANGER
@@ -85,9 +91,11 @@ const Course: React.FunctionComponent<IProps> = (props) => {
     chapterService
       .getChaptersByCourseId(courseId)
       .then((resp) => {
+        setIsLoading(false);
         setChapters(resp.data);
       })
       .catch((err) => {
+        setIsLoading(false);
         alertContext.show(
           axiosErrorParser(err).join(", "),
           AlertVariant.DANGER
@@ -122,9 +130,11 @@ const Course: React.FunctionComponent<IProps> = (props) => {
     }
   };
 
-  const getCourseView = (course: ICourse) => {
+  if (isLoading) {
+    return <Spinner size="3x" />;
+  } else if (course) {
     return (
-      <React.Fragment>
+      <div className="course-container full-width">
         <Breadcrumb className="width-75 bg-transparent">
           <BreadcrumbItem href={BUILD_CATEGORY_URL(course.primaryCategory.id)}>
             {course.primaryCategory.name}
@@ -146,16 +156,13 @@ const Course: React.FunctionComponent<IProps> = (props) => {
           commentableId={course.id}
           className="width-75"
         />
-      </React.Fragment>
+      </div>
     );
-  };
-
-  if (course) {
-    return (
-      <div className="course-container full-width">{getCourseView(course)}</div>
-    );
+  } else if (!found) {
+    return <PageNotFound />;
+  } else {
+    return null;
   }
-  return <Spinner size="3x" />;
 };
 
 export default Course;

@@ -33,7 +33,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
     query: this.props.query,
     typedQuery: this.props.query,
     selectedQueryIndex: -1,
-    selectedSuggestion: null
+    selectedSuggestion: null,
   };
 
   autocompleInputRef: any = createRef();
@@ -41,7 +41,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     this.setState({
       query: e.currentTarget.value,
-      typedQuery: e.currentTarget.value
+      typedQuery: e.currentTarget.value,
     });
     this.props.onChangeHandler(e.currentTarget.value);
   };
@@ -55,19 +55,19 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
           selectedQueryIndex: this.props.suggestions.length - 1,
           selectedSuggestion: this.props.suggestions[
             this.props.suggestions.length - 1
-          ]
+          ],
         });
       } else if (selectedQueryIndex === 0) {
         this.setState({
           query: typedQuery,
           selectedQueryIndex: -1,
-          selectedSuggestion: null
+          selectedSuggestion: null,
         });
       } else {
         this.setState({
           query: this.props.suggestions[selectedQueryIndex - 1].name,
           selectedQueryIndex: selectedQueryIndex - 1,
-          selectedSuggestion: this.props.suggestions[selectedQueryIndex - 1]
+          selectedSuggestion: this.props.suggestions[selectedQueryIndex - 1],
         });
       }
     } else if (e.keyCode === 40) {
@@ -75,13 +75,13 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
         this.setState({
           query: typedQuery,
           selectedQueryIndex: -1,
-          selectedSuggestion: null
+          selectedSuggestion: null,
         });
       } else {
         this.setState({
           query: this.props.suggestions[selectedQueryIndex + 1].name,
           selectedQueryIndex: selectedQueryIndex + 1,
-          selectedSuggestion: this.props.suggestions[selectedQueryIndex + 1]
+          selectedSuggestion: this.props.suggestions[selectedQueryIndex + 1],
         });
       }
     }
@@ -89,6 +89,10 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
 
   handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (this.state.query.length < 2) {
+      return;
+    }
+
     this.autocompleInputRef.blur();
     if (this.props.onCloseHandler) {
       this.props.onCloseHandler();
@@ -114,7 +118,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
   };
 
   toogleOnFocus = () => {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return { isFocus: !prevState.isFocus };
     });
     if (typeof this.props.onFocusHandler === "function") {
@@ -145,12 +149,12 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
         aria-describedby="button-addon"
         className={`form-control bg-none border-0 ${focusKlass}`}
         autoComplete="off"
-        onChange={e => this.handleOnChange(e)}
-        onKeyDown={e => this.handleKeyDown(e)}
+        onChange={(e) => this.handleOnChange(e)}
+        onKeyDown={(e) => this.handleKeyDown(e)}
         onFocus={this.toogleOnFocus}
         onBlur={this.toogleOnFocus}
         autoFocus={this.props.autoFoucs && this.props.query.length === 0}
-        ref={node => (this.autocompleInputRef = node)}
+        ref={(node) => (this.autocompleInputRef = node)}
       />
     );
     if (this.props.icon != null) {
@@ -220,7 +224,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
         <form
           action="/courses/search"
           className="form-inline"
-          onSubmit={e => this.handleOnSubmit(e)}
+          onSubmit={(e) => this.handleOnSubmit(e)}
         >
           {autoCompleteInput}
         </form>
@@ -236,7 +240,7 @@ class Autocomplete extends Component<AutocompleteProps, AutocompleteState> {
             <form
               action="/courses/search"
               className="form-inline"
-              onSubmit={e => this.handleOnSubmit(e)}
+              onSubmit={(e) => this.handleOnSubmit(e)}
             >
               {autoCompleteInput}
             </form>

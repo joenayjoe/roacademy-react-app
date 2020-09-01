@@ -1,19 +1,9 @@
 .courseDetailHeader {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     background-color: #505763;
     background: linear-gradient(#29303B, #29303B, #29303B);
     color: #fff;
-}
-
-.courseDetailInfoContent {
-    position: absolute;
-    background: #fff;
-    color: #212529;
-    border: 1px solid#dedfe0;
-    border-radius: 5px;
-    top: 20px;
-    padding: 10px 20px;
 }
 
 .courseDetailTitle {
@@ -96,7 +86,7 @@
 }
 
 .courseObjectiveText,
-.course-requirement-text {
+.courseRequirementText {
     font-size: 15px;
 }
 

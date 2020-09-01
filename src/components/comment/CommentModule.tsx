@@ -233,10 +233,6 @@ const CommentModule: React.FunctionComponent<IProp> = (props) => {
     }
   };
 
-  if (isLoading) {
-    return <Spinner size="3x" />;
-  }
-
   return (
     <div
       className={`${styles.commentSection} ${
@@ -311,6 +307,7 @@ const CommentModule: React.FunctionComponent<IProp> = (props) => {
         deleteHandler={deleteComment}
         errorHandler={(errors) => setCommentErrors(errors)}
       />
+      {isLoading && <Spinner size="3x" />}
     </div>
   );
 };

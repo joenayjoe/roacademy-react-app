@@ -25,7 +25,7 @@
 
 @media only screen and (max-width: 767px) {
     .autocomplete {
-        height: 56px;
+        height: 62px;
     }
     .autocomplete form,
     .autocomplete .input-group,

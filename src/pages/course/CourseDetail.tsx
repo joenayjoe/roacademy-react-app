@@ -56,20 +56,20 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
 
   const courseObjectives = props.course.objectives.map((obj) => {
     return (
-      <li key={obj} className={styles.course_objective_item}>
-        <FontAwesomeIcon icon="check" className="course-objective-icon" />
-        <span className="course-objective-text">{obj}</span>
+      <li key={obj} className={styles.courseObjectiveItem}>
+        <FontAwesomeIcon icon="check" className={styles.courseObjectiveIcon} />
+        <span className={styles.courseObjectiveText}>{obj}</span>
       </li>
     );
   });
   const courseRequirements = props.course.requirements.map((req) => {
     return (
-      <li key={req} className="course-requirement-item">
+      <li key={req} className={styles.courseRequirementItem}>
         <FontAwesomeIcon
           icon="dot-circle"
-          className="course-requirement-icon"
+          className={styles.courseRequirementIcon}
         />
-        <span className="course-requirement-text">{req}</span>
+        <span className={styles.courseRequirementText}>{req}</span>
       </li>
     );
   });
@@ -81,7 +81,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
           key={`${lecture.id}_${lecture.name}`}
           to={BUILD_COURSE_WATCH_URL(props.course.id, ch.id, lecture.id)}
         >
-          <div className="lecture-list-item">
+          <div className={styles.lectureListItem}>
             <span className="mr-3">
               <FontAwesomeIcon icon={["fab", "youtube"]}></FontAwesomeIcon>
             </span>
@@ -95,12 +95,9 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
   const chapterList = props.chapters.map((ch) => {
     const icon = expandedChapterIds.includes(ch.id) ? "minus" : "plus";
     return (
-      <div
-        key={`${ch.id}_${ch.name}`}
-        className="chapter-list-item collapse-menu-item"
-      >
+      <div key={`${ch.id}_${ch.name}`} className="collapse-menu-item">
         <div
-          className="chapter-list-header collapse-item-header"
+          className="collapse-item-header"
           onClick={() => handleChapterClick(ch)}
         >
           <span>{ch.name}</span>
@@ -109,7 +106,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
           </span>
         </div>
         <Collapse isOpen={expandedChapterIds.includes(ch.id)}>
-          <div className="lecture-container">{getLectureList(ch)}</div>
+          <div>{getLectureList(ch)}</div>
         </Collapse>
       </div>
     );
@@ -121,7 +118,7 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
 
   const classNames = props.className ? props.className : "";
   return (
-    <div className={`course-detail ${classNames}`}>
+    <div className={classNames}>
       {isShareDialogOpen && (
         <ShareDialog
           isOpen={isShareDialogOpen}
@@ -135,107 +132,93 @@ const CourseDetail: React.FunctionComponent<IProp> = (props) => {
       )}
       <div className={styles.courseDetailHeader}>
         <div className="width-75">
-          <div className="row">
-            <div className="col-md-8">
-              <h3 className={styles.courseDetailTitle}>{props.course.name}</h3>
-              <div className={styles.courseDetailHeadline}>
-                {props.course.headline}
-              </div>
-              <div className={styles.courseDetailRow}>
-                <div className={styles.courseDetailItem}>
-                  Views {props.course.hits}
-                </div>
-              </div>
-              <div className={styles.courseDetailRow}>
-                <div className={styles.courseDetailItem}>
-                  Created by{" "}
-                  <Link
-                    to={BUILD_PUBLIC_USER_PROFILE_URL(
-                      props.course.createdBy.id
-                    )}
-                    className={styles.instructorLink}
-                  >
-                    {props.course.createdBy.firstName +
-                      " " +
-                      props.course.createdBy.lastName}
-                  </Link>
-                </div>
-              </div>
-              <div className={styles.courseDetailRow}>
-                <div className={styles.courseDetailItem}>
-                  Level {props.course.level}
-                </div>
-              </div>
-              <div className={styles.courseDetailRow}>
-                <div className={styles.courseDetailItem}>
-                  <button
-                    className={`btn ${
-                      props.isSubscribed
-                        ? "btn-outline-warning"
-                        : "btn-outline-info"
-                    }`}
-                    onClick={props.subscribeHandler}
-                  >
-                    <FontAwesomeIcon icon="calendar-check" />
-                    <span className="pl-2">
-                      {props.isSubscribed ? "Unsubscribe" : "Subscribe"}
-                    </span>
-                  </button>
-                </div>
-                <div className={styles.courseDetailItem}>
-                  <button
-                    className=" btn btn-outline-info"
-                    type="button"
-                    onClick={() => setIsShareDialogOpen(true)}
-                  >
-                    <FontAwesomeIcon icon="share" />
-                    <span className="pl-2">Share</span>
-                  </button>
-                </div>
-              </div>
+          <h3 className={styles.courseDetailTitle}>{props.course.name}</h3>
+          <div className={styles.courseDetailHeadline}>
+            {props.course.headline}
+          </div>
+          <div className={styles.courseDetailRow}>
+            <div className={styles.courseDetailItem}>
+              Views {props.course.hits}
+            </div>
+          </div>
+          <div className={styles.courseDetailRow}>
+            <div className={styles.courseDetailItem}>
+              Created by{" "}
+              <Link
+                to={BUILD_PUBLIC_USER_PROFILE_URL(props.course.createdBy.id)}
+                className={styles.instructorLink}
+              >
+                {props.course.createdBy.firstName +
+                  " " +
+                  props.course.createdBy.lastName}
+              </Link>
+            </div>
+          </div>
+          <div className={styles.courseDetailRow}>
+            <div className={styles.courseDetailItem}>
+              Level {props.course.level}
+            </div>
+          </div>
+          <div className={styles.courseDetailRow}>
+            <div className={styles.courseDetailItem}>
+              <button
+                className={`btn ${
+                  props.isSubscribed ? "btn-outline-danger" : "btn-outline-info"
+                }`}
+                onClick={props.subscribeHandler}
+              >
+                <FontAwesomeIcon
+                  icon={
+                    props.isSubscribed ? "calendar-minus" : "calendar-check"
+                  }
+                />
+                <span className="pl-2">
+                  {props.isSubscribed ? "Unsubscribe" : "Subscribe"}
+                </span>
+              </button>
+            </div>
+            <div className={styles.courseDetailItem}>
+              <button
+                className=" btn btn-outline-info"
+                type="button"
+                onClick={() => setIsShareDialogOpen(true)}
+              >
+                <FontAwesomeIcon icon="share" />
+                <span className="pl-2">Share</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <div className="width-75">
-        <div className="row">
-          <div className="col-md-8 pt-4">
-            <div className={styles.courseDetailObjectives + " pt-2 shadow-sm"}>
-              <h4>What you'll learn</h4>
-              <ul className={styles.courseObjectiveList}>{courseObjectives}</ul>
-            </div>
-            <div className="pt-4">
-              <h4>Course content</h4>
-              <div className="chapter-container">
-                <div className="float-right pb-2">
-                  <button className="btn btn-link mr-2" onClick={expandAll}>
-                    {expandedChapterIds.length === props.chapters.length
-                      ? "Collapse All"
-                      : "Expand All"}
-                  </button>
+      <div className="width-75 mt-2">
+        <div className={styles.courseDetailObjectives + " pt-2 shadow-sm"}>
+          <h4>What you'll learn</h4>
+          <ul className={styles.courseObjectiveList}>{courseObjectives}</ul>
+        </div>
+        <div className="pt-4">
+          <h4>Course content</h4>
+          <div className="float-right pb-2">
+            <button className="btn btn-link mr-2" onClick={expandAll}>
+              {expandedChapterIds.length === props.chapters.length
+                ? "Collapse All"
+                : "Expand All"}
+            </button>
 
-                  <Link to={BUILD_COURSE_WATCH_URL(props.course.id)}>
-                    View All
-                  </Link>
-                </div>
-                <div style={{ clear: "right" }} className="collapse-menu">
-                  {chapterList}
-                </div>
-              </div>
-            </div>
-            <div className="pt-3">
-              <h4>Requirements</h4>
-              <ul className={styles.courseRequirementList}>
-                {courseRequirements}
-              </ul>
-            </div>
-            <div className="pt-3">
-              <h4>Description</h4>
-              <ShowMoreText height={200}>
-                <div dangerouslySetInnerHTML={markupDescription()} />
-              </ShowMoreText>
-            </div>
+            <Link to={BUILD_COURSE_WATCH_URL(props.course.id)}>View All</Link>
           </div>
+          <div style={{ clear: "right" }} className="collapse-menu">
+            {chapterList}
+          </div>
+        </div>
+        <div className="pt-3">
+          <h4>Requirements</h4>
+          <ul className={styles.courseRequirementList}>{courseRequirements}</ul>
+        </div>
+        <div className="pt-3">
+          <h4>Description</h4>
+          <ShowMoreText height={200}>
+            <div dangerouslySetInnerHTML={markupDescription()} />
+          </ShowMoreText>
         </div>
       </div>
     </div>

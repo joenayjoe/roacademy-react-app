@@ -11,28 +11,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-body a,
-body .btn-link {
-    color: #007791;
-    text-decoration: none;
-    outline: 0;
-}
-
-body a:hover,
-body a:focus,
-body .btn-link:focus,
-body .btn-link:hover {
-    text-decoration: none;
-    outline: 0;
-    color: #003845;
-}
-
-body button:focus,
-body .btn:focus {
-    outline: 0;
-    box-shadow: none;
-}
-
 #root {
     display: flex;
     flex-direction: column;

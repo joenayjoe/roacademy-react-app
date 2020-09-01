@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { CategoryService } from "../../services/CategoryService";
 import { ICategory } from "../../settings/DataTypes";
 import GradeSlide from "../grade/GradeSlide";
-import "./Category.css";
 import Spinner from "../../components/spinner/Spinner";
 
 const CategoryList = () => {
