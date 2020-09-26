@@ -61,12 +61,6 @@ const Course: React.FunctionComponent<IProps> = (props) => {
         .isSubscribed(authContext.currentUser.id, courseId)
         .then((resp) => {
           setIsSubscribed(resp.data.subscribed);
-        })
-        .catch((err) => {
-          alertContext.show(
-            "Couldn't determine course subscription status.",
-            AlertVariant.DANGER
-          );
         });
     }
   };
