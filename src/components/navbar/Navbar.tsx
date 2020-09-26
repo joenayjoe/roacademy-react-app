@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Autocomplete from "../../components/autocomplete/Autocomplete";
 
 import "./Navbar.css";
-import logo from "../../assets/images/logo.svg";
+import logo from "../../assets/images/roacademy_logo.svg";
 import DropDownMenu from "./DropDownMenu";
 import {
   NavLink,
@@ -281,9 +281,9 @@ const Navbar: React.FunctionComponent<IProbs> = (props) => {
           <Link to="/" className={`navbar-brand d-flex`}>
             <img
               src={logo}
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
+              width="40"
+              height="40"
+              className="d-inline-block align-top mr-1"
               alt=""
             />
             <div className={`brand-title ${brandNameDisplayKlass}`}>
