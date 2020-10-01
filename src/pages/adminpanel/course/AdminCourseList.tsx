@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import AdminControl from "../AdminControl";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CourseService } from "../../../services/CourseService";
-import { ICourse, Page } from "../../../settings/DataTypes";
+import { ICategory, ICourse, IGrade, Page } from "../../../settings/DataTypes";
 import { camelize } from "../../../utils/StringUtils";
 import Spinner from "../../../components/spinner/Spinner";
 import { withRouter, RouteComponentProps } from "react-router-dom";
@@ -12,17 +12,26 @@ import {
   PAGE_SIZE,
   DEFAULT_SORTING_FIELD,
   DEFAULT_SORTING_ORDER,
-  ADMIN_COURSE_STATUS
+  ADMIN_COURSE_STATUS,
 } from "../../../settings/Constants";
 import Pagination from "../../../components/pagination/Pagination";
+import { CategoryService } from "../../../services/CategoryService";
+import { GradeService } from "../../../services/GradeService";
 
 interface IProp extends RouteComponentProps {}
-const AdminCourseList: React.FunctionComponent<IProp> = props => {
+const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
+  const categoryService = new CategoryService();
+  const gradeService = new GradeService();
   const courseService = new CourseService();
+
   const [coursePage, setCoursePage] = useState<Page<ICourse> | null>(null);
   const [sortCol, setSortCol] = useState<string>(DEFAULT_SORTING_FIELD);
   const [sortOrder, setSortOrder] = useState<string>(DEFAULT_SORTING_ORDER);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [filteredCatId, setFilteredCatId] = useState<number>(0);
+  const [filteredGradeId, setFilteredGradeId] = useState<number>(0);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [grades, setGrades] = useState<IGrade[]>([]);
 
   const theads: string[] = [
     "ID",
@@ -32,16 +41,27 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
     "Hits",
     "Category",
     "Grade",
-    "Created At"
+    "Created At",
   ];
 
   useEffect(() => {
-    courseService.getCourses(0, PAGE_SIZE, ADMIN_COURSE_STATUS).then(resp => {
+    loadCategories();
+    loadCourses();
+    // eslint-disable-next-line
+  }, []);
+
+  const loadCourses = () => {
+    courseService.getCourses(0, PAGE_SIZE, ADMIN_COURSE_STATUS).then((resp) => {
       setCoursePage(resp.data);
       setIsLoading(false);
     });
-    // eslint-disable-next-line
-  }, []);
+  };
+
+  const loadCategories = () => {
+    categoryService.getCategories().then((resp) => {
+      setCategories(resp.data);
+    });
+  };
 
   const handleNewCourseClick = () => {
     props.history.push(ADMIN_NEW_COURSE_URL);
@@ -60,7 +80,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
     const currentPage = coursePage ? coursePage.number : 0;
     courseService
       .getCourses(currentPage, PAGE_SIZE, ADMIN_COURSE_STATUS, getSorting(th))
-      .then(resp => {
+      .then((resp) => {
         setCoursePage(resp.data);
         setIsLoading(false);
       });
@@ -76,9 +96,49 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
       const order = sortCol + "_" + sortOrder;
       courseService
         .getCourses(page, PAGE_SIZE, ADMIN_COURSE_STATUS, order)
-        .then(resp => {
+        .then((resp) => {
           setCoursePage(resp.data);
           setIsLoading(false);
+        });
+    }
+  };
+
+  const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const categoryId = parseInt(e.target.value, 10);
+    setFilteredCatId(categoryId);
+    setFilteredGradeId(0);
+    if (categoryId > 0) {
+      gradeService.getGradesByCategoryId(categoryId, "id_asc").then((resp) => {
+        setGrades(resp.data);
+      });
+    }
+  };
+
+  const handleFilterSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (filteredGradeId > 0) {
+      courseService
+        .getCoursesByGradeId(filteredGradeId, 0, PAGE_SIZE, ADMIN_COURSE_STATUS)
+        .then((resp) => {
+          setCoursePage(resp.data);
+        });
+    } else if (filteredCatId > 0) {
+      courseService
+        .getCoursesByCategoryId(
+          filteredCatId,
+          0,
+          PAGE_SIZE,
+          ADMIN_COURSE_STATUS
+        )
+        .then((resp) => {
+          setCoursePage(resp.data);
+        });
+    } else {
+      courseService
+        .getCourses(0, PAGE_SIZE, ADMIN_COURSE_STATUS)
+        .then((resp) => {
+          setCoursePage(resp.data);
         });
     }
   };
@@ -92,7 +152,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
     return null;
   };
   const getThead = () => {
-    const ths = theads.map(th => {
+    const ths = theads.map((th) => {
       return (
         <th className="link" key={th} onClick={() => handleTableHeadClick(th)}>
           <span className="mr-1">{th}</span>
@@ -105,7 +165,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
   const getTbody = () => {
     const trows =
       coursePage &&
-      coursePage.content.map(course => {
+      coursePage.content.map((course) => {
         return (
           <tr
             className="link"
@@ -125,6 +185,22 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
       });
     return trows;
   };
+
+  const categoryOptions = categories.map((cat) => {
+    return (
+      <option key={cat.id} value={cat.id}>
+        {cat.name}
+      </option>
+    );
+  });
+
+  const gradeOptions = grades.map((grad) => {
+    return (
+      <option key={grad.id} value={grad.id}>
+        {grad.name}
+      </option>
+    );
+  });
 
   let courseListView;
   if (isLoading) {
@@ -149,6 +225,46 @@ const AdminCourseList: React.FunctionComponent<IProp> = props => {
           <FontAwesomeIcon icon="plus" className="pr-1" />
           New Course
         </button>
+
+        <div className="my-2">
+          <form className="form-inline" onSubmit={handleFilterSubmit}>
+            <div className="form-group mb-2 mr-2">
+              <select
+                id="category-select-input"
+                value={filteredCatId}
+                className="form-control"
+                onChange={handleCategoryChange}
+                required
+              >
+                <option key={0} value="0">
+                  -- Select Categories --
+                </option>
+                {categoryOptions}
+              </select>
+            </div>
+
+            <div className="form-group mb-2 mr-2">
+              <select
+                id="grade-select-input"
+                value={filteredGradeId}
+                className="form-control"
+                onChange={(e) =>
+                  setFilteredGradeId(parseInt(e.target.value, 10))
+                }
+              >
+                <option key={0} value="0">
+                  -- Select Grades --
+                </option>
+                {gradeOptions}
+              </select>
+            </div>
+            <div className="form-group mb-2">
+              <button type="submit" className="btn btn-primary">
+                Filter
+              </button>
+            </div>
+          </form>
+        </div>
 
         <div className="table-responsive">
           <table className="table table-hover">

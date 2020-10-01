@@ -4,7 +4,7 @@ import {
   IGrade,
   INewGrade,
   Page,
-  HTTPStatus
+  HTTPStatus,
 } from "../../../settings/DataTypes";
 import { GradeService } from "../../../services/GradeService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,7 +13,7 @@ import {
   BUILD_ADMIN_GRADE_URL,
   PAGE_SIZE,
   DEFAULT_SORTING_FIELD,
-  DEFAULT_SORTING_ORDER
+  DEFAULT_SORTING_ORDER,
 } from "../../../settings/Constants";
 import Modal from "../../../components/modal/Modal";
 import NewGrade from "./NewGrade";
@@ -25,7 +25,7 @@ import { AlertContext } from "../../../contexts/AlertContext";
 
 interface IProps extends RouteComponentProps {}
 
-const AdminGradeList: React.FunctionComponent<IProps> = props => {
+const AdminGradeList: React.FunctionComponent<IProps> = (props) => {
   const gradeService = new GradeService();
   const alertContext = useContext(AlertContext);
   const [gradePage, setGradePage] = useState<Page<IGrade> | null>(null);
@@ -39,7 +39,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   const theads = ["ID", "Name", "Category", "Created At"];
 
   useEffect(() => {
-    gradeService.getGrades(0, PAGE_SIZE).then(resp => {
+    gradeService.getGrades(0, PAGE_SIZE).then((resp) => {
       setGradePage(resp.data);
       setIsLoaded(true);
     });
@@ -65,14 +65,14 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   const handleNewGradeSubmit = (data: INewGrade) => {
     gradeService
       .createGrade(data)
-      .then(resp => {
+      .then((resp) => {
         if (resp.status === HTTPStatus.CREATED) {
           setShowModal(false);
           setNewGradeErrors([]);
           alertContext.show("Grade successfully created");
         }
       })
-      .catch(err => {
+      .catch((err) => {
         setNewGradeErrors(axiosErrorParser(err));
       });
   };
@@ -82,7 +82,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
     const currentPage = gradePage ? gradePage.number : 0;
     gradeService
       .getGrades(currentPage, PAGE_SIZE, getSorting(th))
-      .then(resp => {
+      .then((resp) => {
         setGradePage(resp.data);
         setIsLoaded(true);
       });
@@ -96,7 +96,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
     if (page >= 0) {
       const sorting = sortCol + "_" + sortOrder;
       setIsLoaded(false);
-      gradeService.getGrades(page, PAGE_SIZE, sorting).then(resp => {
+      gradeService.getGrades(page, PAGE_SIZE, sorting).then((resp) => {
         setGradePage(resp.data);
         setIsLoaded(true);
       });
@@ -113,7 +113,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   };
 
   const getThead = () => {
-    const ths = theads.map(th => {
+    const ths = theads.map((th) => {
       return (
         <th className="link" key={th} onClick={() => handleTableHeadClick(th)}>
           <span className="mr-1">{th}</span>
@@ -127,7 +127,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
   const getTbody = () => {
     const trows =
       gradePage &&
-      gradePage.content.map(grade => {
+      gradePage.content.map((grade) => {
         return (
           <tr
             className="link"
@@ -136,7 +136,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = props => {
           >
             <td> {grade.id}</td>
             <td> {grade.name}</td>
-            <td> {grade.name}</td>
+            <td> {grade.primaryCategory.name}</td>
             <td>{grade.createdAt}</td>
           </tr>
         );
