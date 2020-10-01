@@ -42,7 +42,7 @@ class DesktopFooter extends Component {
           <div className="footer-bottom">
             <div className="footer-content width-75">
               <p>
-                Copyright © {year} <strong>Rohingya Academy</strong>
+                Copyright © {year} <strong>Roacademy</strong>
               </p>
               <div className="d-flex">
                 <div className="mr-2">

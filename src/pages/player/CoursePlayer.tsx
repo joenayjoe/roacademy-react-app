@@ -221,7 +221,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
           return (
             <div className="lecture-file-resource" key={resource.id}>
               <FontAwesomeIcon icon="file-pdf" className="mr-2" />
-              <Link to={{ pathname: resource.fileUrl }} target="_blank">
+              <Link to={{ pathname: resource.fileName }} target="_blank">
                 {resource.fileName}
               </Link>
             </div>
@@ -258,7 +258,7 @@ const CoursePlayer: React.FunctionComponent<IProps> = (props) => {
     if (vr) {
       const params =
         "?controls=1&enablejsapi=1&modestbranding=1&showinfo=0&iv_load_policy=3&html5=1&fs=1&rel=0&hl=en&cc_lang_pref=en&cc_load_policy=1&start=0&autoplay=1";
-      url = "https://www.youtube-nocookie.com/embed/" + vr.fileUrl + params;
+      url = "https://www.youtube-nocookie.com/embed/" + vr.resourceId + params;
     }
     return url;
   };

@@ -167,6 +167,7 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
           <BreadcrumbItem href={ADMIN_COURSES_URL}>Courses</BreadcrumbItem>
           <BreadcrumbItem active>Course Details</BreadcrumbItem>
         </Breadcrumb>
+
         <CourseDetail
           course={course}
           chapters={chapters}
@@ -174,13 +175,7 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
           subscribeHandler={subscribeCourse}
         />
 
-        <CommentModule
-          commentableType={CommentableType.COURSE}
-          commentableId={course.id}
-          className="width-75"
-        />
-
-        <div className="action-btn-group">
+        <div className="action-btn-group my-2">
           <button
             className="btn btn-danger action-btn"
             onClick={() => setShowConfirmModal(true)}
@@ -195,6 +190,12 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
             </button>
           </Link>
         </div>
+
+        <CommentModule
+          commentableType={CommentableType.COURSE}
+          commentableId={course.id}
+          className="width-75"
+        />
       </div>
     );
   } else if (!found) {

@@ -277,20 +277,22 @@ const Navbar: React.FunctionComponent<IProbs> = (props) => {
       {modalDialog}
       <nav className="navbar navbar-expand-md navbar-light nav-container">
         {getContentForMobileDevice()}
-        <div className={`${hideForMobileSearch}`}>
-          <Link to="/" className={`navbar-brand d-flex`}>
-            <img
-              src={logo}
-              width="40"
-              height="40"
-              className="d-inline-block align-top mr-1"
-              alt=""
-            />
-            <div className={`brand-title ${brandNameDisplayKlass}`}>
-              Roacademy
-            </div>
-          </Link>
-        </div>
+
+        <Link
+          to="/"
+          className={`navbar-brand d-flex align-items-center ${hideForMobileSearch}`}
+        >
+          <img
+            src={logo}
+            width="48"
+            height="48"
+            className="d-inline-block align-top mr-1"
+            alt=""
+          />
+          <div className={`brand-title ${brandNameDisplayKlass}`}>
+            Roacademy
+          </div>
+        </Link>
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto nav-left">

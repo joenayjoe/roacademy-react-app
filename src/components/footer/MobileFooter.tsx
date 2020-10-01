@@ -37,7 +37,7 @@ class MobileFooter extends Component {
           <div className="footer-bottom">
             <div className="footer-content">
               <p>
-                <strong>Rohingya Academy</strong>
+                <strong>Roacademy</strong>
               </p>
               <p>© {year} </p>
             </div>

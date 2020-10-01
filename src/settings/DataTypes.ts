@@ -217,6 +217,7 @@ export interface ILectureResource extends IAuditable {
   contentType: string;
   fileSize: string;
   fileUrl: string;
+  resourceId: string;
 }
 
 export interface ITag {

@@ -19,8 +19,6 @@ import { RouteComponentProps, withRouter, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { axiosErrorParser } from "../../../utils/errorParser";
 import Alert from "../../../components/flash/Alert";
-import RichTextEditor, { EditorValue } from "react-rte";
-import { RTE_TOOLBAR_CONFIG } from "../../../settings/rte_config";
 import TagInput from "../../../components/taginput/TagInput";
 import TagService from "../../../services/TagService";
 import LectureService from "../../../services/LectureService";
@@ -58,9 +56,9 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
 
   // new lecture state
   const [newLectureName, setNewLectureName] = useState<string>("");
-  const [newLectureDescription, setNewLectureDescription] = useState<
-    EditorValue
-  >(RichTextEditor.createEmptyValue());
+  const [newLectureDescription, setNewLectureDescription] = useState<string>(
+    ""
+  );
   const [newLectureTags, setNewLectureTags] = useState<string[]>([]);
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
   const [newLectureErrors, setNewLectureErrors] = useState<string[]>([]);
@@ -88,8 +86,8 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
 
   const [editingLecture, setEditingLecture] = useState<ILecture | null>(null);
   const [editingLectureDesctiption, setEditingLectureDescription] = useState<
-    EditorValue
-  >(RichTextEditor.createEmptyValue());
+    string
+  >("");
   const [editingLectureErrors, setEditingLectureErrors] = useState<string[]>(
     []
   );
@@ -224,7 +222,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
   const resetNewLecture = () => {
     setChapterForNewLecture(null);
     setNewLectureName("");
-    setNewLectureDescription(RichTextEditor.createEmptyValue());
+    setNewLectureDescription("");
     setNewLectureTags([]);
     setNewLectureErrors([]);
   };
@@ -238,9 +236,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           if (l.id === lectureId) {
             setEditingLecture(l);
             setEditingLectureChapter(ch);
-            setEditingLectureDescription(
-              RichTextEditor.createValueFromString(l.description, "html")
-            );
+            setEditingLectureDescription(l.description);
           }
         });
       }
@@ -265,7 +261,10 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
         alertContext.show("Lecture succesfully deleted");
       })
       .catch((err) => {
-        alertContext.show(axiosErrorParser(err).join(", "), AlertVariant.DANGER);
+        alertContext.show(
+          axiosErrorParser(err).join(", "),
+          AlertVariant.DANGER
+        );
       });
   };
 
@@ -328,7 +327,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
     if (chapterForNewLecture) {
       const lecutreData: INewLecture = {
         name: newLectureName,
-        description: newLectureDescription.toString("html"),
+        description: newLectureDescription,
         tags: newLectureTags,
         chapterId: chapterForNewLecture.id,
         position: chapterForNewLecture.lectures.length,
@@ -359,7 +358,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
       const formData: IEditLecture = {
         id: editingLecture.id,
         name: editingLecture.name,
-        description: editingLectureDesctiption.toString("html"),
+        description: editingLectureDesctiption,
         tags: editingLecture.tags,
         chapterId: editingLectureChapter.id,
       };
@@ -729,7 +728,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           <form onSubmit={(e) => handleNewLectureFormSubmit(e)}>
             {newLectureErrorFlash}
             <div className="form-group">
-              <label>Lecture name</label>
+              <label>Lecture name. (This will be video title in Youtube)</label>
               <input
                 className="form-control"
                 type="text"
@@ -740,17 +739,19 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
             </div>
 
             <div className="form-group">
-              <label>Lecture description</label>
-              <RichTextEditor
-                className="rich-text-editor"
-                toolbarConfig={RTE_TOOLBAR_CONFIG}
+              <label>
+                Lecture description. (This will video description in Youtube)
+              </label>
+              <textarea
+                className="form-control"
                 value={newLectureDescription}
-                onChange={(val) => setNewLectureDescription(val)}
-                placeholder="Enter a lecture description"
-              />
+                onChange={(e) => setNewLectureDescription(e.target.value)}
+              ></textarea>
             </div>
             <div className="form-group">
-              <label>Lecture tags [comma separated value]</label>
+              <label>
+                Enter comma separated tags. (This will be video tags in Youtube)
+              </label>
               <TagInput
                 tags={newLectureTags}
                 suggestions={tagSuggestions}
@@ -797,7 +798,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
           <form onSubmit={(e) => handleEditLectureFormSubmit(e)}>
             {editLectureErrorFlash}
             <div className="form-group">
-              <label>Lecture name</label>
+              <label>Lecture name. (This will video title in Youtube)</label>
               <input
                 className="form-control"
                 type="text"
@@ -808,17 +809,19 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
               />
             </div>
             <div className="form-group">
-              <label>Lecture description</label>
-              <RichTextEditor
-                className="rich-text-editor"
-                toolbarConfig={RTE_TOOLBAR_CONFIG}
+              <label>
+                Lecture description. (This will video description in Youtube)
+              </label>
+              <textarea
+                className="form-control"
                 value={editingLectureDesctiption}
-                onChange={(val) => setEditingLectureDescription(val)}
-                placeholder="Enter a lecture description"
-              />
+                onChange={(e) => setEditingLectureDescription(e.target.value)}
+              ></textarea>
             </div>
             <div className="form-group">
-              <label>Lecture tags [comma separated value]</label>
+              <label>
+                Enter comma separated tags. (This will be video tags in Youtube)
+              </label>
               <TagInput
                 tags={editingLecture.tags}
                 suggestions={tagSuggestions}
