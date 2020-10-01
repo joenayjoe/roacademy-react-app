@@ -17,6 +17,7 @@ import {
 import Pagination from "../../../components/pagination/Pagination";
 import { CategoryService } from "../../../services/CategoryService";
 import { GradeService } from "../../../services/GradeService";
+import { timeAgo } from "../../../utils/DateUtils";
 
 interface IProp extends RouteComponentProps {}
 const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
@@ -46,15 +47,51 @@ const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
 
   useEffect(() => {
     loadCategories();
-    loadCourses();
+    loadCourses(0, PAGE_SIZE);
     // eslint-disable-next-line
   }, []);
 
-  const loadCourses = () => {
-    courseService.getCourses(0, PAGE_SIZE, ADMIN_COURSE_STATUS).then((resp) => {
-      setCoursePage(resp.data);
-      setIsLoading(false);
-    });
+  const loadCourses = (page: number, size: number, order?: string) => {
+    setIsLoading(true);
+
+    if (!order) {
+      order = sortCol + "_" + sortOrder;
+    }
+
+    if (filteredGradeId > 0) {
+      courseService
+        .getCoursesByGradeId(
+          filteredGradeId,
+          page,
+          size,
+          ADMIN_COURSE_STATUS,
+          order
+        )
+        .then((resp) => {
+          setCoursePage(resp.data);
+          setIsLoading(false);
+        });
+    } else if (filteredCatId > 0) {
+      courseService
+        .getCoursesByCategoryId(
+          filteredCatId,
+          page,
+          size,
+          ADMIN_COURSE_STATUS,
+          order
+        )
+        .then((resp) => {
+          setCoursePage(resp.data);
+          setIsLoading(false);
+        });
+    } else {
+      courseService
+        .getCourses(page, size, ADMIN_COURSE_STATUS, order)
+        .then((resp) => {
+          setCoursePage(resp.data);
+          setIsLoading(false);
+        });
+    }
   };
 
   const loadCategories = () => {
@@ -76,14 +113,8 @@ const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
   };
 
   const handleTableHeadClick = (th: string) => {
-    setIsLoading(true);
-    const currentPage = coursePage ? coursePage.number : 0;
-    courseService
-      .getCourses(currentPage, PAGE_SIZE, ADMIN_COURSE_STATUS, getSorting(th))
-      .then((resp) => {
-        setCoursePage(resp.data);
-        setIsLoading(false);
-      });
+    const order = getSorting(th);
+    loadCourses(0, PAGE_SIZE, order);
   };
 
   const handleTableRowClick = (course: ICourse) => {
@@ -92,14 +123,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
 
   const handlePageClick = (page: number) => {
     if (page >= 0) {
-      setIsLoading(true);
-      const order = sortCol + "_" + sortOrder;
-      courseService
-        .getCourses(page, PAGE_SIZE, ADMIN_COURSE_STATUS, order)
-        .then((resp) => {
-          setCoursePage(resp.data);
-          setIsLoading(false);
-        });
+      loadCourses(page, PAGE_SIZE);
     }
   };
 
@@ -116,31 +140,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
 
   const handleFilterSubmit = (e: FormEvent) => {
     e.preventDefault();
-
-    if (filteredGradeId > 0) {
-      courseService
-        .getCoursesByGradeId(filteredGradeId, 0, PAGE_SIZE, ADMIN_COURSE_STATUS)
-        .then((resp) => {
-          setCoursePage(resp.data);
-        });
-    } else if (filteredCatId > 0) {
-      courseService
-        .getCoursesByCategoryId(
-          filteredCatId,
-          0,
-          PAGE_SIZE,
-          ADMIN_COURSE_STATUS
-        )
-        .then((resp) => {
-          setCoursePage(resp.data);
-        });
-    } else {
-      courseService
-        .getCourses(0, PAGE_SIZE, ADMIN_COURSE_STATUS)
-        .then((resp) => {
-          setCoursePage(resp.data);
-        });
-    }
+    loadCourses(0, PAGE_SIZE);
   };
 
   const sortDirIcon = (th: string) => {
@@ -179,7 +179,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
             <td> {course.hits}</td>
             <td> {course.primaryCategory.name}</td>
             <td> {course.primaryGrade.name}</td>
-            <td>{course.createdAt}</td>
+            <td>{timeAgo(course.createdAt)}</td>
           </tr>
         );
       });
@@ -259,7 +259,7 @@ const AdminCourseList: React.FunctionComponent<IProp> = (props) => {
               </select>
             </div>
             <div className="form-group mb-2">
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" className="btn btn-success">
                 Filter
               </button>
             </div>

@@ -22,6 +22,7 @@ import { axiosErrorParser } from "../../../utils/errorParser";
 import Spinner from "../../../components/spinner/Spinner";
 import Pagination from "../../../components/pagination/Pagination";
 import { AlertContext } from "../../../contexts/AlertContext";
+import { timeAgo } from "../../../utils/DateUtils";
 
 interface IProps extends RouteComponentProps {}
 
@@ -137,7 +138,7 @@ const AdminGradeList: React.FunctionComponent<IProps> = (props) => {
             <td> {grade.id}</td>
             <td> {grade.name}</td>
             <td> {grade.primaryCategory.name}</td>
-            <td>{grade.createdAt}</td>
+            <td>{timeAgo(grade.createdAt)}</td>
           </tr>
         );
       });
