@@ -7,7 +7,7 @@ import {
   DEFAULT_SORTING_FIELD,
   ADMIN_COURSE_STATUS,
   BUILD_TEACHER_COURSE_URL,
-  HOME_URL,
+  HOME_URL,DEFAULT_SORTING_ORDER
 } from "../../settings/Constants";
 import { ICourse, Page, AlertVariant } from "../../settings/DataTypes";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -17,6 +17,7 @@ import { camelize } from "../../utils/StringUtils";
 import { AlertContext } from "../../contexts/AlertContext";
 import { axiosErrorParser } from "../../utils/errorParser";
 import Pagination from "../../components/pagination/Pagination";
+import { timeAgo } from "../../utils/DateUtils";
 
 interface IProp extends RouteComponentProps {}
 const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
@@ -28,7 +29,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
   const [coursePage, setCoursePage] = useState<Page<ICourse>>();
 
   const [sortCol, setSortCol] = useState<string>(DEFAULT_SORTING_FIELD);
-  const [sortOrder, setSortOrder] = useState<string>(DEFAULT_SORTING_FIELD);
+  const [sortOrder, setSortOrder] = useState<string>(DEFAULT_SORTING_ORDER);
 
   const [loadingCourse, setLoadingCourse] = useState<boolean>(true);
 
@@ -44,14 +45,27 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
   ];
 
   useEffect(() => {
-    if (authContext.currentUser) {
+    loadCourses(0, PAGE_SIZE)
+    // eslint-disable-next-line
+  }, []);
+
+  const loadCourses = (page: number, size: number, order? :string) => {
+    if (!order) {
+      order = sortCol + "_" + sortOrder;
+    }
+
+    if(!authContext.currentUser) {
+      alertContext.show("Access denied!", AlertVariant.DANGER);
+      props.history.push(HOME_URL);
+    } else {
       setLoadingCourse(true);
       courseService
         .getCoursesByTeacher(
           authContext.currentUser.id,
           0,
           PAGE_SIZE,
-          ADMIN_COURSE_STATUS
+          ADMIN_COURSE_STATUS,
+          order
         )
         .then((resp) => {
           setCoursePage(resp.data);
@@ -61,16 +75,12 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
           console.log("Error = ", err);
           alertContext.show(
             "Failed to load courses.",
-            AlertVariant.DANGER,
+            AlertVariant.WARNING,
             axiosErrorParser(err)
           );
         });
-    } else {
-      alertContext.show("Access denied!", AlertVariant.DANGER);
-      props.history.push(HOME_URL);
     }
-    // eslint-disable-next-line
-  }, []);
+  }
 
   const handleNewCourseClick = () => {
     props.history.push(TEACHER_NEW_COURSE_URL);
@@ -85,32 +95,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
   };
 
   const handleTableHeadClick = (th: string) => {
-    if (authContext.currentUser) {
-      setLoadingCourse(true);
-      const currentPage = coursePage ? coursePage.number : 0;
-      courseService
-        .getCoursesByTeacher(
-          authContext.currentUser.id,
-          currentPage,
-          PAGE_SIZE,
-          ADMIN_COURSE_STATUS,
-          getSorting(th)
-        )
-        .then((resp) => {
-          setCoursePage(resp.data);
-          setLoadingCourse(false);
-        })
-        .catch((err) => {
-          alertContext.show(
-            "Failed to load!",
-            AlertVariant.DANGER,
-            axiosErrorParser(err)
-          );
-        });
-    } else {
-      alertContext.show("Access denied!", AlertVariant.DANGER);
-      props.history.push(HOME_URL);
-    }
+    loadCourses(0, PAGE_SIZE, getSorting(th))
   };
 
   const handleTableRowClick = (course: ICourse) => {
@@ -125,31 +110,8 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
   };
 
   const handlePageClick = (page: number) => {
-    if (page >= 0 && authContext.currentUser) {
-      setLoadingCourse(true);
-      const order = sortCol + "_" + sortOrder;
-      courseService
-        .getCoursesByTeacher(
-          authContext.currentUser.id,
-          page,
-          PAGE_SIZE,
-          ADMIN_COURSE_STATUS,
-          order
-        )
-        .then((resp) => {
-          setCoursePage(resp.data);
-          setLoadingCourse(false);
-        })
-        .catch((err) => {
-          alertContext.show(
-            "Failed to load page: ",
-            AlertVariant.DANGER,
-            axiosErrorParser(err)
-          );
-        });
-    } else {
-      alertContext.show("Access denied!", AlertVariant.DANGER);
-      props.history.push(HOME_URL);
+    if(page >=0) {
+      loadCourses(page, PAGE_SIZE)
     }
   };
 
@@ -191,7 +153,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
             <td> {course.hits}</td>
             <td> {course.primaryCategory.name}</td>
             <td> {course.primaryGrade.name}</td>
-            <td>{course.createdAt}</td>
+            <td>{timeAgo(course.createdAt)}</td>
           </tr>
         );
       });
@@ -225,8 +187,6 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
         </button>
       </div>
       <div className="teacher-courses-container">
-        {loadingCourse && <Spinner size="3x" />}
-
         <div className="table-responsive mt-2">
           <table className="table table-hover">
             <thead className="thead-light text-nowrap">
@@ -234,6 +194,7 @@ const TeacherDashboard: React.FunctionComponent<IProp> = (props) => {
             </thead>
             <tbody>{getTbody()}</tbody>
           </table>
+          {loadingCourse && <Spinner size="3x" />}
         </div>
         {getPagination()}
       </div>

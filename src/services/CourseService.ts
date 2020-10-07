@@ -142,6 +142,15 @@ export class CourseService {
     return await this.apiRequest.get<Page<ICourse>>(url);
   }
 
+  public async getSubscribedCoursesByUser(
+    userId: number,
+    page: number,
+    size: number
+  ): Promise<AxiosResponse<Page<ICourse>>> {
+    const url = `/students/${userId}/courses?page=${page}&size=${size}`;
+    return await this.apiRequest.get<Page<ICourse>>(url);
+  }
+
   public async deleteCourse(
     courseId: string
   ): Promise<AxiosResponse<HTTPStatus>> {

@@ -88,7 +88,7 @@ const Grade: React.FunctionComponent<IProps> = (props) => {
       });
   };
 
-  const loadAllCourses = (page: number, size = 1) => {
+  const loadAllCourses = (page: number, size = PAGE_SIZE) => {
     courseService
       .getCoursesByGradeId(
         +gradeId,

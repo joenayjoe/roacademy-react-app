@@ -17,7 +17,7 @@ import Footer from "../components/footer/Footer";
 import UserDashboard from "../pages/user/UserDashboard";
 import AuthContextProvider from "../contexts/AuthContext";
 import ProfileSetting from "../pages/user/ProfileSetting";
-import UserCourse from "../pages/course/UserCourse";
+import UserCourse from "../pages/user/UserCourse";
 import AccountSetting from "../pages/user/AccountSetting";
 import UserPhotoSetting from "../pages/user/UserPhotoSetting";
 import OAuth2RedirectHandler from "../pages/oauth2redirect/OAuth2RedirectHandler";

@@ -100,7 +100,7 @@ const Course: React.FunctionComponent<IProps> = (props) => {
   const subscribeCourse = () => {
     if (authContext.currentUser) {
       const request: ICourseSubscribeRequest = {
-        userId: authContext.currentUser.id,
+        studentId: authContext.currentUser.id,
         courseId: course!.id,
       };
       userService

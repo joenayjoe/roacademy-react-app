@@ -77,7 +77,7 @@ export class UserService {
     userId: number,
     data: ICourseSubscribeRequest
   ): Promise<AxiosResponse<HTTPStatus>> {
-    const url = `/users/${userId}/subscribe-course`;
+    const url = `/students/${userId}/course_subscription`;
     return await this.apiRequest.put<ICourseSubscribeRequest, HTTPStatus>(
       url,
       data
@@ -88,7 +88,7 @@ export class UserService {
     userId: number,
     courseId: number
   ): Promise<AxiosResponse<ICourseSubscriptionCheckResponse>> {
-    const url = `/users/${userId}/courses/${courseId}/is-subscribed`;
+    const url = `/students/${userId}/courses/${courseId}/is_subscribed`;
     return await this.apiRequest.get<ICourseSubscriptionCheckResponse>(url);
   }
 

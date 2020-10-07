@@ -116,12 +116,12 @@ export interface ICourse extends IPrimaryCourse, IAuditable {
 }
 
 export interface ICourseSubscribeRequest {
-  userId: number;
+  studentId: number;
   courseId: number;
 }
 
 export interface ICourseSubscriptionCheckResponse {
-  userId: number;
+  studentId: number;
   courseId: number;
   subscribed: boolean;
 }

@@ -113,7 +113,7 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
 
   const subscribeCourse = () => {
     const request: ICourseSubscribeRequest = {
-      userId: authContext.currentUser!.id,
+      studentId: authContext.currentUser!.id,
       courseId: course!.id,
     };
     userService
@@ -193,13 +193,7 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
             subscribeHandler={subscribeCourse}
           />
 
-          <CommentModule
-            commentableType={CommentableType.COURSE}
-            commentableId={course.id}
-            className="width-75"
-          />
-
-          <div className="action-btn-group">
+          <div className="action-btn-group my-2">
             <button
               className="btn btn-danger action-btn"
               onClick={() => setShowConfirmModal(true)}
@@ -219,6 +213,12 @@ const TeacherCourse: React.FunctionComponent<IProp> = (props) => {
               </button>
             </Link>
           </div>
+
+          <CommentModule
+            commentableType={CommentableType.COURSE}
+            commentableId={course.id}
+            className="width-75"
+          />
         </div>
       </div>
     );

@@ -112,7 +112,7 @@ const AdminCourse: React.FunctionComponent<IProps> = (props) => {
 
   const subscribeCourse = () => {
     const request: ICourseSubscribeRequest = {
-      userId: authContext.currentUser!.id,
+      studentId: authContext.currentUser!.id,
       courseId: course!.id,
     };
     userService
