@@ -7,6 +7,7 @@ export enum ModalIdentifier {
   SIGNUP_MODAL = "SignupModal",
   NEW_CATEGORY_MODAL = "NewCategoryModal",
   CONFIRM_MODAL = "ConfirmModal",
+  FORGOT_PASSWORD_MODAL = "ForgotPasswordModal",
 }
 
 export enum HTTPStatus {

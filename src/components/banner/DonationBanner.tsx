@@ -8,11 +8,11 @@ const DonationBanner: React.FunctionComponent<IProps> = props => {
   return (
     <div className="banner donation-banner">
       <h1 className="banner-header d-none d-md-block">
-        Support Rohingya Academy
+        Support Roacademy
       </h1>
       <hr className="my-4 d-none d-md-block" />
       <p className="banner-text">
-        <strong>Rohingya Academy</strong> will always be free for life time. To
+        <strong>Roacademy</strong> will always be free for life time. To
         keep the content updated and available for all, we need your support.
       </p>
 

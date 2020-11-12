@@ -17,12 +17,13 @@
     width: 15%;
     min-width: 15%;
     border-right: 1px solid #dedfe0;
+    background-color: rgb(201, 192, 192);
 }
 
 .admin-side-menu ul li:hover,
 .admin-side-menu ul li.active {
-    background-color: #F2F3F5;
-    color: #007791;
+    background-color: #696a6d;
+    color: #f2f3f5;
 }
 
 .admin-content-wrapper {
@@ -41,6 +42,7 @@
     }
     .admin-side-menu {
         border: none;
+        margin-bottom: 1rem;
         width: 100%;
     }
 }

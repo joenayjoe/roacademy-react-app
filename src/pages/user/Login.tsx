@@ -12,7 +12,12 @@ import { axiosErrorParser } from "../../utils/errorParser";
 import Alert from "../../components/flash/Alert";
 import AuthService from "../../services/AuthService";
 import { AuthContext } from "../../contexts/AuthContext";
-import { FACEBOOK_AUTH_URL, GOOGLE_AUTH_URL } from "../../settings/Constants";
+import {
+  FACEBOOK_AUTH_URL,
+  GOOGLE_AUTH_URL,
+  HOME_URL,
+  USER_DASHBOARD_URL,
+} from "../../settings/Constants";
 
 interface IProps extends RouteComponentProps {
   closeHandler: () => void;
@@ -39,7 +44,11 @@ const Login: React.FunctionComponent<IProps> = (props) => {
       .login(formData)
       .then((resp) => {
         authContext && authContext.login(resp.data);
-        props.history.replace(props.location.pathname);
+        if (props.location.pathname === HOME_URL) {
+          props.history.replace(USER_DASHBOARD_URL);
+        } else {
+          props.history.replace(props.location.pathname);
+        }
         props.closeHandler();
       })
       .catch((error) => {
@@ -130,7 +139,9 @@ const Login: React.FunctionComponent<IProps> = (props) => {
       <div className="modal-center-footer">
         <div className="forgot-password">
           <span className="pr-2">or</span>
-          <a href="/">Forgot Password?</a>
+         <span className="span-as-link" onClick={() => props.modalSwitchHandler(ModalIdentifier.FORGOT_PASSWORD_MODAL)}>
+         Forgot Password?
+         </span>
         </div>
 
         <div className="signup-link">

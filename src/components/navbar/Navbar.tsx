@@ -22,6 +22,7 @@ import Signup from "../../pages/user/Signup";
 import Modal from "../modal/Modal";
 import { isMobileOnly, isMobile } from "react-device-detect";
 import DropDown from "../dropdown/DropDown";
+import ForgotPasswordForm from "../../pages/user/ForgotPasswordForm";
 
 interface IProbs extends RouteComponentProps {
   drawerToggleHandler: () => void;
@@ -123,6 +124,9 @@ const Navbar: React.FunctionComponent<IProbs> = (props) => {
       case ModalIdentifier.SIGNUP_MODAL:
         showSignupModal();
         break;
+      case ModalIdentifier.FORGOT_PASSWORD_MODAL:
+        showForgotPasswordModal();
+        break;
     }
   };
   const showLoginModal = () => {
@@ -146,6 +150,15 @@ const Navbar: React.FunctionComponent<IProbs> = (props) => {
         closeHandler={() => setShowModal(false)}
         modalSwitchHandler={(modal: ModalIdentifier) => switchModal(modal)}
       />
+    );
+  };
+
+  const showForgotPasswordModal = () => {
+    setShowAuthLinksDropDown(false);
+    setShowModal(true);
+    setModalTitle("Reset Password");
+    setModalBody(
+      <ForgotPasswordForm closeHandler={() => setShowModal(false)} />
     );
   };
 

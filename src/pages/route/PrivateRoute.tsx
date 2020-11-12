@@ -32,7 +32,6 @@ const PrivateRoute: React.FunctionComponent<IProps> = props => {
       render={props =>
         hasAccess ? (
           <Component
-            // key={`${props.location.pathname} ${props.location.search}`}
             {...props}
           />
         ) : (

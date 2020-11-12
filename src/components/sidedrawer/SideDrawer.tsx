@@ -36,6 +36,7 @@ import { CourseService } from "../../services/CourseService";
 import { AlertContext } from "../../contexts/AlertContext";
 import { axiosErrorParser } from "../../utils/errorParser";
 import { Link } from "react-router-dom";
+import ForgotPasswordForm from "../../pages/user/ForgotPasswordForm";
 
 interface IProps extends RouteComponentProps {
   isOpen: boolean;
@@ -70,7 +71,10 @@ const SideDrawerNew: React.FunctionComponent<IProps> = (props) => {
         setCategories(response.data);
       })
       .catch((error) => {
-        alertContext.show(axiosErrorParser(error).join(", "), AlertVariant.DANGER);
+        alertContext.show(
+          axiosErrorParser(error).join(", "),
+          AlertVariant.DANGER
+        );
       });
     // eslint-disable-next-line
   }, []);
@@ -86,6 +90,9 @@ const SideDrawerNew: React.FunctionComponent<IProps> = (props) => {
         break;
       case ModalIdentifier.SIGNUP_MODAL:
         showSignupModal();
+        break;
+      case ModalIdentifier.FORGOT_PASSWORD_MODAL:
+        showForgotPasswordModal();
         break;
     }
   };
@@ -109,6 +116,14 @@ const SideDrawerNew: React.FunctionComponent<IProps> = (props) => {
         closeHandler={handleModalClose}
         modalSwitchHandler={(modal: ModalIdentifier) => switchModal(modal)}
       />
+    );
+  };
+
+  const showForgotPasswordModal = () => {
+    setShowModal(true);
+    setModalTitle("Reset Password");
+    setModalBody(
+      <ForgotPasswordForm closeHandler={() => setShowModal(false)} />
     );
   };
 

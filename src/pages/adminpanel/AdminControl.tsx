@@ -20,7 +20,7 @@ const AdminControl: React.FunctionComponent<IProps> = (props) => {
   };
 
   return (
-    <div className="admin-panel width-75 mt-2">
+    <div className="admin-panel mt-2">
       <div className="admin-side-menu">
         <ul>
           <li

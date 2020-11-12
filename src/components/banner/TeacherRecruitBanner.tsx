@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import "./Banner.css";
 
 interface IProps extends RouteComponentProps {}
-const TeacherRecruitBanner: React.FunctionComponent<IProps> = props => {
+const TeacherRecruitBanner: React.FunctionComponent<IProps> = (props) => {
   const teacherRequestClick = () => {
     props.history.push(TEACHER_REQUEST_URL);
   };
@@ -13,7 +13,7 @@ const TeacherRecruitBanner: React.FunctionComponent<IProps> = props => {
     <div className="banner teacher-recruitment-banner">
       <h1 className="banner-header d-none d-md-block">Do you like teaching?</h1>
       <p className="banner-subheader">
-        Join <strong>Rohingya Academy</strong> as an Instructor!
+        Join <strong>Roacademy</strong> as an Instructor!
       </p>
       <hr className="my-4 d-none d-md-block" />
       <p className="banner-text d-none d-md-block">

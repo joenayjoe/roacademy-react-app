@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import TeacherRecruitBanner from "../../components/banner/TeacherRecruitBanner";
 import { RoleType } from "../../settings/DataTypes";
+import UserCourses from "./UserCourses";
 
 interface IProps {}
 
@@ -19,16 +20,11 @@ const UserDashboard: React.FunctionComponent<IProps> = () => {
     return null;
   };
 
-  let greeting;
-  if (authContext.currentUser) {
-    greeting = <h1>Welcome {authContext.currentUser.firstName}</h1>;
-  }
   return (
     <React.Fragment>
       {teacherBanner()}
-      <div className="dashboard width-75">
-        {greeting}
-        <p>User dashboard</p>
+      <div className="dashboard">
+        {authContext.currentUser && <UserCourses />}
       </div>
     </React.Fragment>
   );

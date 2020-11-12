@@ -83,6 +83,22 @@ const Home: React.FunctionComponent = () => {
     true
   );
 
+
+  useEffect(() => {
+    if (selectedCategoryId > 0) {
+      loadCategoryCourses(selectedCategoryId, 0);
+    }
+    // eslint-disable-next-line
+  }, [selectedCategoryId]);
+
+  useEffect(() => {
+    loadCategories();
+    loadTrendingCourses(0);
+    loadNewCourses(0);
+    loadPopularTopics(0);
+    // eslint-disable-next-line
+  }, []);
+
   const loadCategories = () => {
     categoryService.getCategories("name_asc").then((resp) => {
       setCategories(resp.data);
@@ -148,21 +164,6 @@ const Home: React.FunctionComponent = () => {
       }
     });
   };
-
-  useEffect(() => {
-    if (selectedCategoryId > 0) {
-      loadCategoryCourses(selectedCategoryId, 0);
-    }
-    // eslint-disable-next-line
-  }, [selectedCategoryId]);
-
-  useEffect(() => {
-    loadCategories();
-    loadTrendingCourses(0);
-    loadNewCourses(0);
-    loadPopularTopics(0);
-    // eslint-disable-next-line
-  }, []);
 
   const loadNextCategoryCoursePage = () => {
     const nextPageNumber = categoryCoursesPageNumber + 1;
