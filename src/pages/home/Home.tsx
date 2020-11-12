@@ -83,7 +83,6 @@ const Home: React.FunctionComponent = () => {
     true
   );
 
-
   useEffect(() => {
     if (selectedCategoryId > 0) {
       loadCategoryCourses(selectedCategoryId, 0);
@@ -247,15 +246,19 @@ const Home: React.FunctionComponent = () => {
     if (selectedCategoryId === category.id) {
       return (
         <Collapse isOpen={selectedCategoryId === category.id}>
-          <CourseSlide
-            key={category.name}
-            courses={categoryCourses}
-            hasMore={hasMoreCategoryCourses}
-            slideAfterChangeHandler={(currentSlide) =>
-              handleCategoryCourseSlideAfterChangeEvent(currentSlide)
-            }
-            loadNextPage={loadNextCategoryCoursePage}
-          />
+          {isCategoryCourseLoading ? (
+            <Spinner size="3x" />
+          ) : (
+            <CourseSlide
+              key={category.name}
+              courses={categoryCourses}
+              hasMore={hasMoreCategoryCourses}
+              slideAfterChangeHandler={(currentSlide) =>
+                handleCategoryCourseSlideAfterChangeEvent(currentSlide)
+              }
+              loadNextPage={loadNextCategoryCoursePage}
+            />
+          )}
         </Collapse>
       );
     }
@@ -268,15 +271,19 @@ const Home: React.FunctionComponent = () => {
         <ul className="nav nav-pills">{categoryPill()}</ul>
 
         <div className="category-pill-content-container mt-2">
-          <CourseSlide
-            key={selectedCategoryId}
-            courses={categoryCourses}
-            hasMore={hasMoreCategoryCourses}
-            slideAfterChangeHandler={(currentSlide) =>
-              handleCategoryCourseSlideAfterChangeEvent(currentSlide)
-            }
-            loadNextPage={loadNextCategoryCoursePage}
-          />
+          {isCategoryCourseLoading ? (
+            <Spinner size="3x" />
+          ) : (
+            <CourseSlide
+              key={selectedCategoryId}
+              courses={categoryCourses}
+              hasMore={hasMoreCategoryCourses}
+              slideAfterChangeHandler={(currentSlide) =>
+                handleCategoryCourseSlideAfterChangeEvent(currentSlide)
+              }
+              loadNextPage={loadNextCategoryCoursePage}
+            />
+          )}
         </div>
       </div>
     ) : null;
@@ -373,7 +380,7 @@ const Home: React.FunctionComponent = () => {
     <React.Fragment>
       {authContext.isAuthenticated && <TeacherRecruitBanner />}
       <div className="width-75 category-courses my-2">
-        {isCategoryCourseLoading ? <Spinner size="3x" /> : getCategoryCourses()}
+        {getCategoryCourses()}
       </div>
       <div className="width-75 trending-courses mb-2">
         {isTrendingCourseLoading ? <Spinner size="3x" /> : getTrendingCourses()}
