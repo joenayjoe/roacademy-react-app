@@ -17,7 +17,8 @@
     width: 15%;
     min-width: 15%;
     border-right: 1px solid #dedfe0;
-    background-color: rgb(201, 192, 192);
+    background-color: rgb(245, 238, 238);
+    height: 100vh;
 }
 
 .admin-side-menu ul li:hover,
@@ -44,5 +45,6 @@
         border: none;
         margin-bottom: 1rem;
         width: 100%;
+        height: max-content;
     }
 }

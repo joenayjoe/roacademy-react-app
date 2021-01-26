@@ -740,7 +740,7 @@ const ChapterForm: React.FunctionComponent<IProp> = (props) => {
 
             <div className="form-group">
               <label>
-                Lecture description. (This will video description in Youtube)
+                Lecture description. (This will be video description in Youtube)
               </label>
               <textarea
                 className="form-control"
