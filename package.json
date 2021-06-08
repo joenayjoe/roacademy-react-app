@@ -17,7 +17,7 @@
         "@types/react-router-dom": "^4.3.5",
         "@types/react-rte": "^0.16.1",
         "@types/react-slick": "^0.23.4",
-        "axios": "^0.19.2",
+        "axios": "^0.21.1",
         "bootstrap": "^4.4.1",
         "jwt-decode": "^2.2.0",
         "react": "^16.13.0",
