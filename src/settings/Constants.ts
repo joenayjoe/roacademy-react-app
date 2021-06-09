@@ -57,11 +57,11 @@ export const BUILD_TEACHER_EDIT_COURSE_URL = (
 
 export const FRONT_END_DOMAIN = window.location.href.startsWith("http://localhost:")
   ? "http://localhost:3000"
-  : "http://www.roacademy.no";
+  : window.location.href
 
 export const API_DOMAIN = window.location.href.startsWith("http://localhost:")
   ? "http://localhost:8080"
-  : "https://roacademy-backend.herokuapp.com";
+  : window.location.href
 
 export const HOME_URL = "/";
 export const CATEGORIES_URL = "/categories";
