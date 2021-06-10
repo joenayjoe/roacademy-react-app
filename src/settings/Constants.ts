@@ -55,13 +55,11 @@ export const BUILD_TEACHER_EDIT_COURSE_URL = (
 
 // Global URLs
 
-export const FRONT_END_DOMAIN = window.location.href.startsWith("http://localhost:")
-  ? "http://localhost:3000"
-  : window.location.href
+export const FRONT_END_DOMAIN = window.location.href;
 
 export const API_DOMAIN = window.location.href.startsWith("http://localhost:")
   ? "http://localhost:8080"
-  : window.location.href
+  : "https://roacademy-backend.azurewebsites.net"
 
 export const HOME_URL = "/";
 export const CATEGORIES_URL = "/categories";
